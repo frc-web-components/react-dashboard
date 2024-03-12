@@ -9,6 +9,9 @@ import { useEffect, useRef, useState } from 'react';
 import Sources from './sources/Sources';
 import { useNt4 } from '@frc-web-components/react';
 
+
+// TODO: use https://github.com/react-grid-layout/react-grid-layout
+
 const json: IJsonModel = {
   global: {
     // "borderMinSize": 100
@@ -28,31 +31,56 @@ const json: IJsonModel = {
     weight: 100,
     children: [
       {
-        width: 300,
-        id: "tools",
-        enableMaximize: false,
-        type: "tabset",
-        weight: 50,
+        width: 400,
+        type: "row",
         children: [
-          {
-            type: "tab",
-            enableClose: false,
+          { 
+            width: 300,
+            id: "tools",
+            enableMaximize: false,
+            type: "tabset",
+            weight: 50,
             enableDrag: false,
-            enableFloat: false,
-            enableRename: false,
-            component: "sources",
-            name: "Sources",
+            children: [
+              {
+                type: "tab",
+                enableClose: false,
+                enableDrag: false,
+                enableFloat: false,
+                enableRename: false,
+                component: "sources",
+                name: "Sources",
+              },
+              {
+                type: "tab",
+                enableClose: false,
+                enableDrag: false,
+                enableFloat: false,
+                enableRename: false,
+                component: "button",
+                name: "Components",
+              },
+            ]
           },
-          {
-            type: "tab",
-            enableClose: false,
+          { 
+            enableMaximize: false,
+            type: "tabset",
+            weight: 50,
+            id: "properties",
             enableDrag: false,
-            enableFloat: false,
-            enableRename: false,
-            component: "button",
-            name: "Components",
+            children: [
+              {
+                type: "tab",
+                enableClose: false,
+                enableDrag: false,
+                enableFloat: false,
+                enableRename: false,
+                component: "properties",
+                name: "Properties",
+              },
+            ]
           },
-        ]
+        ],
       },
       {
         type: "tabset",
@@ -132,7 +160,7 @@ function App() {
               </div>
             )
           }
-        } else if (tabSetNode.getId() !== 'tools') {
+        } else if (!['tools', 'properties'].includes(tabSetNode.getId())) {
           renderValues.stickyButtons.push(
             <img src={addIcon}
               style={{

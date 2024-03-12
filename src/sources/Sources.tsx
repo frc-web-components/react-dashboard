@@ -51,11 +51,60 @@ const Sources = () => {
 
   const [columnDefs] = useState<ColDef[]>([
     {
-      field: 'name', cellRenderer: NameCellRenderer, editable: false, valueGetter: (params: ValueGetterParams) =>
+      field: 'name', 
+      cellRenderer: NameCellRenderer, 
+      editable: false, 
+      valueGetter: (params: ValueGetterParams) =>
         params.data.expanded ? '-' : '+',
+      rowDrag: true,
+      sortable: false,
     },
     // Using dot notation to access nested property
-    { field: 'value', editable: true },
+    {
+      field: 'value', 
+      editable: true,
+      sortable: false, 
+      cellEditorSelector: (params) => {
+        const value = params.data.value;
+        if (typeof value === 'number') {
+          return {
+            component: 'agNumberCellEditor',
+          };
+        } else if (typeof value === 'string') {
+          return {
+            component: 'agTextCellEditor'
+          };
+        } else if (typeof value === 'boolean') {
+          return {
+            component: 'agCheckboxCellEditor',
+          };
+        } else {
+          return {
+            component: 'adsfs'
+          }
+        }
+      },
+      cellRendererSelector: (params) => {
+        const value = params.data.value;
+        if (typeof value === 'number') {
+          return {
+            component: 'agNumberCellRenderer',
+          };
+        } else if (typeof value === 'string') {
+          return {
+            component: 'agTextCellRenderer'
+          };
+        } else if (typeof value === 'boolean') {
+          return {
+            component: 'agCheckboxCellRenderer'
+          };
+        } else {
+          return {
+            component: 'adsfs'
+          }
+        }
+      },
+    },
     // Show default header name
   ])
 
@@ -68,7 +117,7 @@ const Sources = () => {
       const expanded = expandedSources.includes(id);
       const sourceData: SourceData = {
         name,
-        value,
+        value: !parent ? value : undefined,
         id,
         expanded,
         parent,
@@ -108,6 +157,8 @@ const Sources = () => {
             }}
             rowData={nt4Data}
             columnDefs={columnDefs}
+            rowDragManaged={false}
+            suppressMoveWhenRowDragging={true}
           />
         </div>
       </div>
