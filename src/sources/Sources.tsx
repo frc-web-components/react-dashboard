@@ -18,7 +18,7 @@ interface SourceData {
   level: number;
 }
 
-const Sources = () => {
+function Sources() {
   const json = useJson('', {}, false);
   const [expandedSources, setExpandedSources] = useState<string[]>([]);
 
@@ -164,6 +164,6 @@ const Sources = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Sources;

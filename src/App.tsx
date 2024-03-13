@@ -8,9 +8,12 @@ import { BorderNode, IJsonModel, ITabSetRenderValues, Layout, Model, TabNode, Ta
 import { useEffect, useRef, useState } from 'react';
 import Sources from './sources/Sources';
 import { useNt4 } from '@frc-web-components/react';
+import Components from './components/Components';
+import { DashboardThemes, darkTheme } from "@frc-web-components/fwc/themes";
 
+const themes = new DashboardThemes();
+themes.addThemeRules("dark", darkTheme);
 
-// TODO: use https://github.com/react-grid-layout/react-grid-layout
 
 const json: IJsonModel = {
   global: {
@@ -89,13 +92,13 @@ const json: IJsonModel = {
           {
             type: "tab",
             name: "TeleOperated",
-            component: "button",
+            component: "components",
             enableFloat: true,
           },
           {
             type: "tab",
             name: "Autonomous",
-            component: "button",
+            component: "components",
             enableFloat: true,
           },
         ]
@@ -123,8 +126,8 @@ function App() {
   const factory = (node: TabNode) => {
     var component = node.getComponent();
 
-    if (component === "button") {
-      return <></>;
+    if (component === "components") {
+      return <Components />;
       // return <button>{node.getName()}</button>;
     }
 
@@ -168,7 +171,7 @@ function App() {
               }}
               onClick={() => {
                 (layoutRef!.current!).addTabToTabSet(tabSetNode.getId(), {
-                  component: "grid",
+                  component: "components",
                   name: "Unnamed Tab",
                   enableFloat: true,
 
