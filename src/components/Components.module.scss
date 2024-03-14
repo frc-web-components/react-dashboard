@@ -1,0 +1,31 @@
+.component {
+  box-sizing: border-box;
+  border: 2px dashed rgba(0, 0, 0, 0);
+
+  .component-child, .component-child * {
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .editable & {
+    border: 2px dashed #666;
+
+    &.selected {
+        border-color: lightgreen;
+    }
+
+    &:hover {
+      :global {
+        .react-resizable-handle-se,
+        .react-resizable-handle-sw,
+        .react-resizable-handle-ne,
+        .react-resizable-handle-nw {
+          &:after {
+            border-color: #aaa !important;
+          }
+        }
+      }
+    }
+  }
+}
