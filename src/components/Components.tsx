@@ -1,4 +1,4 @@
-import GridLayout from "react-grid-layout";
+import GridLayout, { Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import classNames from "classnames";
@@ -11,7 +11,13 @@ import {
   setSelectedComponent,
 } from "../store/slices/layoutSlice";
 import { useDropZone } from "../context-providers/DropZoneContext";
-import { RowDropZoneParams } from "ag-grid-community";
+import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
+import { DashboardComponent } from "./interfaces";
+import { v4 as uuidv4 } from "uuid";
+
+interface ComponentLayout extends Layout {
+  Component: React.ComponentType<any>;
+}
 
 function Components() {
   const dispatch = useAppDispatch();
@@ -19,36 +25,11 @@ function Components() {
   const [editing, setEditing] = useState(true);
   const { componentGrid } = useDropZone(); // Use the context
   const [gridElement, setGridElement] = useState<HTMLElement>();
-
-  useEffect(() => {
-    if (componentGrid && gridElement) {
-      const dropZoneParms: RowDropZoneParams = {
-        getContainer() {
-            return gridElement;
-        },
-        onDragging(params) {
-            // params.event
-        },
-      };
-      componentGrid.addRowDropZone(dropZoneParms);
-    }
-  }, [gridElement, componentGrid]);
+  const [cellSize, setCellSize] = useState(30);
+  const [cellGap, setCellGap] = useState(5);
 
   // layout is an array of objects, see the demo for more complete usage
-  const [layout, setLayout] = useState([
-    { i: "a", x: 0, y: 0, w: 1, h: 2, Component: Gyro },
-    {
-      i: "b",
-      x: 1,
-      y: 0,
-      w: 3,
-      h: 2,
-      minW: 2,
-      maxW: 4,
-      Component: BasicFmsInfo,
-    },
-    { i: "c", x: 4, y: 0, w: 1, h: 2, bleh: 3, Component: Field },
-  ]);
+  const [layout, setLayout] = useState<ComponentLayout[]>([]);
 
   const gridLayout = useMemo(() => {
     return layout.map((item) => ({
@@ -57,18 +38,128 @@ function Components() {
     }));
   }, [layout, editing]);
 
+  const minWidth = useMemo(() => {
+    let maxX = 0;
+    layout.forEach((item) => {
+      const x = (item.x + item.w) * (cellSize + cellGap);
+      maxX = Math.max(x, maxX);
+    });
+    const width = gridElement?.parentElement?.scrollWidth ?? 0;
+    console.log("width:", maxX);
+    return maxX;
+  }, [layout]);
+
+  useEffect(() => {
+    if (componentGrid && gridElement) {
+      const dropZoneParms: RowDropZoneParams = {
+        getContainer() {
+          return gridElement;
+        },
+        onDragging(params) {
+          // params.event
+        },
+        onDragStop({ node, event }: RowDragEndEvent<DashboardComponent>) {
+          if (!node.data) {
+            return;
+          }
+          const {
+            dashboard: { name: componentName, defaultSize, minSize },
+            component,
+          } = node.data;
+          const { clientX, clientY } = event;
+          const minWidth = Math.ceil(minSize.width / (cellSize + cellGap));
+          const minHeight = Math.ceil(minSize.height / (cellSize + cellGap));
+          const width = Math.max(
+            minWidth,
+            Math.round(defaultSize.width / (cellSize + cellGap))
+          );
+          const height = Math.max(
+            minHeight,
+            Math.round(defaultSize.height / (cellSize + cellGap))
+          );
+          const rect = gridElement.getBoundingClientRect();
+          const x = Math.round((clientX - rect.left) / (cellSize + cellGap));
+          const y = Math.round((clientY - rect.top) / (cellSize + cellGap));
+          console.log("event:", { event, rect });
+
+          setLayout((currentLayout) => {
+            return [
+              ...currentLayout,
+              {
+                i: uuidv4(),
+                x,
+                y,
+                w: width,
+                h: height,
+                minW: minWidth,
+                minH: minHeight,
+                Component: component,
+              },
+            ];
+          });
+        },
+      };
+      componentGrid.addRowDropZone(dropZoneParms);
+    }
+  }, [gridElement, componentGrid]);
+
   return (
     <GridLayout
+      style={{
+        minHeight: "100%",
+        minWidth,
+      }}
       innerRef={(el) => {
         if (el) {
           setGridElement(el);
         }
       }}
+      onResizeStop={(updatedLayout, oldItem, newItem) => {
+        setLayout((currentLayout) => {
+          const { h, w, x, y, i } = newItem;
+          const currentItemIndex = currentLayout.findIndex(
+            (item) => item.i === i
+          );
+          const updatedItem = {
+            ...currentLayout[currentItemIndex],
+            h,
+            w,
+            x,
+            y,
+          };
+          currentLayout[currentItemIndex] = updatedItem;
+          return [...currentLayout];
+        });
+        console.log("updatedLayout:", updatedLayout);
+        // setLayout(updatedLayout as ComponentLayout[]);
+      }}
+      onDragStop={(updatedLayout, oldItem, newItem) => {
+        setLayout((currentLayout) => {
+          const { h, w, x, y, i } = newItem;
+          const currentItemIndex = currentLayout.findIndex(
+            (item) => item.i === i
+          );
+          const updatedItem = {
+            ...currentLayout[currentItemIndex],
+            h,
+            w,
+            x,
+            y,
+          };
+          currentLayout[currentItemIndex] = updatedItem;
+          return [...currentLayout];
+        });
+        console.log("updatedLayout:", updatedLayout);
+        // setLayout(updatedLayout as ComponentLayout[]);
+      }}
       className={classNames(Styles.layout, Styles.editable)}
       layout={gridLayout}
-      cols={12}
-      rowHeight={30}
-      width={1200}
+      cols={20000}
+      rowHeight={cellSize}
+      width={(cellSize + cellGap) * 20000}
+      containerPadding={[0, 0]}
+      margin={[5, 5]}
+      autoSize
       compactType={null}
       preventCollision
       resizeHandles={["ne", "nw", "se", "sw", "s", "e", "w", "n"]}

@@ -1,14 +1,14 @@
 import { GridApi } from "ag-grid-community";
 import React, { createContext, useContext, ReactNode, useState } from "react";
 import { SourceData } from "../sources/Sources";
-import { ComponentData } from "../components/ComponentList";
+import { DashboardComponent } from "../components/interfaces";
 
 // Interface for the context value
 interface DropZoneContextType {
   sourceGrid?: GridApi<SourceData>;
   setSourceGrid: (grid: GridApi<SourceData>) => unknown;
-  componentGrid?: GridApi<ComponentData>;
-  setComponentGrid: (grid: GridApi<ComponentData>) => unknown;
+  componentGrid?: GridApi<DashboardComponent>;
+  setComponentGrid: (grid: GridApi<DashboardComponent>) => unknown;
 }
 
 // Create the context with a default value
@@ -25,7 +25,7 @@ export const DropZoneProvider: React.FC<ThemeProviderProps> = ({
   children,
 }) => {
   const [sourceGrid, setSourceGrid] = useState<GridApi<SourceData>>();
-  const [componentGrid, setComponentGrid] = useState<GridApi<ComponentData>>();
+  const [componentGrid, setComponentGrid] = useState<GridApi<DashboardComponent>>();
 
   // The value that will be given to the context consumers
   const value = {
