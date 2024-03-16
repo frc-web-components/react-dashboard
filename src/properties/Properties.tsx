@@ -5,6 +5,9 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDropZone } from "../context-providers/DropZoneContext";
+import { useAppSelector } from "../store/app/hooks";
+import { selectSelectedComponent, selectSelectedComponentId } from "../store/slices/layoutSlice";
+import { useComponents } from "../context-providers/ComponentContext";
 
 interface SourceData {
   key: string;
@@ -18,7 +21,6 @@ export interface PropertyData {
     provider: string;
   };
   defaultValue: unknown;
-  id: string;
 }
 
 const SourceCellRenderer = (
@@ -131,18 +133,26 @@ const defaultColumnDefs: ColDef[] = [
   // Show default header name
 ];
 
-const gyroProperties: PropertyData[] = [
-  { name: "value", defaultValue: 0, id: "1" },
-  { name: "hideLabel", defaultValue: false, id: "2" },
-  { name: "precision", defaultValue: 2, id: "3" },
-  { name: "counterClockwise", defaultValue: false, id: "4" },
-  { name: "fromRadians", defaultValue: false, id: "5" },
-];
-
 function Properties() {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
   const [gridApi, setGridApi] = useState<GridApi>();
-  const [rowData, setRowData] = useState(gyroProperties);
+  const selectedComponent = useAppSelector(selectSelectedComponent);
+  const { components } = useComponents();
+  
+  const rowData = useMemo(() => {
+    if (!selectedComponent || !components) {
+      return [];
+    }
+    const component = components[selectedComponent.type];
+    return Object.entries(component?.properties).map(([name, property]) => {
+      return {
+        name,
+        defaultValue: property.defaultValue,
+      };
+    }) ?? [];
+  }, [selectedComponent, components]);
+
+  // const [rowData, setRowData] = useState(gyroProperties);
   // const { setPropertiesDropZone, sourceGrid } = useDropZone(); // Use the context
 
   return (
@@ -160,7 +170,7 @@ function Properties() {
             suppressMoveWhenRowDragging={true}
             suppressRowDrag={true}
             getRowId={(params) => {
-              return params.data.id;
+              return params.data.name;
             }}
             animateRows={false}
 

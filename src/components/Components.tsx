@@ -4,16 +4,23 @@ import "react-resizable/css/styles.css";
 import classNames from "classnames";
 import Styles from "./Components.module.scss";
 import { useEffect, useMemo, useState } from "react";
-import { Gyro, BasicFmsInfo, Field } from "@frc-web-components/react";
 import { useAppDispatch, useAppSelector } from "../store/app/hooks";
 import {
   selectSelectedComponentId,
   setSelectedComponent,
+  selectComponents,
+  addComponent,
+  updateComponentPosition,
+  updateComponentSize,
 } from "../store/slices/layoutSlice";
 import { useDropZone } from "../context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
-import { DashboardComponent } from "./interfaces";
+import {
+  DashboardComponent,
+  useComponents,
+} from "../context-providers/ComponentContext";
 import { v4 as uuidv4 } from "uuid";
+import { ComponentListItem } from "./ComponentList";
 
 interface ComponentLayout extends Layout {
   Component: React.ComponentType<any>;
@@ -22,6 +29,8 @@ interface ComponentLayout extends Layout {
 function Components() {
   const dispatch = useAppDispatch();
   const selectedComponentId = useAppSelector(selectSelectedComponentId);
+  const layoutComponents = useAppSelector(selectComponents);
+  const { components } = useComponents();
   const [editing, setEditing] = useState(true);
   const { componentGrid } = useDropZone(); // Use the context
   const [gridElement, setGridElement] = useState<HTMLElement>();
@@ -29,25 +38,35 @@ function Components() {
   const [cellGap, setCellGap] = useState(5);
 
   // layout is an array of objects, see the demo for more complete usage
-  const [layout, setLayout] = useState<ComponentLayout[]>([]);
+  // const [layout, setLayout] = useState<ComponentLayout[]>([]);
 
   const gridLayout = useMemo(() => {
+    const layout: ComponentLayout[] = Object.values(layoutComponents).map(
+      (item) => ({
+        Component: components[item.type].component,
+        i: item.id,
+        w: item.size.width,
+        h: item.size.height,
+        x: item.position.x,
+        y: item.position.y,
+        minW: item.minSize.width,
+        minH: item.minSize.height,
+      })
+    );
     return layout.map((item) => ({
       ...item,
       static: !editing,
     }));
-  }, [layout, editing]);
+  }, [layoutComponents, editing]);
 
   const minWidth = useMemo(() => {
     let maxX = 0;
-    layout.forEach((item) => {
+    gridLayout.forEach((item) => {
       const x = (item.x + item.w) * (cellSize + cellGap);
       maxX = Math.max(x, maxX);
     });
-    const width = gridElement?.parentElement?.scrollWidth ?? 0;
-    console.log("width:", maxX);
     return maxX;
-  }, [layout]);
+  }, [gridLayout]);
 
   useEffect(() => {
     if (componentGrid && gridElement) {
@@ -58,13 +77,13 @@ function Components() {
         onDragging(params) {
           // params.event
         },
-        onDragStop({ node, event }: RowDragEndEvent<DashboardComponent>) {
+        onDragStop({ node, event }: RowDragEndEvent<ComponentListItem>) {
           if (!node.data) {
             return;
           }
           const {
-            dashboard: { name: componentName, defaultSize, minSize },
-            component,
+            dashboard: { defaultSize, minSize },
+            type,
           } = node.data;
           const { clientX, clientY } = event;
           const minWidth = Math.ceil(minSize.width / (cellSize + cellGap));
@@ -80,23 +99,18 @@ function Components() {
           const rect = gridElement.getBoundingClientRect();
           const x = Math.round((clientX - rect.left) / (cellSize + cellGap));
           const y = Math.round((clientY - rect.top) / (cellSize + cellGap));
-          console.log("event:", { event, rect });
 
-          setLayout((currentLayout) => {
-            return [
-              ...currentLayout,
-              {
-                i: uuidv4(),
-                x,
-                y,
-                w: width,
-                h: height,
-                minW: minWidth,
-                minH: minHeight,
-                Component: component,
-              },
-            ];
-          });
+          dispatch(
+            addComponent({
+              id: uuidv4(),
+              children: [],
+              minSize: { width: minWidth, height: minHeight },
+              size: { width, height },
+              position: { x, y },
+              properties: {},
+              type,
+            })
+          );
         },
       };
       componentGrid.addRowDropZone(dropZoneParms);
@@ -115,42 +129,21 @@ function Components() {
         }
       }}
       onResizeStop={(updatedLayout, oldItem, newItem) => {
-        setLayout((currentLayout) => {
-          const { h, w, x, y, i } = newItem;
-          const currentItemIndex = currentLayout.findIndex(
-            (item) => item.i === i
-          );
-          const updatedItem = {
-            ...currentLayout[currentItemIndex],
-            h,
-            w,
-            x,
-            y,
-          };
-          currentLayout[currentItemIndex] = updatedItem;
-          return [...currentLayout];
+        const { w, h, i } = newItem;
+        updateComponentSize({
+          id: i,
+          width: w,
+          height: h,
         });
-        console.log("updatedLayout:", updatedLayout);
         // setLayout(updatedLayout as ComponentLayout[]);
       }}
       onDragStop={(updatedLayout, oldItem, newItem) => {
-        setLayout((currentLayout) => {
-          const { h, w, x, y, i } = newItem;
-          const currentItemIndex = currentLayout.findIndex(
-            (item) => item.i === i
-          );
-          const updatedItem = {
-            ...currentLayout[currentItemIndex],
-            h,
-            w,
-            x,
-            y,
-          };
-          currentLayout[currentItemIndex] = updatedItem;
-          return [...currentLayout];
+        const { x, y, i } = newItem;
+        updateComponentPosition({
+          id: i,
+          x,
+          y,
         });
-        console.log("updatedLayout:", updatedLayout);
-        // setLayout(updatedLayout as ComponentLayout[]);
       }}
       className={classNames(Styles.layout, Styles.editable)}
       layout={gridLayout}
@@ -167,7 +160,7 @@ function Components() {
         dispatch(setSelectedComponent(newItem.i));
       }}
     >
-      {layout.map(({ i: id, Component }) => {
+      {gridLayout.map(({ i: id, Component }) => {
         return (
           <div
             key={id}

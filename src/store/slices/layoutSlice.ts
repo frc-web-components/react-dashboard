@@ -1,11 +1,22 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../app/createAppSlice";
-// import type { AppThunk } from "../app/store";
-// import { fetchCount } from "./counterAPI";
 
 export interface Component {
   id: string;
   type: string;
+  properties: {
+    [propertName: string]: {
+      value: unknown;
+      source?: {
+        provider: string;
+        key: string;
+      }
+    }
+  };
+  position: { x: number, y: number };
+  size: { width: number, height: number };
+  minSize: { width: number, height: number };
+  children: string[];
 }
 
 export interface LayoutSliceState {
@@ -31,6 +42,23 @@ export const layoutSlice = createAppSlice({
         state.selectedComponentId = action.payload;
       }
     ),
+    addComponent: create.reducer(
+      (state, action: PayloadAction<Component>) => {
+        state.components[action.payload.id] = action.payload;
+      }
+    ),
+    updateComponentSize: create.reducer(
+      (state, action: PayloadAction<{id: string, width: number, height: number}>) => {
+        const { id, width, height } = action.payload;
+        state.components[id].size = { width, height };
+      }
+    ),
+    updateComponentPosition: create.reducer(
+      (state, action: PayloadAction<{id: string, x: number, y: number}>) => {
+        const { id, x, y } = action.payload;
+        state.components[id].position = { x, y };
+      }
+    ),
   }),
   // You can define your selectors here. These selectors receive the slice
   // state as their first argument.
@@ -39,15 +67,16 @@ export const layoutSlice = createAppSlice({
     selectSelectedComponent: (layout) =>
       layout.selectedComponentId ?
       layout.components[layout.selectedComponentId] : undefined,
+    selectComponents: (layout) => layout.components,
   },
 });
 
 // Action creators are generated for each case reducer function.
-export const { setSelectedComponent } =
+export const { setSelectedComponent, addComponent, updateComponentPosition, updateComponentSize } =
   layoutSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectSelectedComponent, selectSelectedComponentId } = layoutSlice.selectors;
+export const { selectSelectedComponent, selectSelectedComponentId, selectComponents } = layoutSlice.selectors;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

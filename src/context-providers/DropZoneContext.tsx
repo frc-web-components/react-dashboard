@@ -1,7 +1,7 @@
 import { GridApi } from "ag-grid-community";
 import React, { createContext, useContext, ReactNode, useState } from "react";
 import { SourceData } from "../sources/Sources";
-import { DashboardComponent } from "../components/interfaces";
+import { DashboardComponent } from "./ComponentContext";
 
 // Interface for the context value
 interface DropZoneContextType {
@@ -17,11 +17,11 @@ const DropZoneContext = createContext<DropZoneContextType | undefined>(
 );
 
 // Create a provider component
-interface ThemeProviderProps {
+interface ProviderProps {
   children: ReactNode;
 }
 
-export const DropZoneProvider: React.FC<ThemeProviderProps> = ({
+export const DropZoneProvider: React.FC<ProviderProps> = ({
   children,
 }) => {
   const [sourceGrid, setSourceGrid] = useState<GridApi<SourceData>>();
