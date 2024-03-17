@@ -153,9 +153,8 @@ function Properties() {
   const containerElementRef = useRef<HTMLElement>(null);
   useResizeObserver(containerElementRef, () => {
     if (gridApi) {
-      console.log("!!!!!");
       gridApi.sizeColumnsToFit();
-    };
+    }
   });
 
   const rowData = useMemo(() => {
@@ -178,8 +177,6 @@ function Properties() {
 
   useEffect(() => {
     if (gridApi) {
-      console.log("????");
-
       gridApi.sizeColumnsToFit();
     }
   }, [gridApi]);
@@ -199,6 +196,9 @@ function Properties() {
         >
           <AgGridReact<PropertyData>
             onGridReady={(params) => setGridApi(params.api)}
+            localeText={{
+              noRowsToShow: "No properties to show",
+            }}
             rowData={rowData}
             columnDefs={columnDefs}
             rowDragManaged={true}

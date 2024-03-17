@@ -21,9 +21,19 @@ import {
 } from "../context-providers/ComponentContext";
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "./ComponentList";
+import LayoutComponent from "./LayoutComponent";
 
 interface ComponentLayout extends Layout {
   Component: React.ComponentType<any>;
+  properties: {
+    [name: string]: {
+      value: unknown;
+      source?: {
+        provider: string;
+        key: string;
+      };
+    };
+  };
 }
 
 function Components() {
@@ -42,16 +52,19 @@ function Components() {
 
   const gridLayout = useMemo(() => {
     const layout: ComponentLayout[] = Object.values(layoutComponents).map(
-      (item) => ({
-        Component: components[item.type].component,
-        i: item.id,
-        w: item.size.width,
-        h: item.size.height,
-        x: item.position.x,
-        y: item.position.y,
-        minW: item.minSize.width,
-        minH: item.minSize.height,
-      })
+      (item) => {
+        return {
+          Component: components[item.type].component,
+          i: item.id,
+          w: item.size.width,
+          h: item.size.height,
+          x: item.position.x,
+          y: item.position.y,
+          minW: item.minSize.width,
+          minH: item.minSize.height,
+          properties: item.properties,
+        };
+      }
     );
     return layout.map((item) => ({
       ...item,
@@ -103,7 +116,7 @@ function Components() {
           const props: Record<string, { value: unknown }> = {};
           Object.entries(properties).forEach(([name, prop]) => {
             props[name] = {
-              value: prop.defaultValue
+              value: prop.defaultValue,
             };
           });
           dispatch(
@@ -170,7 +183,7 @@ function Components() {
         dispatch(setSelectedComponent(newItem.i));
       }}
     >
-      {gridLayout.map(({ i: id, Component }) => {
+      {gridLayout.map(({ i: id, Component, properties }) => {
         return (
           <div
             key={id}
@@ -178,7 +191,7 @@ function Components() {
               [Styles.selected]: selectedComponentId === id,
             })}
           >
-            <Component className={Styles["component-child"]} />
+            <LayoutComponent Component={Component} properties={properties} />
           </div>
         );
       })}

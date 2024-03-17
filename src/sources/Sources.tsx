@@ -172,6 +172,9 @@ function Sources() {
             onGridReady={(params) => {
               setSourceGrid(params.api);
             }}
+            localeText={{
+              noRowsToShow: "No sources to show",
+            }}
             getRowId={(props) => {
               return props.data.id;
             }}
@@ -179,7 +182,6 @@ function Sources() {
             columnDefs={columnDefs}
             rowDragManaged={true}
             suppressMoveWhenRowDragging={true}
-            
           />
         </div>
       </div>
