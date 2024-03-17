@@ -5,6 +5,7 @@ import addIcon from "/add.svg";
 import "./App.css";
 import "flexlayout-react/style/dark.css";
 import {
+  Actions,
   BorderNode,
   ITabSetRenderValues,
   Layout,
@@ -20,6 +21,10 @@ import { DashboardThemes, darkTheme } from "@frc-web-components/fwc/themes";
 import Properties from "./properties/Properties";
 import ComponentList from "./components/ComponentList";
 import { layoutJson } from "./layout";
+import { useAppSelector } from "./store/app/hooks";
+import { selectSelectedComponent } from "./store/slices/layoutSlice";
+import startCase from 'lodash.startcase';
+import { useComponents } from "./context-providers/ComponentContext";
 
 const themes = new DashboardThemes();
 themes.addThemeRules("dark", darkTheme);
@@ -30,12 +35,46 @@ function App() {
   const layoutRef = useRef<Layout>();
   const { nt4Provider } = useNt4();
   const [isNt4Connected, setIsNt4Connected] = useState(false);
+  const selectedComponent = useAppSelector(selectSelectedComponent);
+  const { components } = useComponents();
 
   useEffect(() => {
     nt4Provider.addConnectionListener((connected) => {
       setIsNt4Connected(connected);
     });
   }, [nt4Provider]);
+
+  useEffect(() => {
+    let propertiesTabName = 'Properties';
+    if (selectedComponent && components) {
+      propertiesTabName = components[selectedComponent.type].dashboard.name ?? 'Properties';
+    }
+    // const updatedModel = model.toJson();
+    const node = model.getNodeById("mainProperties") as TabNode;
+    if (!node) {
+      return;
+    }
+    if (node.getType?.() === 'tab') {
+      node
+        .getModel()
+        .doAction(Actions.renameTab(node.getId(), propertiesTabName));
+    }
+    // console.log("NODE:", node);
+  }, [selectedComponent]);
+
+  //   const changeTabName = (nodeId, newName) => {
+  //     // Create a copy of the model to modify
+  //     const updatedModel = model.toJson();
+  //     // Find the node with the given ID
+  //     const node = model.getNodeById('mainProperties');
+  //     if (node) {
+  //       // node?.getChildren()
+  //       //   // Update the title of the node
+  //       //   node._attributes.name = newName;
+  //       //   // Update the layout with the new model
+  //       //   setModel(FlexLayout.Model.fromJson(updatedModel));
+  //     }
+  // };
 
   const factory = (node: TabNode) => {
     var component = node.getComponent();
@@ -52,7 +91,7 @@ function App() {
       return <Properties />;
     }
 
-    if (component === 'componentList') {
+    if (component === "componentList") {
       return <ComponentList />;
     }
   };

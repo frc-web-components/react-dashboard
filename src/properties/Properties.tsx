@@ -3,15 +3,16 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDropZone } from "../context-providers/DropZoneContext";
 import { useAppSelector, useAppDispatch } from "../store/app/hooks";
 import {
   selectSelectedComponent,
-  selectSelectedComponentId,
   updateComponentProperty,
+  updateComponentSource,
 } from "../store/slices/layoutSlice";
 import { useComponents } from "../context-providers/ComponentContext";
+import useResizeObserver from "@react-hook/resize-observer";
 
 interface SourceData {
   key: string;
@@ -149,6 +150,13 @@ function Properties() {
   const selectedComponent = useAppSelector(selectSelectedComponent);
   const { components } = useComponents();
   const dispatch = useAppDispatch();
+  const containerElementRef = useRef<HTMLElement>(null);
+  useResizeObserver(containerElementRef, () => {
+    if (gridApi) {
+      console.log("!!!!!");
+      gridApi.sizeColumnsToFit();
+    };
+  });
 
   const rowData = useMemo(() => {
     if (!selectedComponent || !components) {
@@ -159,25 +167,37 @@ function Properties() {
       Object.entries(component?.properties).map(([name, property]) => {
         return {
           name,
-          defaultValue: selectedComponent.properties[name]?.value ?? property.defaultValue,
+          defaultValue:
+            selectedComponent.properties[name]?.value ?? property.defaultValue,
           type: property.type,
+          source: selectedComponent.properties[name].source,
         };
       }) ?? []
     );
   }, [selectedComponent, components]);
 
+  useEffect(() => {
+    if (gridApi) {
+      console.log("????");
+
+      gridApi.sizeColumnsToFit();
+    }
+  }, [gridApi]);
+
   // const [rowData, setRowData] = useState(gyroProperties);
   // const { setPropertiesDropZone, sourceGrid } = useDropZone(); // Use the context
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div
+      ref={containerElementRef as any}
+      style={{ height: "100%", width: "100%" }}
+    >
       <div style={{ height: "100%", boxSizing: "border-box" }}>
         <div
           style={{ height: "100%", width: "100%" }}
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<PropertyData>
-            key={selectedComponent?.id ?? ""}
             onGridReady={(params) => setGridApi(params.api)}
             rowData={rowData}
             columnDefs={columnDefs}
@@ -185,20 +205,32 @@ function Properties() {
             suppressMoveWhenRowDragging={true}
             suppressRowDrag={true}
             getRowId={(params) => {
-              return `${selectedComponent?.id ?? ""} ${params.data.name}`;
+              return params.data.name;
             }}
             animateRows={false}
-            onCellValueChanged={event => {
+            onCellValueChanged={(event) => {
+              const { newValue } = event;
+              const colId = event.column.getColId();
               if (!selectedComponent) {
                 return;
               }
-              dispatch(
-                updateComponentProperty({
-                  componentId: selectedComponent.id,
-                  propertyName: event.data.name,
-                  propertyValue: event.newValue
-                })
-              )
+              if (colId === "defaultValue") {
+                dispatch(
+                  updateComponentProperty({
+                    componentId: selectedComponent.id,
+                    propertyName: event.data.name,
+                    propertyValue: newValue,
+                  })
+                );
+              } else if (colId === "source") {
+                dispatch(
+                  updateComponentSource({
+                    componentId: selectedComponent.id,
+                    propertyName: event.data.name,
+                    source: newValue,
+                  })
+                );
+              }
             }}
           />
         </div>

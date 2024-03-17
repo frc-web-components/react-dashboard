@@ -61,6 +61,7 @@ export const layoutJson: IJsonModel = {
                 enableFloat: false,
                 enableRename: false,
                 component: "properties",
+                id: 'mainProperties',
                 name: "Properties",
               },
             ],

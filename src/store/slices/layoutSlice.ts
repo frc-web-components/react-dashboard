@@ -74,6 +74,22 @@ export const layoutSlice = createAppSlice({
           propertyValue;
       }
     ),
+    updateComponentSource: create.reducer(
+      (
+        state,
+        action: PayloadAction<{
+          componentId: string;
+          propertyName: string;
+          source?: {
+            provider: string;
+            key: string;
+          }
+        }>
+      ) => {
+        const { componentId, propertyName, source } = action.payload;
+        state.components[componentId].properties[propertyName].source = source;
+      }
+    ),
   }),
   // You can define your selectors here. These selectors receive the slice
   // state as their first argument.
@@ -94,6 +110,7 @@ export const {
   updateComponentPosition,
   updateComponentSize,
   updateComponentProperty,
+  updateComponentSource,
 } = layoutSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
