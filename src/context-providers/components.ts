@@ -1,5 +1,11 @@
 import { DashboardComponent } from "./ComponentContext";
-import { Accelerometer, BasicFmsInfo, Field, Gyro } from "@frc-web-components/react";
+import {
+  Accelerometer,
+  BasicFmsInfo,
+  Field,
+  Gyro,
+} from "@frc-web-components/react";
+import MarkdownViewer from "./MarkdownViewer";
 
 export const componentMap: Record<string, DashboardComponent> = {
   basicFmsInfo: {
@@ -63,7 +69,19 @@ export const componentMap: Record<string, DashboardComponent> = {
       },
       unit: { type: "String", defaultValue: "g" },
     },
-    component: Accelerometer
+    component: Accelerometer,
+  },
+  markdownViewer: {
+    dashboard: {
+      name: "Markdown Viewer",
+      description: "",
+      defaultSize: { width: 300, height: 300 },
+      minSize: { width: 50, height: 50 },
+    },
+    properties: {
+      markdown: { type: "String", defaultValue: "" },
+    },
+    component: MarkdownViewer
   },
 };
 
