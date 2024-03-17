@@ -5,8 +5,12 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { useEffect, useMemo, useState } from "react";
 import { useDropZone } from "../context-providers/DropZoneContext";
-import { useAppSelector } from "../store/app/hooks";
-import { selectSelectedComponent, selectSelectedComponentId } from "../store/slices/layoutSlice";
+import { useAppSelector, useAppDispatch } from "../store/app/hooks";
+import {
+  selectSelectedComponent,
+  selectSelectedComponentId,
+  updateComponentProperty,
+} from "../store/slices/layoutSlice";
 import { useComponents } from "../context-providers/ComponentContext";
 
 interface SourceData {
@@ -20,6 +24,7 @@ export interface PropertyData {
     key: string;
     provider: string;
   };
+  type: string;
   defaultValue: unknown;
 }
 
@@ -29,7 +34,7 @@ const SourceCellRenderer = (
   const { sourceGrid } = useDropZone(); // Use the context
   const [element, setElement] = useState<HTMLElement>();
   const [dropZone, setDropZone] = useState<RowDropZoneParams>();
-  
+
   useEffect(() => {
     if (sourceGrid && element) {
       if (dropZone) {
@@ -37,15 +42,13 @@ const SourceCellRenderer = (
       }
       const dropZoneParams: RowDropZoneParams = {
         getContainer() {
-            return element;
+          return element;
         },
         onDragStop(params) {
-          
           props.setValue?.({
-            provider: 'NT',
-            key: params.node.data.id
+            provider: "NT",
+            key: params.node.data.id,
           });
-            console.log('param data:', params.node.data.id, props.setValue);
         },
       };
       sourceGrid.addRowDropZone(dropZoneParams);
@@ -59,12 +62,13 @@ const SourceCellRenderer = (
   }, [sourceGrid, element]);
 
   return (
-    <div ref={el => {
-      if (el) {
-        setElement(el);
-      }
-    }}
-      style={{ height: '100%', display: 'flex', gap: '3px'}}
+    <div
+      ref={(el) => {
+        if (el) {
+          setElement(el);
+        }
+      }}
+      style={{ height: "100%", display: "flex", gap: "3px" }}
     >
       {props.value && (
         <>
@@ -76,8 +80,7 @@ const SourceCellRenderer = (
   );
 };
 
-
-const defaultColumnDefs: ColDef[] = [
+const defaultColumnDefs: ColDef<PropertyData>[] = [
   {
     field: "name",
     editable: false,
@@ -87,39 +90,46 @@ const defaultColumnDefs: ColDef[] = [
     field: "defaultValue",
     editable: true,
     sortable: false,
+    valueGetter: (params) => {
+      return params.data?.defaultValue;
+    },
     cellEditorSelector: (params) => {
-      const value = params.data.defaultValue;
-      if (typeof value === "number") {
+      const type = params.data.type;
+      if (type === "Number") {
         return {
           component: "agNumberCellEditor",
         };
-      } else if (typeof value === "string") {
+      } else if (type === "String") {
         return {
           component: "agTextCellEditor",
         };
-      } else if (typeof value === "boolean") {
+      } else if (type === "Boolean") {
         return {
           component: "agCheckboxCellEditor",
         };
       } else {
         return {
-          component: "adsfs",
+          component: "agTextCellEditor",
         };
       }
     },
     cellRendererSelector: (params) => {
-      const value = params.data.defaultValue;
-      if (typeof value === "number") {
+      const type = params.data?.type;
+      if (type === "Number") {
         return {
           component: "agNumberCellRenderer",
         };
-      } else if (typeof value === "string") {
+      } else if (type === "String") {
         return {
           component: "agTextCellRenderer",
         };
-      } else if (typeof value === "boolean") {
+      } else if (type === "Boolean") {
         return {
           component: "agCheckboxCellRenderer",
+        };
+      } else {
+        return {
+          component: "agTextCellRenderer",
         };
       }
     },
@@ -138,18 +148,22 @@ function Properties() {
   const [gridApi, setGridApi] = useState<GridApi>();
   const selectedComponent = useAppSelector(selectSelectedComponent);
   const { components } = useComponents();
-  
+  const dispatch = useAppDispatch();
+
   const rowData = useMemo(() => {
     if (!selectedComponent || !components) {
       return [];
     }
     const component = components[selectedComponent.type];
-    return Object.entries(component?.properties).map(([name, property]) => {
-      return {
-        name,
-        defaultValue: property.defaultValue,
-      };
-    }) ?? [];
+    return (
+      Object.entries(component?.properties).map(([name, property]) => {
+        return {
+          name,
+          defaultValue: selectedComponent.properties[name]?.value ?? property.defaultValue,
+          type: property.type,
+        };
+      }) ?? []
+    );
   }, [selectedComponent, components]);
 
   // const [rowData, setRowData] = useState(gyroProperties);
@@ -163,6 +177,7 @@ function Properties() {
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<PropertyData>
+            key={selectedComponent?.id ?? ""}
             onGridReady={(params) => setGridApi(params.api)}
             rowData={rowData}
             columnDefs={columnDefs}
@@ -170,10 +185,21 @@ function Properties() {
             suppressMoveWhenRowDragging={true}
             suppressRowDrag={true}
             getRowId={(params) => {
-              return params.data.name;
+              return `${selectedComponent?.id ?? ""} ${params.data.name}`;
             }}
             animateRows={false}
-
+            onCellValueChanged={event => {
+              if (!selectedComponent) {
+                return;
+              }
+              dispatch(
+                updateComponentProperty({
+                  componentId: selectedComponent.id,
+                  propertyName: event.data.name,
+                  propertyValue: event.newValue
+                })
+              )
+            }}
           />
         </div>
       </div>

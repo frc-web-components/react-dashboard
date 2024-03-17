@@ -84,6 +84,7 @@ function Components() {
           const {
             dashboard: { defaultSize, minSize },
             type,
+            properties,
           } = node.data;
           const { clientX, clientY } = event;
           const minWidth = Math.ceil(minSize.width / (cellSize + cellGap));
@@ -99,7 +100,12 @@ function Components() {
           const rect = gridElement.getBoundingClientRect();
           const x = Math.round((clientX - rect.left) / (cellSize + cellGap));
           const y = Math.round((clientY - rect.top) / (cellSize + cellGap));
-
+          const props: Record<string, { value: unknown }> = {};
+          Object.entries(properties).forEach(([name, prop]) => {
+            props[name] = {
+              value: prop.defaultValue
+            };
+          });
           dispatch(
             addComponent({
               id: uuidv4(),
@@ -107,7 +113,7 @@ function Components() {
               minSize: { width: minWidth, height: minHeight },
               size: { width, height },
               position: { x, y },
-              properties: {},
+              properties: props,
               type,
             })
           );
@@ -130,20 +136,24 @@ function Components() {
       }}
       onResizeStop={(updatedLayout, oldItem, newItem) => {
         const { w, h, i } = newItem;
-        updateComponentSize({
-          id: i,
-          width: w,
-          height: h,
-        });
+        dispatch(
+          updateComponentSize({
+            id: i,
+            width: w,
+            height: h,
+          })
+        );
         // setLayout(updatedLayout as ComponentLayout[]);
       }}
       onDragStop={(updatedLayout, oldItem, newItem) => {
         const { x, y, i } = newItem;
-        updateComponentPosition({
-          id: i,
-          x,
-          y,
-        });
+        dispatch(
+          updateComponentPosition({
+            id: i,
+            x,
+            y,
+          })
+        );
       }}
       className={classNames(Styles.layout, Styles.editable)}
       layout={gridLayout}

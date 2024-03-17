@@ -10,12 +10,12 @@ export interface Component {
       source?: {
         provider: string;
         key: string;
-      }
-    }
+      };
+    };
   };
-  position: { x: number, y: number };
-  size: { width: number, height: number };
-  minSize: { width: number, height: number };
+  position: { x: number; y: number };
+  size: { width: number; height: number };
+  minSize: { width: number; height: number };
   children: string[];
 }
 
@@ -42,21 +42,36 @@ export const layoutSlice = createAppSlice({
         state.selectedComponentId = action.payload;
       }
     ),
-    addComponent: create.reducer(
-      (state, action: PayloadAction<Component>) => {
-        state.components[action.payload.id] = action.payload;
-      }
-    ),
+    addComponent: create.reducer((state, action: PayloadAction<Component>) => {
+      state.components[action.payload.id] = action.payload;
+    }),
     updateComponentSize: create.reducer(
-      (state, action: PayloadAction<{id: string, width: number, height: number}>) => {
+      (
+        state,
+        action: PayloadAction<{ id: string; width: number; height: number }>
+      ) => {
         const { id, width, height } = action.payload;
         state.components[id].size = { width, height };
       }
     ),
     updateComponentPosition: create.reducer(
-      (state, action: PayloadAction<{id: string, x: number, y: number}>) => {
+      (state, action: PayloadAction<{ id: string; x: number; y: number }>) => {
         const { id, x, y } = action.payload;
         state.components[id].position = { x, y };
+      }
+    ),
+    updateComponentProperty: create.reducer(
+      (
+        state,
+        action: PayloadAction<{
+          componentId: string;
+          propertyName: string;
+          propertyValue: unknown;
+        }>
+      ) => {
+        const { componentId, propertyName, propertyValue } = action.payload;
+        state.components[componentId].properties[propertyName].value =
+          propertyValue;
       }
     ),
   }),
@@ -65,18 +80,28 @@ export const layoutSlice = createAppSlice({
   selectors: {
     selectSelectedComponentId: (layout) => layout.selectedComponentId,
     selectSelectedComponent: (layout) =>
-      layout.selectedComponentId ?
-      layout.components[layout.selectedComponentId] : undefined,
+      layout.selectedComponentId
+        ? layout.components[layout.selectedComponentId]
+        : undefined,
     selectComponents: (layout) => layout.components,
   },
 });
 
 // Action creators are generated for each case reducer function.
-export const { setSelectedComponent, addComponent, updateComponentPosition, updateComponentSize } =
-  layoutSlice.actions;
+export const {
+  setSelectedComponent,
+  addComponent,
+  updateComponentPosition,
+  updateComponentSize,
+  updateComponentProperty,
+} = layoutSlice.actions;
 
 // Selectors returned by `slice.selectors` take the root state as their first argument.
-export const { selectSelectedComponent, selectSelectedComponentId, selectComponents } = layoutSlice.selectors;
+export const {
+  selectSelectedComponent,
+  selectSelectedComponentId,
+  selectComponents,
+} = layoutSlice.selectors;
 
 // We can also write thunks by hand, which may contain both sync and async logic.
 // Here's an example of conditionally dispatching actions based on current state.

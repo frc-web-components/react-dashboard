@@ -1,5 +1,5 @@
 import { DashboardComponent } from "./ComponentContext";
-import { BasicFmsInfo, Field, Gyro } from "@frc-web-components/react";
+import { Accelerometer, BasicFmsInfo, Field, Gyro } from "@frc-web-components/react";
 
 export const componentMap: Record<string, DashboardComponent> = {
   basicFmsInfo: {
@@ -9,7 +9,12 @@ export const componentMap: Record<string, DashboardComponent> = {
       defaultSize: { width: 380, height: 100 },
       minSize: { width: 150, height: 90 },
     },
-    properties: {},
+    properties: {
+      eventName: { type: "String", defaultValue: "" },
+      matchNumber: { type: "Number", defaultValue: 0 },
+      matchType: { type: "Number", defaultValue: 0 },
+      fmsControlData: { type: "Number", defaultValue: 0 },
+    },
     component: BasicFmsInfo,
   },
   field: {
@@ -30,15 +35,36 @@ export const componentMap: Record<string, DashboardComponent> = {
       minSize: { width: 120, height: 120 },
     },
     properties: {
-      value: { type: 'Number', defaultValue: 0 },
-      hideLabel: { type: 'Boolean', defaultValue:  false },
-      precision: { type: 'Number', defaultValue: 2 },
-      counterClockwise: { type: 'Boolean', defaultValue: false },
-      fromRadians: { type: 'Boolean', defaultValue: false },
+      value: { type: "Number", defaultValue: 0 },
+      hideLabel: { type: "Boolean", defaultValue: false },
+      precision: { type: "Number", defaultValue: 2 },
+      counterClockwise: { type: "Boolean", defaultValue: false },
+      fromRadians: { type: "Boolean", defaultValue: false },
     },
     component: Gyro,
-  }
+  },
+  accelerometer: {
+    dashboard: {
+      name: "Accelerometer",
+      description: "",
+      defaultSize: { width: 200, height: 60 },
+      minSize: { width: 80, height: 60 },
+    },
+    properties: {
+      value: { type: "Number", defaultValue: 0 },
+      max: { type: "Number", defaultValue: 1 },
+      min: { type: "Number", defaultValue: -1 },
+      center: { type: "Number", defaultValue: 0 },
+      precision: { type: "Number", defaultValue: 2 },
+      hideText: { type: "Boolean", defaultValue: false },
+      numTickMarks: {
+        type: "Number",
+        defaultValue: 3,
+      },
+      unit: { type: "String", defaultValue: "g" },
+    },
+    component: Accelerometer
+  },
 };
-
 
 export const componentList: DashboardComponent[] = Object.values(componentMap);
