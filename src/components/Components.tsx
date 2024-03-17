@@ -15,13 +15,11 @@ import {
 } from "../store/slices/layoutSlice";
 import { useDropZone } from "../context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
-import {
-  DashboardComponent,
-  useComponents,
-} from "../context-providers/ComponentContext";
+import { useComponents } from "../context-providers/ComponentContext";
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "./ComponentList";
 import LayoutComponent from "./LayoutComponent";
+import { selectEditing } from "../store/slices/appSlice";
 
 interface ComponentLayout extends Layout {
   Component: React.ComponentType<any>;
@@ -41,7 +39,7 @@ function Components() {
   const selectedComponentId = useAppSelector(selectSelectedComponentId);
   const layoutComponents = useAppSelector(selectComponents);
   const { components } = useComponents();
-  const [editing, setEditing] = useState(true);
+  const editing = useAppSelector(selectEditing);
   const { componentGrid } = useDropZone(); // Use the context
   const [gridElement, setGridElement] = useState<HTMLElement>();
   const [cellSize, setCellSize] = useState(30);
@@ -168,7 +166,9 @@ function Components() {
           })
         );
       }}
-      className={classNames(Styles.layout, Styles.editable)}
+      className={classNames(Styles.layout, {
+        [Styles.editable]: editing
+      })}
       layout={gridLayout}
       cols={20000}
       rowHeight={cellSize}

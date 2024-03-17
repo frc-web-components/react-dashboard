@@ -7,29 +7,34 @@ import "flexlayout-react/style/dark.css";
 import {
   Actions,
   BorderNode,
+  DockLocation,
   ITabSetRenderValues,
   Layout,
   Model,
   TabNode,
   TabSetNode,
 } from "flexlayout-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Sources from "./sources/Sources";
 import { useNt4 } from "@frc-web-components/react";
 import Components from "./components/Components";
 import { DashboardThemes, darkTheme } from "@frc-web-components/fwc/themes";
 import Properties from "./properties/Properties";
 import ComponentList from "./components/ComponentList";
-import { layoutJson } from "./layout";
+import {
+  componentListTabJson,
+  layoutJson as defaultLayoutJson,
+  propertiesTabJson,
+  sourceTabJson,
+} from "./layout";
 import { useAppSelector } from "./store/app/hooks";
 import { selectSelectedComponent } from "./store/slices/layoutSlice";
-import startCase from 'lodash.startcase';
 import { useComponents } from "./context-providers/ComponentContext";
+import EditButton from "./sidebar/EditButton";
+import { selectEditing } from "./store/slices/appSlice";
 
 const themes = new DashboardThemes();
 themes.addThemeRules("dark", darkTheme);
-
-const model = Model.fromJson(layoutJson);
 
 function App() {
   const layoutRef = useRef<Layout>();
@@ -37,6 +42,12 @@ function App() {
   const [isNt4Connected, setIsNt4Connected] = useState(false);
   const selectedComponent = useAppSelector(selectSelectedComponent);
   const { components } = useComponents();
+  const editing = useAppSelector(selectEditing);
+  const [layoutJson] = useState(defaultLayoutJson);
+
+  const model = useMemo(() => {
+    return Model.fromJson(layoutJson);
+  }, [layoutJson]);
 
   useEffect(() => {
     nt4Provider.addConnectionListener((connected) => {
@@ -45,36 +56,55 @@ function App() {
   }, [nt4Provider]);
 
   useEffect(() => {
-    let propertiesTabName = 'Properties';
-    if (selectedComponent && components) {
-      propertiesTabName = components[selectedComponent.type].dashboard.name ?? 'Properties';
+    if (!editing) {
+      model.doAction(Actions.deleteTab("sources"));
+      model.doAction(Actions.deleteTab("componentList"));
+      model.doAction(Actions.deleteTab("mainProperties"));
+      
+    } else {
+      const sourcesTab = model.getNodeById("sources");
+      if (!sourcesTab) {
+        const node = model.doAction(
+          Actions.addNode(sourceTabJson, "layout", DockLocation.LEFT, 0)
+        );
+        
+        const tabset = node?.getParent() as TabSetNode | undefined;
+        if (tabset) {
+          model.doAction(Actions.updateNodeAttributes(tabset.getId(), {
+            enableMaximize: false,
+          }));
+          model.doAction(
+            Actions.addNode(componentListTabJson, tabset.getId(), DockLocation.CENTER, 1)
+          );
+          const propertiesTabset = model.doAction(
+            Actions.addNode(propertiesTabJson, tabset.getId(), DockLocation.BOTTOM, 1)
+          )?.getParent();
+          if (propertiesTabset) {
+            model.doAction(Actions.updateNodeAttributes(propertiesTabset.getId(), {
+              enableMaximize: false,
+            }));
+          }
+        }
+      }
     }
-    // const updatedModel = model.toJson();
+  }, [editing]);
+
+  useEffect(() => {
+    let propertiesTabName = "Properties";
+    if (selectedComponent && components) {
+      propertiesTabName =
+        components[selectedComponent.type].dashboard.name ?? "Properties";
+    }
     const node = model.getNodeById("mainProperties") as TabNode;
     if (!node) {
       return;
     }
-    if (node.getType?.() === 'tab') {
+    if (node.getType?.() === "tab") {
       node
         .getModel()
         .doAction(Actions.renameTab(node.getId(), propertiesTabName));
     }
-    // console.log("NODE:", node);
   }, [selectedComponent]);
-
-  //   const changeTabName = (nodeId, newName) => {
-  //     // Create a copy of the model to modify
-  //     const updatedModel = model.toJson();
-  //     // Find the node with the given ID
-  //     const node = model.getNodeById('mainProperties');
-  //     if (node) {
-  //       // node?.getChildren()
-  //       //   // Update the title of the node
-  //       //   node._attributes.name = newName;
-  //       //   // Update the layout with the new model
-  //       //   setModel(FlexLayout.Model.fromJson(updatedModel));
-  //     }
-  // };
 
   const factory = (node: TabNode) => {
     var component = node.getComponent();
@@ -105,14 +135,32 @@ function App() {
         tabSetNode: TabSetNode | BorderNode,
         renderValues: ITabSetRenderValues
       ) => {
+        const hasTools = tabSetNode.getChildren().some(node => {
+          return ['sources', 'componentList', 'mainProperties'].includes(node.getId());
+        });
+
         if (tabSetNode instanceof BorderNode) {
           const location = tabSetNode.getLocation();
-          if (location.getName() === "bottom") {
-            // buttons on right side
-            renderValues.stickyButtons.push(<img src={settingsIcon} />);
 
+          if (location.getName() === "left") {
+            // buttons on bottom side
+            renderValues.stickyButtons.push(
+              <img
+                style={{
+                  transform: "rotate(90deg)",
+                  margin: "0 5px",
+                  cursor: "pointer",
+                }}
+                src={settingsIcon}
+              />
+            );
+
+            renderValues.stickyButtons.push(<EditButton />);
+          }
+
+          if (location.getName() === "bottom") {
             // buttons on left side
-            renderValues.buttons.push(
+            renderValues.stickyButtons.push(
               <div
                 style={{
                   display: "flex",
@@ -126,7 +174,7 @@ function App() {
               </div>
             );
           }
-        } else if (!["tools", "properties"].includes(tabSetNode.getId())) {
+        } else if (!hasTools) {
           renderValues.stickyButtons.push(
             <img
               src={addIcon}

@@ -1,4 +1,71 @@
-import { IJsonModel } from "flexlayout-react";
+import {
+  IJsonModel,
+  IJsonRowNode,
+  IJsonTabSetNode,
+  IJsonTabNode,
+} from "flexlayout-react";
+
+export const sourceTabJson: IJsonTabNode = {
+  type: "tab",
+  enableClose: false,
+  enableDrag: false,
+  enableFloat: false,
+  enableRename: false,
+  component: "sources",
+  name: "Sources",
+  id: "sources",
+};
+
+export const componentListTabJson: IJsonTabNode = {
+  type: "tab",
+  enableClose: false,
+  enableDrag: false,
+  enableFloat: false,
+  enableRename: false,
+  component: "componentList",
+  name: "Components",
+  id: "componentList",
+};
+
+export const propertiesTabJson: IJsonTabNode ={
+  type: "tab",
+  enableClose: false,
+  enableDrag: false,
+  enableFloat: false,
+  enableRename: false,
+  component: "properties",
+  id: "mainProperties",
+  name: "Properties",
+};
+
+export const toolsTabsetJson: IJsonTabSetNode = {
+  width: 300,
+  id: "tools",
+  enableMaximize: false,
+  type: "tabset",
+  weight: 50,
+  enableDrag: false,
+  children: [sourceTabJson, componentListTabJson],
+
+};
+
+export const propertiesTabsetJson: IJsonTabSetNode = {
+  enableMaximize: false,
+  type: "tabset",
+  weight: 50,
+  id: "properties",
+  enableDrag: false,
+  children: [
+    propertiesTabJson,
+  ],
+};
+
+export const editorLayoutJson: IJsonRowNode = {
+  width: 400,
+  type: "row",
+  id: "editor",
+  children: [toolsTabsetJson, propertiesTabsetJson],
+};
 
 export const layoutJson: IJsonModel = {
   global: {},
@@ -6,68 +73,22 @@ export const layoutJson: IJsonModel = {
     {
       type: "border",
       selected: -1,
-      size: 353.79999923706055,
       location: "bottom",
+      children: [],
+    },
+    {
+      type: "border",
+      selected: -1,
+      location: "left",
       children: [],
     },
   ],
   layout: {
     type: "row",
     weight: 100,
+    id: "layout",
     children: [
-      {
-        width: 400,
-        type: "row",
-        children: [
-          {
-            width: 300,
-            id: "tools",
-            enableMaximize: false,
-            type: "tabset",
-            weight: 50,
-            enableDrag: false,
-            children: [
-              {
-                type: "tab",
-                enableClose: false,
-                enableDrag: false,
-                enableFloat: false,
-                enableRename: false,
-                component: "sources",
-                name: "Sources",
-              },
-              {
-                type: "tab",
-                enableClose: false,
-                enableDrag: false,
-                enableFloat: false,
-                enableRename: false,
-                component: "componentList",
-                name: "Components",
-              },
-            ],
-          },
-          {
-            enableMaximize: false,
-            type: "tabset",
-            weight: 50,
-            id: "properties",
-            enableDrag: false,
-            children: [
-              {
-                type: "tab",
-                enableClose: false,
-                enableDrag: false,
-                enableFloat: false,
-                enableRename: false,
-                component: "properties",
-                id: 'mainProperties',
-                name: "Properties",
-              },
-            ],
-          },
-        ],
-      },
+      editorLayoutJson,
       {
         type: "tabset",
         weight: 50,
