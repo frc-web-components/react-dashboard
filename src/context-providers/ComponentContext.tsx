@@ -13,6 +13,10 @@ export interface ComponentProperty {
     | "Boolean[]"
     | "Object[]";
   defaultValue: unknown;
+  input?: {
+    type: string,
+    [props: string]: unknown
+  }
 }
 
 export interface DashboardComponent {

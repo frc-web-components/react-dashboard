@@ -11,8 +11,9 @@ import {
   updateComponentProperty,
   updateComponentSource,
 } from "../store/slices/layoutSlice";
-import { useComponents } from "../context-providers/ComponentContext";
+import { DashboardComponent, useComponents } from "../context-providers/ComponentContext";
 import useResizeObserver from "@react-hook/resize-observer";
+import MarkdownEditor from "./MarkdownEditor";
 
 interface SourceData {
   key: string;
@@ -27,6 +28,7 @@ export interface PropertyData {
   };
   type: string;
   defaultValue: unknown;
+  componentConfig: DashboardComponent
 }
 
 const SourceCellRenderer = (
@@ -91,11 +93,28 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     field: "defaultValue",
     editable: true,
     sortable: false,
+    suppressKeyboardEvent: (params) => {
+      if (!params.data) {
+        return false;
+      }
+      const { componentConfig, name } = params.data;
+      const { input } = componentConfig.properties[name];
+      return input?.type === 'Markdown';
+    },
+
     valueGetter: (params) => {
       return params.data?.defaultValue;
     },
     cellEditorSelector: (params) => {
-      const type = params.data.type;
+      const { type, componentConfig, name } = params.data;
+      const { input } = componentConfig.properties[name];
+      if (input?.type === 'Markdown') {
+        return {
+          component: MarkdownEditor,
+          popup: true,
+
+        };
+      }
       if (type === "Number") {
         return {
           component: "agNumberCellEditor",
@@ -170,6 +189,7 @@ function Properties() {
             selectedComponent.properties[name]?.value ?? property.defaultValue,
           type: property.type,
           source: selectedComponent.properties[name].source,
+          componentConfig: component,
         };
       }) ?? []
     );
@@ -208,6 +228,8 @@ function Properties() {
               return params.data.name;
             }}
             animateRows={false}
+            reactiveCustomComponents
+
             onCellValueChanged={(event) => {
               const { newValue } = event;
               const colId = event.column.getColId();

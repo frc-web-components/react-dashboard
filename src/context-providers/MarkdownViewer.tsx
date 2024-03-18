@@ -1,5 +1,6 @@
 import React from "react";
 import MDEditor from "@uiw/react-md-editor";
+import styles from './MarkdownViewer.module.scss';
 
 interface Props {
   markdown: string;
@@ -8,7 +9,7 @@ interface Props {
 function MarkdownViewer({ markdown = '' }: Props) {
   const [value, setValue] = React.useState("**Hello world!!!**");
   return (
-    <div className="container" data-color-mode="dark">
+    <div className={styles['markdown-viewer']} data-color-mode="dark">
       {/* <MDEditor
         value={value}
         onChange={(value) => {

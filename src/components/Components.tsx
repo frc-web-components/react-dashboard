@@ -173,7 +173,6 @@ function Components() {
       cols={20000}
       rowHeight={cellSize}
       width={(cellSize + cellGap) * 20000}
-      containerPadding={[0, 0]}
       margin={[5, 5]}
       autoSize
       compactType={null}

@@ -1,85 +1,71 @@
-import { CustomCellEditorProps } from 'ag-grid-react';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import { CustomCellEditorProps } from "ag-grid-react";
+import React, { memo, useEffect, useRef, useState } from "react";
+import MDEditor, {
+  ICommand,
+  commands,
+  divider,
+  getCommands,
+} from "@uiw/react-md-editor";
+import { PropertyData } from "./Properties";
 
-export default memo(
-  ({ value, onValueChange, stopEditing }: CustomCellEditorProps) => {
-    const isHappy = (value: string) => value === 'Happy';
+export default memo((props: CustomCellEditorProps<PropertyData>) => {
+  const { value, onValueChange, stopEditing } = props;
 
-    const [ready, setReady] = useState(false);
-    const refContainer = useRef<HTMLDivElement>(null);
+  console.log("PROPS:", props, onValueChange);
+  const isHappy = (value: string) => value === "Happy";
 
-    const checkAndToggleMoodIfLeftRight = (event: any) => {
-      if (ready) {
-        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) {
-          // left and right
-          const isLeft = event.key === 'ArrowLeft';
-          onValueChange(isLeft ? 'Happy' : 'Sad');
-          event.stopPropagation();
-        }
-      }
-    };
+  const onClick = (happy: boolean) => {
+    onValueChange(happy ? "Happy" : "Sad");
+    stopEditing();
+  };
 
-    useEffect(() => {
-      refContainer.current?.focus();
-      setReady(true);
-    }, []);
-
-    useEffect(() => {
-      window.addEventListener('keydown', checkAndToggleMoodIfLeftRight);
-
-      return () => {
-        window.removeEventListener('keydown', checkAndToggleMoodIfLeftRight);
-      };
-    }, [checkAndToggleMoodIfLeftRight, ready]);
-
-    const onClick = (happy: boolean) => {
-      onValueChange(happy ? 'Happy' : 'Sad');
-      stopEditing();
-    };
-
-    const mood = {
-      borderRadius: 15,
-      border: '1px solid grey',
-      backgroundColor: '#e6e6e6',
-      padding: 15,
-      textAlign: 'center' as const,
-      display: 'inline-block',
-    };
-
-    const unselected = {
-      paddingLeft: 10,
-      paddingRight: 10,
-      border: '1px solid transparent',
-      padding: 4,
-    };
-
-    const selected = {
-      paddingLeft: 10,
-      paddingRight: 10,
-      border: '1px solid lightgreen',
-      padding: 4,
-    };
-
-    const happyStyle = isHappy(value) ? selected : unselected;
-    const sadStyle = !isHappy(value) ? selected : unselected;
-
-    return (
+  const title3: ICommand = {
+    name: "title3",
+    keyCommand: "title3",
+    buttonProps: { "aria-label": "Insert title3" },
+    icon: (
       <div
-        ref={refContainer}
-        style={mood}
-        tabIndex={1} // important - without this the key presses wont be caught
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: '5px'
+        }}
       >
-        <img
-          src="https://www.ag-grid.com/example-assets/smileys/happy.png"
-          onClick={() => onClick(true)}
-          style={happyStyle}
-        />
-        <img
-          src="https://www.ag-grid.com/example-assets/smileys/sad.png"
-          onClick={() => onClick(false)}
-          style={sadStyle}
-        />
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M 1,6 L 4,9 L 11,2"
+            stroke="white"
+            fill="none"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span style={{  }}>Finish Editing</span>
       </div>
-    );
-  }
-);
+    ),
+    execute: (state, api) => {
+      stopEditing();
+    },
+  };
+  // const [editorValue, setValue] = React.useState("**Hello world!!!**");
+
+  return (
+    <div className="container" data-color-mode="dark" style={{ width: "100%" }}>
+      <MDEditor
+        value={value}
+        onChange={(value) => {
+          onValueChange(value ?? "");
+          // setValue(value ?? "");
+        }}
+        commands={[title3, divider, ...getCommands()]}
+        fullscreen
+      />
+    </div>
+  );
+});

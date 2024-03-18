@@ -4,6 +4,7 @@ import {
   BasicFmsInfo,
   Field,
   Gyro,
+  Swerve,
 } from "@frc-web-components/react";
 import MarkdownViewer from "./MarkdownViewer";
 
@@ -75,14 +76,67 @@ export const componentMap: Record<string, DashboardComponent> = {
     dashboard: {
       name: "Markdown Viewer",
       description: "",
+      defaultSize: { width: 200, height: 50 },
+      minSize: { width: 50, height: 50 },
+    },
+    properties: {
+      markdown: {
+        type: "String",
+        defaultValue: "## Hello there",
+        input: {
+          type: "Markdown",
+        },
+      },
+    },
+    component: MarkdownViewer,
+  },
+  swerveDrivebase: {
+    dashboard: {
+      name: 'Swerve Drivebase',
+      description: "",
       defaultSize: { width: 300, height: 300 },
       minSize: { width: 50, height: 50 },
     },
     properties: {
-      markdown: { type: "String", defaultValue: "" },
+      moduleCount: {
+        type: 'Number',
+        defaultValue: 4,
+      },
+      wheelLocations: {
+        type: 'Number[]',
+        defaultValue: [1, -1, 1, 1, -1, -1, -1, 1],
+      },
+      measuredStates: {
+        type: 'Number[]',
+        defaultValue: [0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      desiredStates: {
+        type: 'Number[]',
+        defaultValue: [0, 0, 0, 0, 0, 0, 0, 0],
+      },
+      robotRotation: {
+        type: 'Number',
+        defaultValue: 0,
+      },
+      maxSpeed: {
+        type: 'Number',
+        defaultValue: 1,
+      },
+      rotationUnit: {
+        type: 'String',
+        defaultValue: 'radians',
+      },
+      sizeLeftRight: {
+        type: 'Number',
+        defaultValue: 2,
+      },
+      sizeFrontBack: {
+        type: 'Number',
+        defaultValue: 2,
+      },
     },
-    component: MarkdownViewer
-  },
+    component: Swerve
+  }
 };
 
 export const componentList: DashboardComponent[] = Object.values(componentMap);
