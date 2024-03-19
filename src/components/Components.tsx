@@ -34,10 +34,16 @@ interface ComponentLayout extends Layout {
   };
 }
 
-function Components() {
+interface Props {
+  tabId: string;
+}
+
+function Components({ tabId }: Props) {
   const dispatch = useAppDispatch();
   const selectedComponentId = useAppSelector(selectSelectedComponentId);
-  const layoutComponents = useAppSelector(selectComponents);
+  const layoutComponents = useAppSelector((state) =>
+    selectComponents(state, tabId)
+  );
   const { components } = useComponents();
   const editing = useAppSelector(selectEditing);
   const { componentGrid } = useDropZone(); // Use the context
@@ -49,7 +55,7 @@ function Components() {
   // const [layout, setLayout] = useState<ComponentLayout[]>([]);
 
   const gridLayout = useMemo(() => {
-    const layout: ComponentLayout[] = Object.values(layoutComponents).map(
+    const layout: ComponentLayout[] = Object.values(layoutComponents ?? {}).map(
       (item) => {
         return {
           Component: components[item.type].component,
@@ -119,13 +125,16 @@ function Components() {
           });
           dispatch(
             addComponent({
-              id: uuidv4(),
-              children: [],
-              minSize: { width: minWidth, height: minHeight },
-              size: { width, height },
-              position: { x, y },
-              properties: props,
-              type,
+              tabId,
+              component: {
+                id: uuidv4(),
+                children: [],
+                minSize: { width: minWidth, height: minHeight },
+                size: { width, height },
+                position: { x, y },
+                properties: props,
+                type,
+              },
             })
           );
         },
@@ -149,6 +158,7 @@ function Components() {
         const { w, h, i } = newItem;
         dispatch(
           updateComponentSize({
+            tabId,
             id: i,
             width: w,
             height: h,
@@ -160,6 +170,7 @@ function Components() {
         const { x, y, i } = newItem;
         dispatch(
           updateComponentPosition({
+            tabId,
             id: i,
             x,
             y,
@@ -167,7 +178,7 @@ function Components() {
         );
       }}
       className={classNames(Styles.layout, {
-        [Styles.editable]: editing
+        [Styles.editable]: editing,
       })}
       layout={gridLayout}
       cols={20000}

@@ -21,7 +21,7 @@ export interface Component {
 
 export interface LayoutSliceState {
   selectedComponentId?: string;
-  components: Record<string, Component>;
+  components: Record<string, Record<string, Component>>;
 }
 
 const initialState: LayoutSliceState = {
@@ -42,35 +42,40 @@ export const layoutSlice = createAppSlice({
         state.selectedComponentId = action.payload;
       }
     ),
-    addComponent: create.reducer((state, action: PayloadAction<Component>) => {
-      state.components[action.payload.id] = action.payload;
+    addComponent: create.reducer((state, action: PayloadAction<{ component: Component, tabId: string }>) => {
+      const { component, tabId } = action.payload;
+      if (!state.components[tabId]) {
+        state.components[tabId] = {};
+      }
+      state.components[tabId][component.id] = component;
     }),
     updateComponentSize: create.reducer(
       (
         state,
-        action: PayloadAction<{ id: string; width: number; height: number }>
+        action: PayloadAction<{ tabId: string, id: string; width: number; height: number }>
       ) => {
-        const { id, width, height } = action.payload;
-        state.components[id].size = { width, height };
+        const { tabId, id, width, height } = action.payload;
+        state.components[tabId][id].size = { width, height };
       }
     ),
     updateComponentPosition: create.reducer(
-      (state, action: PayloadAction<{ id: string; x: number; y: number }>) => {
-        const { id, x, y } = action.payload;
-        state.components[id].position = { x, y };
+      (state, action: PayloadAction<{ tabId: string, id: string; x: number; y: number }>) => {
+        const { tabId, id, x, y } = action.payload;
+        state.components[tabId][id].position = { x, y };
       }
     ),
     updateComponentProperty: create.reducer(
       (
         state,
         action: PayloadAction<{
+          tabId: string;
           componentId: string;
           propertyName: string;
           propertyValue: unknown;
         }>
       ) => {
-        const { componentId, propertyName, propertyValue } = action.payload;
-        state.components[componentId].properties[propertyName].value =
+        const { tabId, componentId, propertyName, propertyValue } = action.payload;
+        state.components[tabId][componentId].properties[propertyName].value =
           propertyValue;
       }
     ),
@@ -78,6 +83,7 @@ export const layoutSlice = createAppSlice({
       (
         state,
         action: PayloadAction<{
+          tabId: string;
           componentId: string;
           propertyName: string;
           source?: {
@@ -86,8 +92,8 @@ export const layoutSlice = createAppSlice({
           }
         }>
       ) => {
-        const { componentId, propertyName, source } = action.payload;
-        state.components[componentId].properties[propertyName].source = source;
+        const { tabId, componentId, propertyName, source } = action.payload;
+        state.components[tabId][componentId].properties[propertyName].source = source;
       }
     ),
   }),
@@ -95,11 +101,19 @@ export const layoutSlice = createAppSlice({
   // state as their first argument.
   selectors: {
     selectSelectedComponentId: (layout) => layout.selectedComponentId,
-    selectSelectedComponent: (layout) =>
-      layout.selectedComponentId
-        ? layout.components[layout.selectedComponentId]
-        : undefined,
-    selectComponents: (layout) => layout.components,
+    selectSelectedComponent: (layout) => {
+      if (!layout.selectedComponentId) {
+        return undefined;
+      }
+      for (let components of Object.values(layout.components)) {
+        const component = components[layout.selectedComponentId];
+        if (component) {
+          return component;
+        }
+      }
+      return undefined;
+    },
+    selectComponents: (layout, tabId: string) => layout.components[tabId],
   },
 });
 

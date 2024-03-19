@@ -110,7 +110,7 @@ function App() {
     var component = node.getComponent();
 
     if (component === "components") {
-      return <Components />;
+      return <Components tabId={node.getId()} />;
     }
 
     if (component === "sources") {
@@ -182,12 +182,15 @@ function App() {
                 cursor: "pointer",
               }}
               onClick={() => {
-                layoutRef!.current!.addTabToTabSet(tabSetNode.getId(), {
+                const node = layoutRef!.current!.addTabToTabSet(tabSetNode.getId(), {
                   component: "components",
                   name: "Unnamed Tab",
                   enableFloat: true,
                 });
+                console.log('added node:', node?.getId())
+                
               }}
+              
             />
           );
         }
