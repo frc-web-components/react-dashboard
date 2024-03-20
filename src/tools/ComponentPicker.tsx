@@ -5,9 +5,9 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import { useMemo, useState } from "react";
 import { useDropZone } from "../context-providers/DropZoneContext";
-import { DashboardComponent, useComponents } from "../context-providers/ComponentContext";
+import { ComponentConfig, useComponentConfigs } from "../context-providers/ComponentConfigContext";
 
-export interface ComponentListItem extends DashboardComponent {
+export interface ComponentListItem extends ComponentConfig {
   type: string;
 }
 
@@ -26,9 +26,9 @@ const defaultColumnDefs: ColDef[] = [
   },
 ];
 
-function ComponentList() {
+function ComponentPicker() {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
-  const { components } = useComponents();
+  const { components } = useComponentConfigs();
   const { setComponentGrid } = useDropZone();
 
 
@@ -62,4 +62,4 @@ function ComponentList() {
   );
 }
 
-export default ComponentList;
+export default ComponentPicker;

@@ -6,18 +6,18 @@ import { NT4Provider } from "@frc-web-components/react";
 import { Provider } from "react-redux";
 import { store } from "./store/app/store";
 import { DropZoneProvider } from "./context-providers/DropZoneContext.tsx";
-import { ComponentProvider } from "./context-providers/ComponentContext.tsx";
+import { ComponentConfigProvider } from "./context-providers/ComponentConfigContext.tsx";
 import { componentMap } from "./context-providers/components.ts";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
       <DropZoneProvider>
-        <ComponentProvider components={componentMap}>
+        <ComponentConfigProvider components={componentMap}>
           <NT4Provider address="localhost">
             <App />
           </NT4Provider>
-        </ComponentProvider>
+        </ComponentConfigProvider>
       </DropZoneProvider>
     </Provider>
   </React.StrictMode>

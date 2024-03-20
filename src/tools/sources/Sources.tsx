@@ -7,7 +7,7 @@ import expandIcon from "/expand.svg";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { useEffect, useMemo, useState } from "react";
 import { useJson } from "@frc-web-components/react";
-import { useDropZone } from "../context-providers/DropZoneContext";
+import { useDropZone } from "../../context-providers/DropZoneContext";
 
 export interface SourceData {
   name: string;

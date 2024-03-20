@@ -1,6 +1,6 @@
 import { GridApi } from "ag-grid-community";
 import React, { createContext, useContext, ReactNode, useState } from "react";
-import { SourceData } from "../sources/Sources";
+import { SourceData } from "../tools/sources/Sources";
 
 export interface ComponentProperty {
   type:
@@ -19,7 +19,7 @@ export interface ComponentProperty {
   }
 }
 
-export interface DashboardComponent {
+export interface ComponentConfig {
   dashboard: {
     name: string;
     description: string;
@@ -37,42 +37,42 @@ export interface DashboardComponent {
 }
 
 // Interface for the context value
-interface ComponentContextType {
-  addComponent: (id: string, component: DashboardComponent) => unknown;
-  addComponents: (components: Record<string, DashboardComponent>) => unknown;
-  components: Record<string, DashboardComponent>;
+interface ComponentConfigContextType {
+  addComponent: (id: string, component: ComponentConfig) => unknown;
+  addComponents: (components: Record<string, ComponentConfig>) => unknown;
+  components: Record<string, ComponentConfig>;
   hasComponent: (id: string) => boolean;
 }
 
 // Create the context with a default value
-const ComponentContext = createContext<ComponentContextType | undefined>(
+const ComponentConfigContext = createContext<ComponentConfigContextType | undefined>(
   undefined
 );
 
 // Create a provider component
 interface ProviderProps {
   children: ReactNode;
-  components?: Record<string, DashboardComponent>
+  components?: Record<string, ComponentConfig>
 }
 
-export const ComponentProvider: React.FC<ProviderProps> = ({
+export const ComponentConfigProvider: React.FC<ProviderProps> = ({
   children,
   components: initialComponents = {}
 }) => {
-  const [components, setComponents] = useState<Record<string, DashboardComponent>>(initialComponents);
+  const [components, setComponents] = useState<Record<string, ComponentConfig>>(initialComponents);
 
   const hasComponent = (id: string) => {
     return id in components;
   };
 
-  const addComponent = (id: string, component: DashboardComponent) => {
+  const addComponent = (id: string, component: ComponentConfig) => {
     setComponents(currentComponents => ({
       ...currentComponents,
       [id]: component
     }));
   };
   
-  const addComponents = (newComponents: Record<string, DashboardComponent>) => {
+  const addComponents = (newComponents: Record<string, ComponentConfig>) => {
     setComponents(currentComponents => ({
       ...currentComponents,
       ...newComponents,
@@ -88,15 +88,15 @@ export const ComponentProvider: React.FC<ProviderProps> = ({
   };
 
   return (
-    <ComponentContext.Provider value={value}>
+    <ComponentConfigContext.Provider value={value}>
       {children}
-    </ComponentContext.Provider>
+    </ComponentConfigContext.Provider>
   );
 };
 
 // Hook for consuming the context in components
-export const useComponents = (): ComponentContextType => {
-  const context = useContext(ComponentContext);
+export const useComponentConfigs = (): ComponentConfigContextType => {
+  const context = useContext(ComponentConfigContext);
   if (context === undefined) {
     throw new Error("useComponents must be used within a ComponentProvider");
   }

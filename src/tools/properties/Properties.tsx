@@ -4,16 +4,16 @@ import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useDropZone } from "../context-providers/DropZoneContext";
-import { useAppSelector, useAppDispatch } from "../store/app/hooks";
+import { useDropZone } from "../../context-providers/DropZoneContext";
+import { useAppSelector, useAppDispatch } from "../../store/app/hooks";
 import {
-  selectSelectedComponent,
   updateComponentProperty,
   updateComponentSource,
-} from "../store/slices/layoutSlice";
-import { DashboardComponent, useComponents } from "../context-providers/ComponentContext";
+} from "../../store/slices/layoutSlice";
+import { ComponentConfig, useComponentConfigs } from "../../context-providers/ComponentConfigContext";
 import useResizeObserver from "@react-hook/resize-observer";
 import MarkdownEditor from "./MarkdownEditor";
+import { selectSelectedComponent } from "../../store/selectors/layoutSelectors";
 
 interface SourceData {
   key: string;
@@ -28,7 +28,7 @@ export interface PropertyData {
   };
   type: string;
   defaultValue: unknown;
-  componentConfig: DashboardComponent
+  componentConfig: ComponentConfig
 }
 
 const SourceCellRenderer = (
@@ -167,7 +167,7 @@ function Properties() {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
   const [gridApi, setGridApi] = useState<GridApi>();
   const selectedComponent = useAppSelector(selectSelectedComponent);
-  const { components } = useComponents();
+  const { components } = useComponentConfigs();
   const dispatch = useAppDispatch();
   const containerElementRef = useRef<HTMLElement>(null);
   useResizeObserver(containerElementRef, () => {

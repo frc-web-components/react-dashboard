@@ -1,4 +1,4 @@
-import { DashboardComponent } from "./ComponentContext";
+import { ComponentConfig } from "./ComponentConfigContext";
 import {
   Accelerometer,
   BasicFmsInfo,
@@ -8,7 +8,7 @@ import {
 } from "@frc-web-components/react";
 import MarkdownViewer from "./MarkdownViewer";
 
-export const componentMap: Record<string, DashboardComponent> = {
+export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
     dashboard: {
       name: "Basic FMS Info",
@@ -139,4 +139,4 @@ export const componentMap: Record<string, DashboardComponent> = {
   }
 };
 
-export const componentList: DashboardComponent[] = Object.values(componentMap);
+export const componentList: ComponentConfig[] = Object.values(componentMap);

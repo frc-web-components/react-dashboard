@@ -2,23 +2,25 @@ import GridLayout, { Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import classNames from "classnames";
-import Styles from "./Components.module.scss";
+import Styles from "./Tab.module.scss";
 import { useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/app/hooks";
 import {
-  selectSelectedComponentId,
   setSelectedComponent,
-  selectComponents,
   addComponent,
   updateComponentPosition,
   updateComponentSize,
 } from "../store/slices/layoutSlice";
+import {
+  selectSelectedComponentId,
+  selectTabComponents,
+} from "../store/selectors/layoutSelectors";
 import { useDropZone } from "../context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
-import { useComponents } from "../context-providers/ComponentContext";
+import { useComponentConfigs } from "../context-providers/ComponentConfigContext";
 import { v4 as uuidv4 } from "uuid";
-import { ComponentListItem } from "./ComponentList";
-import LayoutComponent from "./LayoutComponent";
+import { ComponentListItem } from "../tools/ComponentPicker";
+import TabComponent from "./TabComponent";
 import { selectEditing } from "../store/slices/appSlice";
 
 interface ComponentLayout extends Layout {
@@ -38,13 +40,13 @@ interface Props {
   tabId: string;
 }
 
-function Components({ tabId }: Props) {
+function Tab({ tabId }: Props) {
   const dispatch = useAppDispatch();
   const selectedComponentId = useAppSelector(selectSelectedComponentId);
   const layoutComponents = useAppSelector((state) =>
-    selectComponents(state, tabId)
+    selectTabComponents(state, tabId)
   );
-  const { components } = useComponents();
+  const { components } = useComponentConfigs();
   const editing = useAppSelector(selectEditing);
   const { componentGrid } = useDropZone(); // Use the context
   const [gridElement, setGridElement] = useState<HTMLElement>();
@@ -158,7 +160,6 @@ function Components({ tabId }: Props) {
         const { w, h, i } = newItem;
         dispatch(
           updateComponentSize({
-            tabId,
             id: i,
             width: w,
             height: h,
@@ -170,7 +171,6 @@ function Components({ tabId }: Props) {
         const { x, y, i } = newItem;
         dispatch(
           updateComponentPosition({
-            tabId,
             id: i,
             x,
             y,
@@ -201,7 +201,7 @@ function Components({ tabId }: Props) {
               [Styles.selected]: selectedComponentId === id,
             })}
           >
-            <LayoutComponent Component={Component} properties={properties} />
+            <TabComponent Component={Component} properties={properties} />
           </div>
         );
       })}
@@ -209,4 +209,4 @@ function Components({ tabId }: Props) {
   );
 }
 
-export default Components;
+export default Tab;

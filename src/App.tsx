@@ -15,12 +15,12 @@ import {
   TabSetNode,
 } from "flexlayout-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import Sources from "./sources/Sources";
+import Sources from "./tools/sources/Sources";
 import { useNt4 } from "@frc-web-components/react";
-import Components from "./components/Components";
+import Tab from "./tab/Tab";
 import { DashboardThemes, darkTheme } from "@frc-web-components/fwc/themes";
-import Properties from "./properties/Properties";
-import ComponentList from "./components/ComponentList";
+import Properties from "./tools/properties/Properties";
+import ComponentPicker from "./tools/ComponentPicker";
 import {
   componentListTabJson,
   layoutJson as defaultLayoutJson,
@@ -28,8 +28,8 @@ import {
   sourceTabJson,
 } from "./layout";
 import { useAppSelector } from "./store/app/hooks";
-import { selectSelectedComponent } from "./store/slices/layoutSlice";
-import { useComponents } from "./context-providers/ComponentContext";
+import { selectSelectedComponent } from "./store/selectors/layoutSelectors";
+import { useComponentConfigs } from "./context-providers/ComponentConfigContext";
 import EditButton from "./sidebar/EditButton";
 import { selectEditing } from "./store/slices/appSlice";
 
@@ -41,7 +41,7 @@ function App() {
   const { nt4Provider } = useNt4();
   const [isNt4Connected, setIsNt4Connected] = useState(false);
   const selectedComponent = useAppSelector(selectSelectedComponent);
-  const { components } = useComponents();
+  const { components } = useComponentConfigs();
   const editing = useAppSelector(selectEditing);
   const [layoutJson] = useState(defaultLayoutJson);
 
@@ -110,7 +110,7 @@ function App() {
     var component = node.getComponent();
 
     if (component === "components") {
-      return <Components tabId={node.getId()} />;
+      return <Tab tabId={node.getId()} />;
     }
 
     if (component === "sources") {
@@ -122,7 +122,7 @@ function App() {
     }
 
     if (component === "componentList") {
-      return <ComponentList />;
+      return <ComponentPicker />;
     }
   };
 

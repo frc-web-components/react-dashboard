@@ -1,6 +1,5 @@
-import { useEffect, useMemo } from "react";
-import Styles from "./Components.module.scss";
-import { useNt4 } from "@frc-web-components/react";
+import { useMemo } from "react";
+import Styles from "./Tab.module.scss";
 import useEntries from "./useEntries";
 
 interface Props {
@@ -16,7 +15,7 @@ interface Props {
   };
 }
 
-function LayoutComponent({ Component, properties }: Props) {
+function TabComponent({ Component, properties }: Props) {
   const entryKeyMap = useMemo(() => {
     const keyMap: Record<
       string,
@@ -49,4 +48,4 @@ function LayoutComponent({ Component, properties }: Props) {
   return <Component className={Styles["component-child"]} {...propValues} />;
 }
 
-export default LayoutComponent;
+export default TabComponent;
