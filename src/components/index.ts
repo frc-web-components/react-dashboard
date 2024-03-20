@@ -6,8 +6,8 @@ import {
   Gyro,
   Swerve,
 } from "@frc-web-components/react";
-import { markdownViewerConfig } from "./MarkdownViewer";
-import { numberSliderConfig } from './NumberSlider';
+import { markdownViewer } from "./MarkdownViewer";
+import { numberSlider } from './NumberSlider';
 
 export const componentMap: Record<string, ComponentConfig> = {
     basicFmsInfo: {
@@ -120,8 +120,8 @@ export const componentMap: Record<string, ComponentConfig> = {
       },
       component: Swerve,
     },
-    markdownViewer: markdownViewerConfig,
-    numberSlider: numberSliderConfig,
+    markdownViewer,
+    numberSlider,
   };
   
   export const componentList: ComponentConfig[] = Object.values(componentMap);

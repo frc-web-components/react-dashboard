@@ -24,7 +24,6 @@ function capitalize(value: string) {
 }
 
 function TabComponent({ Component, properties }: Props) {
-
   const [defaultPropValues, setDefaultPropValues] = useState(
     Object.fromEntries(
       Object.entries(properties).map(([propName, prop]) => {
@@ -40,7 +39,6 @@ function TabComponent({ Component, properties }: Props) {
   const updateNtValue = useCallback((key: string, newValue: unknown) => {
     nt4Provider.userUpdate(key, newValue);
   }, []);
-
 
   // update values if defaults change
   useEffect(() => {
@@ -58,7 +56,7 @@ function TabComponent({ Component, properties }: Props) {
     if (Object.values(updatedValues).length === 0) {
       return;
     }
-    setValues(current => ({
+    setValues((current) => ({
       ...current,
       ...updatedValues,
     }));
@@ -66,31 +64,35 @@ function TabComponent({ Component, properties }: Props) {
   }, [properties]);
 
   const keyListener = useCallback((prop: string, _: string, value: unknown) => {
-    setValues(current => ({
+    setValues((current) => ({
       ...current,
-      [prop]: value
+      [prop]: value,
     }));
   }, []);
 
   useEntryListener(properties, keyListener);
-  
-  const propSetters = useMemo(() => {
-    const setters: Record<string, (value: unknown) => unknown> = {};
-    Object.entries(properties).forEach(([prop, { source }]) => {
-      setters[`set${capitalize(prop)}`] = (value: unknown) => {
-        setValues(current => ({
-          ...current,
-          [prop]: value
-        }));
-        if (source) {
-          updateNtValue(source.key, value);
-        }
-      };
-    });
-    return setters;
+
+  const setProperty = useMemo(() => {
+    const setter = (prop: string, value: unknown) => {
+      setValues((current) => ({
+        ...current,
+        [prop]: value,
+      }));
+      const { source } = properties[prop];
+      if (source) {
+        updateNtValue(source.key, value);
+      }
+    };
+    return setter;
   }, [properties]);
 
-  return <Component className={Styles["component-child"]} {...values} {...propSetters} />;
+  return (
+    <Component
+      className={Styles["component-child"]}
+      {...values}
+      setProperty={setProperty}
+    />
+  );
 }
 
 export default TabComponent;

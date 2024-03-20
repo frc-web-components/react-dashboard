@@ -1,6 +1,7 @@
 import { GridApi } from "ag-grid-community";
 import React, { createContext, useContext, ReactNode, useState } from "react";
 import { SourceData } from "../tools/sources/Sources";
+import { FromProps } from "../components/fromProps";
 
 export interface ComponentProperty {
   type:
