@@ -1,6 +1,6 @@
 import MDEditor from "@uiw/react-md-editor";
 import styles from "./MarkdownViewer.module.scss";
-import { createComponent } from "./fromProps";
+import { createComponent, markdownProp } from "./fromProps";
 
 export const markdownViewer = createComponent(
   {
@@ -11,21 +11,12 @@ export const markdownViewer = createComponent(
       minSize: { width: 50, height: 50 },
     },
     properties: {
-      markdown: {
-        type: "String",
-        defaultValue: "## Hello there",
-        input: {
-          type: "Markdown",
-        },
-      },
+      markdown: markdownProp({ defaultValue: "## Hello there" }),
     },
   },
   ({ markdown, className }) => {
     return (
-      <div
-        className={`${styles["markdown-viewer"]}`}
-        data-color-mode="dark"
-      >
+      <div className={`${styles["markdown-viewer"]}`} data-color-mode="dark">
         <MDEditor.Markdown
           source={markdown}
           style={{ whiteSpace: "pre-wrap", background: "none" }}

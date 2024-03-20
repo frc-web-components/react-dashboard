@@ -1,5 +1,5 @@
 import { NumberSlider } from "@frc-web-components/react";
-import { createComponent } from "./fromProps";
+import { createComponent, numberProp } from "./fromProps";
 
 export const numberSlider = createComponent(
   {
@@ -10,13 +10,10 @@ export const numberSlider = createComponent(
       minSize: { width: 80, height: 30 },
     },
     properties: {
-      value: { type: "Number", defaultValue: 0 },
-      min: { type: "Number", defaultValue: -1 },
-      max: { type: "Number", defaultValue: 1 },
-      blockIncrement: {
-        type: "Number",
-        defaultValue: 0.05,
-      },
+      value: numberProp(),
+      min: numberProp({ defaultValue: -1 }),
+      max: numberProp({ defaultValue: 1 }),
+      blockIncrement: numberProp({ defaultValue: .05 }),
     },
   },
   ({ blockIncrement, value, min, max, className, setProperty }) => {
