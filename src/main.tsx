@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 import { store } from "./store/app/store";
 import { DropZoneProvider } from "./context-providers/DropZoneContext.tsx";
 import { ComponentConfigProvider } from "./context-providers/ComponentConfigContext.tsx";
-import { componentMap } from "./context-providers/components.ts";
+import { componentMap } from "./components";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
