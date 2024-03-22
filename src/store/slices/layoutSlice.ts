@@ -4,6 +4,11 @@ import { createAppSlice } from "../app/createAppSlice";
 export interface Component {
   id: string;
   type: string;
+  name: string;
+  source?: {
+    provider: string;
+    key: string;
+  };
   properties: {
     [propertName: string]: {
       value: unknown;
@@ -22,13 +27,13 @@ export interface Component {
 export interface LayoutSliceState {
   selectedComponentId?: string;
   components: {
-    [componentId: string]: Component; 
-  },
+    [componentId: string]: Component;
+  };
   tabs: {
     [tabId: string]: {
       componentIds: string[];
-    }
-  }
+    };
+  };
   // components: Record<string, Record<string, Component>>;
 }
 
@@ -51,16 +56,28 @@ export const layoutSlice = createAppSlice({
         state.selectedComponentId = action.payload;
       }
     ),
-    addComponent: create.reducer((state, action: PayloadAction<{ component: Component, tabId: string }>) => {
-      const { component, tabId } = action.payload;
-      state.components[component.id] = component;
-      if (!state.tabs[tabId]) {
-        state.tabs[tabId] = {
-          componentIds: []
+    addComponent: create.reducer(
+      (
+        state,
+        action: PayloadAction<{ component: Component; tabId: string }>
+      ) => {
+        const { component, tabId } = action.payload;
+        state.components[component.id] = component;
+        if (!state.tabs[tabId]) {
+          state.tabs[tabId] = {
+            componentIds: [],
+          };
         }
+        state.tabs[tabId].componentIds.push(component.id);
       }
-      state.tabs[tabId].componentIds.push(component.id);
-    }),
+    ),
+    setComponentName: create.reducer(
+      (state, action: PayloadAction<{ id: string; name: string }>) => {
+        const { id, name } = action.payload;
+        state.components[id].name = name;
+      }
+    ),
+
     updateComponentSize: create.reducer(
       (
         state,
@@ -99,7 +116,7 @@ export const layoutSlice = createAppSlice({
           source?: {
             provider: string;
             key: string;
-          }
+          };
         }>
       ) => {
         const { componentId, propertyName, source } = action.payload;
@@ -118,4 +135,3 @@ export const {
   updateComponentProperty,
   updateComponentSource,
 } = layoutSlice.actions;
-

@@ -18,6 +18,8 @@ import MarkdownEditor from "./MarkdownEditor";
 import { selectSelectedComponent } from "../../store/selectors/layoutSelectors";
 import { SourceCellRenderer } from "./SourceCellRenderer";
 import { ColorCellRenderer } from "./ColorCellRenderer";
+import PropertyNameCellRenderer from "./NameCellRenderer";
+import styles from "./Properties.module.scss";
 
 export interface SourceData {
   key: string;
@@ -25,6 +27,7 @@ export interface SourceData {
 }
 
 export interface PropertyData {
+  componentId: string;
   isParent?: boolean;
   name: string;
   source?: SourceData;
@@ -33,21 +36,19 @@ export interface PropertyData {
   componentConfig: ComponentConfig;
 }
 
+export interface PropertyContext {
+  expanded: boolean;
+  toggleExpanded: () => unknown;
+}
+
 const defaultColumnDefs: ColDef<PropertyData>[] = [
   {
     field: "name",
-    editable: false,
+    editable: (params) => {
+      return !!params.data?.isParent;
+    },
     sortable: false,
-    cellRendererSelector: (params) => {
-      if (params.data?.isParent) {
-        return {
-          component: 
-        };
-      }
-      return {
-        component: 'agTextCellRenderer'
-      }
-    }
+    cellRenderer: PropertyNameCellRenderer,
   },
   {
     field: "source",
@@ -115,6 +116,11 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       }
     },
     cellRendererSelector: (params) => {
+      if (params.data?.isParent) {
+        return {
+          component: () => <></>,
+        };
+      }
       if (!params.data) {
         return {
           component: "agTextCellRenderer",
@@ -151,6 +157,8 @@ function Properties() {
   const [gridApi, setGridApi] = useState<GridApi>();
   const selectedComponent = useAppSelector(selectSelectedComponent);
   const { components } = useComponentConfigs();
+  const [isExpanded, setIsExpanded] = useState(true);
+
   const dispatch = useAppDispatch();
   const containerElementRef = useRef<HTMLElement>(null);
   useResizeObserver(containerElementRef, () => {
@@ -164,19 +172,31 @@ function Properties() {
       return [];
     }
     const component = components[selectedComponent.type];
-    const propertyRows =
-      Object.entries(component?.properties).map(([name, property]) => {
-        return {
-          name,
-          defaultValue:
-            selectedComponent.properties[name]?.value ?? property.defaultValue,
-          type: property.input?.type ?? property.type,
-          source: selectedComponent.properties[name].source,
-          componentConfig: component,
-        };
-      }) ?? [];
-      return propertyRows;
-  }, [selectedComponent, components]);
+    const parentCell: PropertyData = {
+      componentId: selectedComponent.id,
+      componentConfig: component,
+      defaultValue: isExpanded,
+      name: selectedComponent.name,
+      type: "",
+      isParent: true,
+    };
+    const propertyRows = !isExpanded
+      ? []
+      : Object.entries(component?.properties).map(([name, property]) => {
+          return {
+            componentId: selectedComponent.id,
+            name,
+            defaultValue:
+              selectedComponent.properties[name]?.value ??
+              property.defaultValue,
+            type: property.input?.type ?? property.type,
+            source: selectedComponent.properties[name].source,
+            componentConfig: component,
+          };
+        }) ?? [];
+
+    return [parentCell, ...propertyRows];
+  }, [selectedComponent, components, isExpanded]);
 
   useEffect(() => {
     if (gridApi) {
@@ -184,13 +204,29 @@ function Properties() {
     }
   }, [gridApi]);
 
-  // const [rowData, setRowData] = useState(gyroProperties);
-  // const { setPropertiesDropZone, sourceGrid } = useDropZone(); // Use the context
+  const toggleExpanded = useCallback(() => {
+    setIsExpanded((current) => !current);
+  }, []);
+
+  const context: PropertyContext = useMemo(() => {
+    return {
+      expanded: isExpanded,
+      toggleExpanded,
+    };
+  }, [isExpanded]);
+
+  useEffect(() => {
+    if (gridApi) {
+      gridApi.setGridOption("context", context);
+      gridApi.redrawRows();
+    }
+  }, [context, gridApi]);
 
   return (
     <div
       ref={containerElementRef as any}
       style={{ height: "100%", width: "100%" }}
+      className={styles["properties-grid"]}
     >
       <div style={{ height: "100%", boxSizing: "border-box" }}>
         <div
@@ -198,6 +234,7 @@ function Properties() {
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<PropertyData>
+            context={context}
             onGridReady={(params) => setGridApi(params.api)}
             localeText={{
               noRowsToShow: "No properties to show",
@@ -215,9 +252,7 @@ function Properties() {
             }}
             animateRows={false}
             reactiveCustomComponents
-
             onCellValueChanged={(event) => {
-              console.log("VALUE:", event);
               const { newValue } = event;
               const colId = event.column.getColId();
               if (!selectedComponent) {

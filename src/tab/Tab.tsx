@@ -136,6 +136,7 @@ function Tab({ tabId }: Props) {
                 position: { x, y },
                 properties: props,
                 type,
+                name: node.data.dashboard.name
               },
             })
           );
@@ -157,12 +158,19 @@ function Tab({ tabId }: Props) {
         }
       }}
       onResizeStop={(updatedLayout, oldItem, newItem) => {
-        const { w, h, i } = newItem;
+        const { w, h, i, x, y } = newItem;
         dispatch(
           updateComponentSize({
             id: i,
             width: w,
             height: h,
+          })
+        );
+        dispatch(
+          updateComponentPosition({
+            id: i,
+            x,
+            y,
           })
         );
         // setLayout(updatedLayout as ComponentLayout[]);
