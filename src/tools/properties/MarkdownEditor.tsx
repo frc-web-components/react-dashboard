@@ -1,23 +1,10 @@
 import { CustomCellEditorProps } from "ag-grid-react";
-import React, { memo, useEffect, useRef, useState } from "react";
-import MDEditor, {
-  ICommand,
-  commands,
-  divider,
-  getCommands,
-} from "@uiw/react-md-editor";
+import { memo } from "react";
+import MDEditor, { ICommand, divider, getCommands } from "@uiw/react-md-editor";
 import { PropertyData } from "./Properties";
 
 export default memo((props: CustomCellEditorProps<PropertyData>) => {
   const { value, onValueChange, stopEditing } = props;
-
-  console.log("PROPS:", props, onValueChange);
-  const isHappy = (value: string) => value === "Happy";
-
-  const onClick = (happy: boolean) => {
-    onValueChange(happy ? "Happy" : "Sad");
-    stopEditing();
-  };
 
   const title3: ICommand = {
     name: "title3",
@@ -28,7 +15,7 @@ export default memo((props: CustomCellEditorProps<PropertyData>) => {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: '5px'
+          gap: "5px",
         }}
       >
         <svg
@@ -46,14 +33,13 @@ export default memo((props: CustomCellEditorProps<PropertyData>) => {
             stroke-linejoin="round"
           />
         </svg>
-        <span style={{  }}>Finish Editing</span>
+        <span style={{}}>Finish Editing</span>
       </div>
     ),
-    execute: (state, api) => {
+    execute: () => {
       stopEditing();
     },
   };
-  // const [editorValue, setValue] = React.useState("**Hello world!!!**");
 
   return (
     <div className="container" data-color-mode="dark" style={{ width: "100%" }}>
@@ -61,7 +47,6 @@ export default memo((props: CustomCellEditorProps<PropertyData>) => {
         value={value}
         onChange={(value) => {
           onValueChange(value ?? "");
-          // setValue(value ?? "");
         }}
         commands={[title3, divider, ...getCommands()]}
         fullscreen

@@ -8,6 +8,8 @@ import {
 } from "@frc-web-components/react";
 import { markdownViewer } from "./MarkdownViewer";
 import { numberSlider } from './NumberSlider';
+import { booleanBox } from './BooleanBox';
+import { booleanProp, numberProp } from "./fromProps";
 
 export const componentMap: Record<string, ComponentConfig> = {
     basicFmsInfo: {
@@ -43,11 +45,11 @@ export const componentMap: Record<string, ComponentConfig> = {
         minSize: { width: 120, height: 120 },
       },
       properties: {
-        value: { type: "Number", defaultValue: 0 },
-        hideLabel: { type: "Boolean", defaultValue: false },
-        precision: { type: "Number", defaultValue: 2 },
-        counterClockwise: { type: "Boolean", defaultValue: false },
-        fromRadians: { type: "Boolean", defaultValue: false },
+        value: numberProp(),
+        hideLabel: booleanProp(),
+        precision: numberProp({ defaultValue: 2, min: 0, precision: 0 }),
+        counterClockwise: booleanProp(),
+        fromRadians: booleanProp(),
       },
       component: Gyro,
     },
@@ -122,6 +124,7 @@ export const componentMap: Record<string, ComponentConfig> = {
     },
     markdownViewer,
     numberSlider,
+    booleanBox,
   };
   
   export const componentList: ComponentConfig[] = Object.values(componentMap);

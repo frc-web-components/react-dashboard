@@ -48,7 +48,7 @@ function ComponentPicker() {
         >
           <AgGridReact<ComponentListItem>
             onGridReady={(params) => setComponentGrid(params.api as any)}
-            rowData={Object.values(rowData)}
+            rowData={Object.values(rowData).sort((a, b) => a.dashboard.name.localeCompare(b.dashboard.name))}
             columnDefs={columnDefs}
             rowDragManaged={true}
             suppressMoveWhenRowDragging={true}

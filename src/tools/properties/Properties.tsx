@@ -1,97 +1,64 @@
-import { ColDef, GridApi, RowDropZoneParams } from "ag-grid-community";
+import { ColDef, GridApi, IsFullWidthRowParams } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useDropZone } from "../../context-providers/DropZoneContext";
+import { AgGridReact } from "ag-grid-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/app/hooks";
 import {
   updateComponentProperty,
   updateComponentSource,
 } from "../../store/slices/layoutSlice";
-import { ComponentConfig, useComponentConfigs } from "../../context-providers/ComponentConfigContext";
+import {
+  ComponentConfig,
+  useComponentConfigs,
+} from "../../context-providers/ComponentConfigContext";
 import useResizeObserver from "@react-hook/resize-observer";
 import MarkdownEditor from "./MarkdownEditor";
 import { selectSelectedComponent } from "../../store/selectors/layoutSelectors";
+import { SourceCellRenderer } from "./SourceCellRenderer";
+import { ColorCellRenderer } from "./ColorCellRenderer";
 
-interface SourceData {
+export interface SourceData {
   key: string;
   provider: string;
 }
 
 export interface PropertyData {
+  isParent?: boolean;
   name: string;
-  source?: {
-    key: string;
-    provider: string;
-  };
+  source?: SourceData;
   type: string;
   defaultValue: unknown;
-  componentConfig: ComponentConfig
+  componentConfig: ComponentConfig;
 }
-
-const SourceCellRenderer = (
-  props: CustomCellRendererProps<PropertyData, SourceData>
-) => {
-  const { sourceGrid } = useDropZone(); // Use the context
-  const [element, setElement] = useState<HTMLElement>();
-  const [dropZone, setDropZone] = useState<RowDropZoneParams>();
-
-  useEffect(() => {
-    if (sourceGrid && element) {
-      if (dropZone) {
-        sourceGrid.removeRowDropZone(dropZone);
-      }
-      const dropZoneParams: RowDropZoneParams = {
-        getContainer() {
-          return element;
-        },
-        onDragStop(params) {
-          props.setValue?.({
-            provider: "NT",
-            key: params.node.data.id,
-          });
-        },
-      };
-      sourceGrid.addRowDropZone(dropZoneParams);
-      setDropZone(dropZoneParams);
-    }
-    return () => {
-      if (dropZone && sourceGrid) {
-        sourceGrid.removeRowDropZone(dropZone);
-      }
-    };
-  }, [sourceGrid, element]);
-
-  return (
-    <div
-      ref={(el) => {
-        if (el) {
-          setElement(el);
-        }
-      }}
-      style={{ height: "100%", display: "flex", gap: "3px" }}
-    >
-      {props.value && (
-        <>
-          <div>{props.value.provider}:</div>
-          <div>{props.value.key}</div>
-        </>
-      )}
-    </div>
-  );
-};
 
 const defaultColumnDefs: ColDef<PropertyData>[] = [
   {
     field: "name",
     editable: false,
+    sortable: false,
+    cellRendererSelector: (params) => {
+      if (params.data?.isParent) {
+        return {
+          component: 
+        };
+      }
+      return {
+        component: 'agTextCellRenderer'
+      }
+    }
+  },
+  {
+    field: "source",
+    editable: false,
+    sortable: false,
+    cellRenderer: SourceCellRenderer,
   },
   // Using dot notation to access nested property
   {
     field: "defaultValue",
-    editable: true,
+    // editable: true,
     sortable: false,
     suppressKeyboardEvent: (params) => {
       if (!params.data) {
@@ -99,25 +66,39 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       }
       const { componentConfig, name } = params.data;
       const { input } = componentConfig.properties[name];
-      return input?.type === 'Markdown';
+      return input?.type === "Markdown";
     },
 
     valueGetter: (params) => {
       return params.data?.defaultValue;
     },
+    editable: (params) => {
+      if (!params.data) {
+        return true;
+      }
+      const { componentConfig, name } = params.data;
+      const { input } = componentConfig.properties[name];
+      return input?.type !== "Color";
+    },
     cellEditorSelector: (params) => {
       const { type, componentConfig, name } = params.data;
       const { input } = componentConfig.properties[name];
-      if (input?.type === 'Markdown') {
+      if (type === "Markdown") {
         return {
           component: MarkdownEditor,
           popup: true,
-
         };
       }
       if (type === "Number") {
         return {
           component: "agNumberCellEditor",
+          params: {
+            min: input?.min,
+            max: input?.max,
+            step: input?.step,
+            precision: input?.precision,
+            showStepperButtons: true,
+          },
         };
       } else if (type === "String") {
         return {
@@ -134,8 +115,17 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       }
     },
     cellRendererSelector: (params) => {
-      const type = params.data?.type;
-      if (type === "Number") {
+      if (!params.data) {
+        return {
+          component: "agTextCellRenderer",
+        };
+      }
+      const { type } = params.data;
+      if (type === "Color") {
+        return {
+          component: ColorCellRenderer,
+        };
+      } else if (type === "Number") {
         return {
           component: "agNumberCellRenderer",
         };
@@ -154,13 +144,6 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       }
     },
   },
-  {
-    field: "source",
-    editable: true,
-    sortable: false,
-    cellRenderer: SourceCellRenderer,
-  },
-  // Show default header name
 ];
 
 function Properties() {
@@ -176,23 +159,23 @@ function Properties() {
     }
   });
 
-  const rowData = useMemo(() => {
+  const rowData: PropertyData[] = useMemo(() => {
     if (!selectedComponent || !components) {
       return [];
     }
     const component = components[selectedComponent.type];
-    return (
+    const propertyRows =
       Object.entries(component?.properties).map(([name, property]) => {
         return {
           name,
           defaultValue:
             selectedComponent.properties[name]?.value ?? property.defaultValue,
-          type: property.type,
+          type: property.input?.type ?? property.type,
           source: selectedComponent.properties[name].source,
           componentConfig: component,
         };
-      }) ?? []
-    );
+      }) ?? [];
+      return propertyRows;
   }, [selectedComponent, components]);
 
   useEffect(() => {
@@ -225,15 +208,22 @@ function Properties() {
             suppressMoveWhenRowDragging={true}
             suppressRowDrag={true}
             getRowId={(params) => {
-              return params.data.name;
+              if ("name" in params.data) {
+                return params.data.name;
+              }
+              return "parent";
             }}
             animateRows={false}
             reactiveCustomComponents
 
             onCellValueChanged={(event) => {
+              console.log("VALUE:", event);
               const { newValue } = event;
               const colId = event.column.getColId();
               if (!selectedComponent) {
+                return;
+              }
+              if (!("name" in event.data)) {
                 return;
               }
               if (colId === "defaultValue") {

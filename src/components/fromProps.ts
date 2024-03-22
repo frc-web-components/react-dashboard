@@ -42,53 +42,79 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
 
 export function numberProp(prop?: {
   defaultValue?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  precision?: number;
 }): {
-  type: 'Number',
-  defaultValue: number
+  type: "Number";
+  defaultValue: number;
+  input: {
+    type: "Number";
+    min?: number;
+    max?: number;
+    step?: number;
+    precision?: number;
+  };
 } {
   return {
     type: "Number",
     defaultValue: prop?.defaultValue ?? 0,
-  };
-}
-
-export function stringProp(prop?: {
-  defaultValue?: string;
-}): {
-  type: 'String',
-  defaultValue: string,
-} {
-  return {
-    type: "String",
-    defaultValue: prop?.defaultValue ?? '',
-  };
-}
-
-export function markdownProp(prop?: {
-  defaultValue?: string;
-}): {
-  type: 'String',
-  defaultValue: string,
-  input: {
-    type: 'Markdown'
-  }
-} {
-  return {
-    type: "String",
-    defaultValue: prop?.defaultValue ?? '',
     input: {
-      type: 'Markdown'
-    }
+      type: "Number",
+      min: prop?.min,
+      max: prop?.max,
+      step: prop?.step,
+      precision: prop?.precision,
+    },
   };
 }
 
+export function stringProp(prop?: { defaultValue?: string }): {
+  type: "String";
+  defaultValue: string;
+} {
+  return {
+    type: "String",
+    defaultValue: prop?.defaultValue ?? "",
+  };
+}
 
+export function colorProp(prop?: { defaultValue?: string }): {
+  type: "String";
+  defaultValue: string;
+  input: {
+    type: "Color";
+  };
+} {
+  return {
+    type: "String",
+    defaultValue: prop?.defaultValue ?? "",
+    input: {
+      type: "Color",
+    },
+  };
+}
 
-export function booleanProp(prop?: {
-  defaultValue?: boolean;
-}): {
-  type: 'Boolean',
-  defaultValue: boolean,
+export function markdownProp(prop?: { defaultValue?: string }): {
+  type: "String";
+  defaultValue: string;
+  input: {
+    type: "Markdown";
+  };
+} {
+  return {
+    type: "String",
+    defaultValue: prop?.defaultValue ?? "",
+    input: {
+      type: "Markdown",
+    },
+  };
+}
+
+export function booleanProp(prop?: { defaultValue?: boolean }): {
+  type: "Boolean";
+  defaultValue: boolean;
 } {
   return {
     type: "Boolean",
