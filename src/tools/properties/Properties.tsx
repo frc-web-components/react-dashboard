@@ -6,7 +6,9 @@ import { AgGridReact } from "ag-grid-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/app/hooks";
 import {
+  setComponentName,
   updateComponentProperty,
+  updateComponentPropertySource,
   updateComponentSource,
 } from "../../store/slices/layoutSlice";
 import {
@@ -178,6 +180,7 @@ function Properties() {
       defaultValue: isExpanded,
       name: selectedComponent.name,
       type: "",
+      source: selectedComponent.source,
       isParent: true,
     };
     const propertyRows = !isExpanded
@@ -245,15 +248,18 @@ function Properties() {
             suppressMoveWhenRowDragging={true}
             suppressRowDrag={true}
             getRowId={(params) => {
-              if ("name" in params.data) {
+              if (!params.data.isParent) {
                 return params.data.name;
               }
-              return "parent";
+              return `${params.data.componentId}parent`;
             }}
             animateRows={false}
             reactiveCustomComponents
             onCellValueChanged={(event) => {
-              const { newValue } = event;
+              const {
+                newValue,
+                data: { isParent },
+              } = event;
               const colId = event.column.getColId();
               if (!selectedComponent) {
                 return;
@@ -270,11 +276,27 @@ function Properties() {
                   })
                 );
               } else if (colId === "source") {
+                if (!isParent) {
+                  dispatch(
+                    updateComponentPropertySource({
+                      componentId: selectedComponent.id,
+                      propertyName: event.data.name,
+                      source: newValue,
+                    })
+                  );
+                } else {
+                  dispatch(
+                    updateComponentSource({
+                      componentId: selectedComponent.id,
+                      source: newValue,
+                    })
+                  );
+                }
+              } else if (colId === "name") {
                 dispatch(
-                  updateComponentSource({
+                  setComponentName({
                     componentId: selectedComponent.id,
-                    propertyName: event.data.name,
-                    source: newValue,
+                    name: newValue,
                   })
                 );
               }

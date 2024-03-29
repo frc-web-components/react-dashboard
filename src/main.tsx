@@ -8,6 +8,10 @@ import { store } from "./store/app/store";
 import { DropZoneProvider } from "./context-providers/DropZoneContext.tsx";
 import { ComponentConfigProvider } from "./context-providers/ComponentConfigContext.tsx";
 import { componentMap } from "./components";
+import { NT4Provider as NTProvider } from './store/sources/nt4';
+
+
+const provider = new NTProvider(store);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

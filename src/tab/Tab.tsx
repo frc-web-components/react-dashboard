@@ -13,6 +13,7 @@ import {
 } from "../store/slices/layoutSlice";
 import {
   selectSelectedComponentId,
+  selectSelectedComponent,
   selectTabComponents,
 } from "../store/selectors/layoutSelectors";
 import { useDropZone } from "../context-providers/DropZoneContext";
@@ -42,7 +43,7 @@ interface Props {
 
 function Tab({ tabId }: Props) {
   const dispatch = useAppDispatch();
-  const selectedComponentId = useAppSelector(selectSelectedComponentId);
+  const selectedComponent = useAppSelector(selectSelectedComponent);
   const layoutComponents = useAppSelector((state) =>
     selectTabComponents(state, tabId)
   );
@@ -206,10 +207,10 @@ function Tab({ tabId }: Props) {
           <div
             key={id}
             className={classNames(Styles.component, {
-              [Styles.selected]: selectedComponentId === id,
+              [Styles.selected]: selectedComponent?.id === id,
             })}
           >
-            <TabComponent Component={Component} properties={properties} />
+            <TabComponent Component={Component} properties={properties} componentSource={selectedComponent?.source} />
           </div>
         );
       })}

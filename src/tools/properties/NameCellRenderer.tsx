@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { RowDropZoneParams } from "ag-grid-community";
 import { useDropZone } from "../../context-providers/DropZoneContext";
 import { useAppDispatch } from "../../store/app/hooks";
-import { updateComponentSource } from "../../store/slices/layoutSlice";
+import { updateComponentPropertySource } from "../../store/slices/layoutSlice";
 
 const NameCellRenderer = (
   props: CustomCellRendererProps<PropertyData, string, PropertyContext>
@@ -30,7 +30,7 @@ const NameCellRenderer = (
       const { componentId, isParent, name } = data;
       if (!isParent) {
         dispatch(
-          updateComponentSource({
+          updateComponentPropertySource({
             componentId: componentId,
             propertyName: name,
             source: {
@@ -100,6 +100,7 @@ const NameCellRenderer = (
           overflow: "hidden",
           textOverflow: "ellipsis",
           paddingLeft: isParent ? 0 : 18,
+          fontWeight: isParent ? 'bold' : 'normal'
         }}
       >
         {props.data?.name}

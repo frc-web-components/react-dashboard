@@ -5,6 +5,10 @@ import { useNt4 } from "@frc-web-components/react";
 
 interface Props {
   Component: React.ComponentType<any>;
+  componentSource?: {
+    provider: string;
+    key: string;
+  },
   properties: {
     [name: string]: {
       value: unknown;
@@ -23,7 +27,7 @@ function capitalize(value: string) {
   return value[0].toUpperCase() + value.substring(1);
 }
 
-function TabComponent({ Component, properties }: Props) {
+function TabComponent({ Component, properties, componentSource }: Props) {
   const [defaultPropValues, setDefaultPropValues] = useState(
     Object.fromEntries(
       Object.entries(properties).map(([propName, prop]) => {

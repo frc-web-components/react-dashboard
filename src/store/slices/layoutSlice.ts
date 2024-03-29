@@ -72,9 +72,9 @@ export const layoutSlice = createAppSlice({
       }
     ),
     setComponentName: create.reducer(
-      (state, action: PayloadAction<{ id: string; name: string }>) => {
-        const { id, name } = action.payload;
-        state.components[id].name = name;
+      (state, action: PayloadAction<{ componentId: string; name: string }>) => {
+        const { componentId, name } = action.payload;
+        state.components[componentId].name = name;
       }
     ),
 
@@ -107,7 +107,7 @@ export const layoutSlice = createAppSlice({
           propertyValue;
       }
     ),
-    updateComponentSource: create.reducer(
+    updateComponentPropertySource: create.reducer(
       (
         state,
         action: PayloadAction<{
@@ -123,6 +123,21 @@ export const layoutSlice = createAppSlice({
         state.components[componentId].properties[propertyName].source = source;
       }
     ),
+    updateComponentSource: create.reducer(
+      (
+        state,
+        action: PayloadAction<{
+          componentId: string;
+          source?: {
+            provider: string;
+            key: string;
+          };
+        }>
+      ) => {
+        const { componentId, source } = action.payload;
+        state.components[componentId].source = source;
+      }
+    ),
   }),
 });
 
@@ -133,5 +148,7 @@ export const {
   updateComponentPosition,
   updateComponentSize,
   updateComponentProperty,
+  updateComponentPropertySource,
   updateComponentSource,
+  setComponentName,
 } = layoutSlice.actions;

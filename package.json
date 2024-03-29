@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@frc-web-components/fwc": "^2.4.2",
+    "@frc-web-components/fwc": "C:/Users/Owner/Documents/repos/robotics/fwc/frc-web-components/packages/fwc",
     "@frc-web-components/react": "^0.7.0",
     "@react-hook/resize-observer": "^1.2.6",
     "@reduxjs/toolkit": "^2.2.1",
@@ -19,6 +19,7 @@
     "ag-grid-react": "^31.1.1",
     "classnames": "^2.5.1",
     "flexlayout-react": "^0.7.15",
+    "protobufjs": "^7.2.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-grid-layout": "^1.4.4",
