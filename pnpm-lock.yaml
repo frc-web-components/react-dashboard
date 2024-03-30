@@ -35,6 +35,9 @@ dependencies:
   protobufjs:
     specifier: ^7.2.6
     version: 7.2.6
+  proxy-memoize:
+    specifier: ^2.0.5
+    version: 2.0.5
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -4704,6 +4707,16 @@ packages:
       '@protobufjs/utf8': 1.1.0
       '@types/node': 20.11.30
       long: 5.2.3
+    dev: false
+
+  /proxy-compare@2.6.0:
+    resolution: {integrity: sha512-8xuCeM3l8yqdmbPoYeLbrAXCBWu19XEYc5/F28f5qOaoAIMyfmBUkl5axiK+x9olUvRlcekvnm98AP9RDngOIw==}
+    dev: false
+
+  /proxy-memoize@2.0.5:
+    resolution: {integrity: sha512-EeD3Fn6s7qVHCWPlbWFf0P2OcXww2MCWkFpnWMVYl8uF02zR0WvXqkoOUVb1z5QVAI3ptq40U0xlqGVzy/Iomg==}
+    dependencies:
+      proxy-compare: 2.6.0
     dev: false
 
   /pubsub-js@1.9.4:

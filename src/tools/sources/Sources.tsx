@@ -1,11 +1,11 @@
-import { ColDef, GridApi, ValueGetterParams } from "ag-grid-community";
+import { ColDef, ValueGetterParams } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import collapseIcon from "/collapse.svg";
 import expandIcon from "/expand.svg";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useJson } from "@frc-web-components/react";
 import { useDropZone } from "../../context-providers/DropZoneContext";
 

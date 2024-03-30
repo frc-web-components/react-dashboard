@@ -20,6 +20,7 @@
     "classnames": "^2.5.1",
     "flexlayout-react": "^0.7.15",
     "protobufjs": "^7.2.6",
+    "proxy-memoize": "^2.0.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-grid-layout": "^1.4.4",

@@ -14,7 +14,7 @@ abstract class Provider {
     this.#store = store;
   }
 
-  abstract componentUpdate(key: string, value: unknown): unknown;
+  abstract componentUpdate(key: string, value: unknown, type: string): unknown;
 
   update(key: string, value: unknown, type: string) {
     // dispatch action from store
@@ -26,6 +26,7 @@ export class NT4Provider extends Provider {
   #nt4: NT4_Client;
   #structDecoder = new StructDecoder();
   static #STRUCT_PREFIX = "struct:";
+  #topics: Record<string, NT4_Topic> = {};
 
   constructor(store: AppStore) {
     super(store);
@@ -35,10 +36,11 @@ export class NT4Provider extends Provider {
       "localhost",
       "FRC Web Components",
       (topic: NT4_Topic) => {
+        this.#topics[topic.name] = topic;
         this.update(topic.name, undefined, topic.type);
       },
       (topic: NT4_Topic) => {
-        // this.onTopicUnannounce(...args);
+        delete this.#topics[topic.name];
       },
       (topic: NT4_Topic, timestamp_us: number, value: unknown) => {
         const basicTypes = [
@@ -96,14 +98,11 @@ export class NT4Provider extends Provider {
         if (isArray) {
           schemaType = schemaType.slice(0, -2);
         }
-
         try {
           const decodedData = isArray
             ? this.#structDecoder.decodeArray(schemaType, value)
             : this.#structDecoder.decode(schemaType, value);
           this.update(topic.name, decodedData.data, topic.type);
-
-          // console.log("decodedData:", decodedData);
         } catch {}
       }
       // else if (topic.type.startsWith(PROTO_PREFIX)) {
@@ -137,8 +136,23 @@ export class NT4Provider extends Provider {
         name.split(NT4Provider.#STRUCT_PREFIX)[1],
         value
       );
+      const { schemas } = this.#structDecoder.toSerialized();
+      Object.entries(schemas).forEach(([name, schema]) => {
+        this.update(`/.schema/${NT4Provider.#STRUCT_PREFIX}${name}`, schema, 'structschema');
+      });
     }
   }
 
-  componentUpdate(key: string, value: unknown) {}
+  componentUpdate(key: string, value: unknown, type: string) {
+    const topic = this.#topics[key];
+    if (topic) {
+      this.#nt4.publishNewTopic(topic.name, topic.type);
+      this.#nt4.addSample(topic.name, value);
+      this.update(topic.name, value, type);
+    } else if (type !== undefined) {
+      this.#nt4.publishNewTopic(key, type);
+      this.#nt4.addSample(key, value);
+      this.update(key, value, type);
+    }
+  }
 }

@@ -1,16 +1,18 @@
 /** Class to manage decoding WPILib structs.
  *
  * Code from AdvantageScope: https://github.com/Mechanical-Advantage/AdvantageScope/blob/f781f29067b8fa175e95cfc9aa4c23ea6d5ee3d3/src/shared/log/StructDecoder.ts
- * 
- * Specification: https://github.com/PeterJohnson/allwpilib/blob/protobuf/wpiutil/doc/struct.adoc
+ *
+ * Specification: https://github.com/wpilibsuite/allwpilib/blob/main/wpiutil/doc/struct.adoc
  */
 export default class StructDecoder {
   private schemaStrings: { [key: string]: string } = {};
   private schemas: { [key: string]: Schema } = {};
   private static textDecoder = new TextDecoder();
+  private static textEncoder = new TextEncoder();
 
   addSchema(name: string, schema: Uint8Array): void {
     let schemaStr = StructDecoder.textDecoder.decode(schema);
+    console.log("schemaStr:", { name, schemaStr });
     if (name in this.schemaStrings) return;
     this.schemaStrings[name] = schemaStr;
 
@@ -19,7 +21,10 @@ export default class StructDecoder {
       let compileSuccess = false;
       Object.keys(this.schemaStrings).forEach((schemaName) => {
         if (!(schemaName in this.schemas)) {
-          let success = this.compileSchema(schemaName, this.schemaStrings[schemaName]);
+          let success = this.compileSchema(
+            schemaName,
+            this.schemaStrings[schemaName]
+          );
           compileSuccess = compileSuccess || success;
         }
       });
@@ -32,7 +37,9 @@ export default class StructDecoder {
   }
 
   private compileSchema(name: string, schema: string): boolean {
-    let valueSchemaStrs: string[] = schema.split(";").filter((schemaStr) => schemaStr.length > 0);
+    let valueSchemaStrs: string[] = schema
+      .split(";")
+      .filter((schemaStr) => schemaStr.length > 0);
     let valueSchemas: ValueSchema[] = [];
     for (let i = 0; i < valueSchemaStrs.length; i++) {
       let schemaStr = valueSchemaStrs[i];
@@ -99,7 +106,7 @@ export default class StructDecoder {
         enum: enumData,
         bitfieldWidth: bitfieldWidth,
         arrayLength: arrayLength,
-        bitRange: [0, 0]
+        bitRange: [0, 0],
       });
     }
 
@@ -129,7 +136,9 @@ export default class StructDecoder {
         }
         bitfieldPosition = null;
         bitfieldLength = null;
-        let bitLength = VALUE_TYPE_MAX_BITS.get(valueSchema.type as ValueType) as number;
+        let bitLength = VALUE_TYPE_MAX_BITS.get(
+          valueSchema.type as ValueType
+        ) as number;
         if (valueSchema.arrayLength !== null) {
           bitLength *= valueSchema.arrayLength;
         }
@@ -137,12 +146,15 @@ export default class StructDecoder {
         bitPosition += bitLength;
       } else {
         // Bitfield value
-        let typeLength = VALUE_TYPE_MAX_BITS.get(valueSchema.type as ValueType) as number;
+        let typeLength = VALUE_TYPE_MAX_BITS.get(
+          valueSchema.type as ValueType
+        ) as number;
         let valueBitLength = Math.min(valueSchema.bitfieldWidth, typeLength);
         if (
           bitfieldPosition === null || // No bitfield started
           bitfieldLength === null || // No bitfield started
-          (valueSchema.type !== ValueType.Bool && bitfieldLength !== typeLength) || // Current bitfield is a different size (except for boolean that fits anywhere)
+          (valueSchema.type !== ValueType.Bool &&
+            bitfieldLength !== typeLength) || // Current bitfield is a different size (except for boolean that fits anywhere)
           bitfieldPosition + valueBitLength > bitfieldLength // Current bitfield won't fit this data
         ) {
           // Start new bitfield
@@ -164,23 +176,140 @@ export default class StructDecoder {
     // Save schema
     this.schemas[name] = {
       length: bitPosition,
-      valueSchemas: valueSchemas
+      valueSchemas: valueSchemas,
     };
     return true;
   }
 
+  private encodeArrayValueType(type: ValueType, values: any[]): Uint8Array {
+    const valueTypeSize = VALUE_TYPE_MAX_BITS.get(type)! / 8;
+    let buffer = new Uint8Array(valueTypeSize * values.length);
+    values.forEach((value, i) => {
+      const encodedValue = this.encodeValueType(type, value);
+      buffer.set(encodedValue, valueTypeSize * i);
+    });
+    return buffer;
+  }
+
+  private encodeValueType(type: ValueType, value: any): Uint8Array {
+    let buffer = new Uint8Array(VALUE_TYPE_MAX_BITS.get(type)! / 8);
+    let dataView = new DataView(buffer.buffer);
+    switch (type) {
+      case ValueType.Bool:
+        dataView.setUint8(0, value);
+        break;
+      case ValueType.Char:
+        return StructDecoder.textEncoder.encode(value);
+      case ValueType.Int8:
+        dataView.setInt8(0, value);
+        break;
+      case ValueType.Int16:
+        dataView.setInt16(0, value, true);
+        break;
+      case ValueType.Int32:
+        dataView.setInt32(0, value, true);
+        break;
+      case ValueType.Int64:
+        // JS doesn't support int64, get as close as possible
+        dataView.setBigInt64(0, value, true);
+        break;
+      case ValueType.Uint8:
+        dataView.setUint8(0, value);
+        break;
+      case ValueType.Uint16:
+        dataView.setUint16(0, value, true);
+        break;
+      case ValueType.Uint32:
+        dataView.setUint32(0, value, true);
+        break;
+      case ValueType.Uint64:
+        // JS doesn't support uint64, get as close as possible
+        dataView.setBigUint64(0, value, true);
+        break;
+      case ValueType.Float:
+      case ValueType.Float32:
+        dataView.setFloat32(0, value, true);
+        break;
+      case ValueType.Double:
+      case ValueType.Float64:
+        dataView.setFloat64(0, value, true);
+        break;
+    }
+    return buffer;
+  }
+
+  encodeArray(name: string, values: any[]): Uint8Array {
+    // get schema
+    if (!(name in this.schemas)) {
+      throw new Error(`Schema "${name}" not defined`);
+    }
+    const schema = this.schemas[name];
+
+    // create data view from buffer of length schema length
+    const buffer = new Uint8Array((schema.length * values.length) / 8);
+
+    values.forEach((value, i) => {
+      const encodedValue = this.encode(name, value);
+      buffer.set(encodedValue, (schema.length / 8) * i);
+    });
+    return buffer;
+  }
+
+  encode(name: string, value: any): Uint8Array {
+    // get schema
+    if (!(name in this.schemas)) {
+      throw new Error(`Schema "${name}" not defined`);
+    }
+    const schema = this.schemas[name];
+
+    // create data view from buffer of length schema length
+    const buffer = new Uint8Array(schema.length / 8);
+
+    schema.valueSchemas.forEach((valueSchema) => {
+      const schemaPropInValue = valueSchema.name in value;
+      if (!schemaPropInValue) {
+        throw new Error("Value does not match schema");
+      }
+      const { type, bitRange, arrayLength } = valueSchema;
+      if (VALID_TYPE_STRINGS.includes(type)) {
+        const encodedValue =
+          arrayLength === null
+            ? this.encodeValueType(type as ValueType, value[valueSchema.name])
+            : this.encodeArrayValueType(
+                type as ValueType,
+                value[valueSchema.name]
+              );
+        buffer.set(encodedValue, bitRange[0] / 8);
+      } else {
+        const encodedValue =
+          arrayLength === null
+            ? this.encode(type, value[valueSchema.name])
+            : this.encodeArray(type, value[valueSchema.name]);
+        buffer.set(encodedValue, bitRange[0] / 8);
+      }
+    });
+    return buffer;
+  }
+
   /** Converts struct-encoded data with a known schema to an object. */
-  decode(name: string, value: Uint8Array): { data: unknown; schemaTypes: { [key: string]: string } } {
+  decode(
+    name: string,
+    value: Uint8Array
+  ): { data: unknown; schemaTypes: { [key: string]: string } } {
     if (!(name in this.schemas)) {
       throw new Error("Schema not defined");
     }
+    console.log("DECODE " + name);
     let outputData: { [key: string]: unknown } = {};
     let outputSchemaTypes: { [key: string]: string } = {};
     let schema = this.schemas[name];
     let boolArray = StructDecoder.toBoolArray(value);
     for (let i = 0; i < schema.valueSchemas.length; i++) {
       let valueSchema = schema.valueSchemas[i];
-      let valueBoolArray = boolArray.slice(valueSchema.bitRange[0], valueSchema.bitRange[1]);
+      let valueBoolArray = boolArray.slice(
+        valueSchema.bitRange[0],
+        valueSchema.bitRange[1]
+      );
       if (VALID_TYPE_STRINGS.includes(valueSchema.type)) {
         let type = valueSchema.type as ValueType;
         if (valueSchema.arrayLength === null) {
@@ -193,11 +322,19 @@ export default class StructDecoder {
         } else {
           // Array type
           let value: unknown[] = [];
-          let itemLength = (valueSchema.bitRange[1] - valueSchema.bitRange[0]) / valueSchema.arrayLength;
-          for (let position = 0; (position += itemLength); position < valueBoolArray.length) {
+          let itemLength =
+            (valueSchema.bitRange[1] - valueSchema.bitRange[0]) /
+            valueSchema.arrayLength;
+          for (
+            let position = 0;
+            position < valueBoolArray.length;
+            position += itemLength
+          ) {
             value.push(
               StructDecoder.decodeValue(
-                StructDecoder.toUint8Array(valueBoolArray.slice(position, position + itemLength)),
+                StructDecoder.toUint8Array(
+                  valueBoolArray.slice(position, position + itemLength)
+                ),
                 type,
                 valueSchema.enum
               )
@@ -212,21 +349,28 @@ export default class StructDecoder {
       } else {
         // Child struct
         outputSchemaTypes[valueSchema.name] = valueSchema.type;
-        let child = this.decode(valueSchema.type, StructDecoder.toUint8Array(valueBoolArray));
+        let child = this.decode(
+          valueSchema.type,
+          StructDecoder.toUint8Array(valueBoolArray)
+        );
         outputData[valueSchema.name] = child.data;
         Object.keys(child.schemaTypes).forEach((field) => {
-          outputSchemaTypes[valueSchema.name + "/" + field] = child.schemaTypes[field];
+          outputSchemaTypes[valueSchema.name + "/" + field] =
+            child.schemaTypes[field];
         });
       }
     }
     return {
       data: outputData,
-      schemaTypes: outputSchemaTypes
+      schemaTypes: outputSchemaTypes,
     };
   }
 
   /** Converts struct-encoded data with a known array schema to an object. */
-  decodeArray(name: string, value: Uint8Array): { data: unknown; schemaTypes: { [key: string]: string } } {
+  decodeArray(
+    name: string,
+    value: Uint8Array
+  ): { data: unknown; schemaTypes: { [key: string]: string } } {
     if (!(name in this.schemas)) {
       throw new Error("Schema not defined");
     }
@@ -235,21 +379,30 @@ export default class StructDecoder {
     let schemaLength = this.schemas[name].length / 8;
     let length = value.length / schemaLength;
     for (let i = 0; i < length; i++) {
-      let decodedData = this.decode(name, value.slice(i * schemaLength, (i + 1) * schemaLength));
+      let decodedData = this.decode(
+        name,
+        value.slice(i * schemaLength, (i + 1) * schemaLength)
+      );
       outputData.push(decodedData.data);
-      Object.entries(decodedData.schemaTypes).forEach(([itemKey, itemSchemaType]) => {
-        outputSchemaTypes[i.toString() + "/" + itemKey] = itemSchemaType;
-      });
+      Object.entries(decodedData.schemaTypes).forEach(
+        ([itemKey, itemSchemaType]) => {
+          outputSchemaTypes[i.toString() + "/" + itemKey] = itemSchemaType;
+        }
+      );
       outputSchemaTypes[i.toString()] = name;
     }
     return {
       data: outputData,
-      schemaTypes: outputSchemaTypes
+      schemaTypes: outputSchemaTypes,
     };
   }
 
   /** Decode a uint8 array as a single value based on the known type. */
-  private static decodeValue(value: Uint8Array, type: ValueType, enumData: { [key: number]: string } | null): any {
+  private static decodeValue(
+    value: Uint8Array,
+    type: ValueType,
+    enumData: { [key: number]: string } | null
+  ): any {
     let paddedValue = new Uint8Array(VALUE_TYPE_MAX_BITS.get(type)! / 8);
     paddedValue.set(value);
     let dataView = new DataView(paddedValue.buffer);
@@ -327,10 +480,10 @@ export default class StructDecoder {
   }
 
   /** Returns a serialized version of the data from this decoder. */
-  toSerialized(): any {
+  toSerialized() {
     return {
       schemaStrings: this.schemaStrings,
-      schemas: this.schemas
+      schemas: this.schemas,
     };
   }
 
@@ -371,7 +524,7 @@ enum ValueType {
   Float = "float",
   Float32 = "float32",
   Double = "double",
-  Float64 = "float64"
+  Float64 = "float64",
 }
 
 const VALID_TYPE_STRINGS = Object.values(ValueType) as string[];
@@ -385,7 +538,7 @@ const BITFIELD_VALID_TYPES = [
   ValueType.Uint8,
   ValueType.Uint16,
   ValueType.Uint32,
-  ValueType.Uint64
+  ValueType.Uint64,
 ];
 
 const VALUE_TYPE_MAX_BITS = new Map([
@@ -402,5 +555,5 @@ const VALUE_TYPE_MAX_BITS = new Map([
   [ValueType.Float, 32],
   [ValueType.Float32, 32],
   [ValueType.Double, 64],
-  [ValueType.Float64, 64]
+  [ValueType.Float64, 64],
 ]);
