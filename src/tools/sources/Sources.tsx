@@ -6,8 +6,9 @@ import collapseIcon from "/collapse.svg";
 import expandIcon from "/expand.svg";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { useMemo, useState } from "react";
-import { useJson } from "@frc-web-components/react";
 import { useDropZone } from "../../context-providers/DropZoneContext";
+import { useAppSelector } from "../../store/app/hooks";
+import { selectSourceTree, SourceTree } from "../../store/selectors/sourceSelectors";
 
 export interface SourceData {
   name: string;
@@ -19,7 +20,9 @@ export interface SourceData {
 }
 
 function Sources() {
-  const json = useJson("", {}, false);
+  
+  const sourceTree = useAppSelector(state => selectSourceTree(state, 'NT', ''));
+
   const [expandedSources, setExpandedSources] = useState<string[]>([]);
   const { setSourceGrid } = useDropZone(); // Use the context
 
@@ -129,16 +132,16 @@ function Sources() {
 
     const addData = (
       name: string,
-      value: unknown,
+      tree: SourceTree,
       parentId: string,
       level: number
     ) => {
       const id = [parentId, name].join("/");
-      const parent = typeof value === "object" && !(value instanceof Array);
+      const parent = tree.children.length > 0;
       const expanded = expandedSources.includes(id);
       const sourceData: SourceData = {
         name,
-        value: !parent ? value : undefined,
+        value: tree.value,
         id,
         expanded,
         parent,
@@ -147,19 +150,19 @@ function Sources() {
       data.push(sourceData);
 
       if (parent && expanded) {
-        Object.entries(value as any).forEach(([name, value]) => {
-          addData(name, value, id, level + 1);
+        tree.childrenSources.forEach(childSource => {
+          addData(childSource.key.split('/').pop() ?? '', childSource, id, level + 1);
         });
       }
     };
 
-    if (json) {
-      Object.entries(json).forEach(([name, value]) => {
-        addData(name, value, "", 0);
+    if (sourceTree) {
+      sourceTree.childrenSources.forEach(childSource => {
+        addData(childSource.key.split('/').pop() ?? '', childSource, "", 0);
       });
     }
     return data;
-  }, [json, expandedSources]);
+  }, [sourceTree, expandedSources]);
 
   return (
     <div style={{ height: "100%", width: "100%" }}>

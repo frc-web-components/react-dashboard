@@ -8,6 +8,8 @@ export const selectComponents = (state: RootState) => state.layout.components;
 export const selectTab = (state: RootState, tabId: string) =>
   state.layout.tabs[tabId];
 
+export const selectComponent = (state: RootState, componentId: string) => state.layout.components[componentId];
+
 export const selectTabComponents = createSelector(
   [selectTab, selectComponents],
   (tab, components) => {

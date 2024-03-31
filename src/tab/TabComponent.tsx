@@ -2,8 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import Styles from "./Tab.module.scss";
 import useEntryListener from "./useEntryListener";
 import { useNt4 } from "@frc-web-components/react";
+import { selectComponentPropertyValues } from "../store/selectors/componentSelectors";
+import { useAppSelector } from "../store/app/hooks";
 
 interface Props {
+  componentId: string;
   Component: React.ComponentType<any>;
   componentSource?: {
     provider: string;
@@ -27,7 +30,12 @@ function capitalize(value: string) {
   return value[0].toUpperCase() + value.substring(1);
 }
 
-function TabComponent({ Component, properties, componentSource }: Props) {
+function TabComponent({ Component, properties, componentSource, componentId }: Props) {
+  const componentPropertyValues =  useAppSelector(state => selectComponentPropertyValues(state, componentId));
+
+
+  console.log('componentPropertyValues:', componentPropertyValues);
+
   const [defaultPropValues, setDefaultPropValues] = useState(
     Object.fromEntries(
       Object.entries(properties).map(([propName, prop]) => {

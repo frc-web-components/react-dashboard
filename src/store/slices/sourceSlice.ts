@@ -1,11 +1,25 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../app/createAppSlice";
 
+export type PropertyType =
+  | "Number"
+  | "String"
+  | "Boolean"
+  | "Object"
+  | "Number[]"
+  | "String[]"
+  | "Boolean[]"
+  | "Object[]";
+
 export interface Source {
+  provider: string;
+  key: string;
   type?: string;
+  propertyType?: PropertyType;
   value?: unknown;
   parent?: string;
   children: string[];
+  name: string;
 }
 
 export interface SourceSlice {
@@ -32,32 +46,42 @@ export const sourceSlice = createAppSlice({
           key: string;
           value: unknown;
           type: string;
+          propertyType: PropertyType;
         }>
       ) => {
         // add source
-        const { provider, type, key, value } = action.payload;
+        const { provider, type, propertyType, key, value } = action.payload;
         const keyParts = key.split("/");
         if (!state.sources[provider]) {
           state.sources[provider] = {};
         }
         if (!state.sources[provider][key]) {
           state.sources[provider][key] = {
+            provider,
+            key,
+            name: keyParts[keyParts.length - 1],
             children: [],
             type,
+            propertyType,
             value,
             parent:
               keyParts.length > 1 ? keyParts.slice(0, -1).join("/") : undefined,
           };
         } else {
           state.sources[provider][key].value = value;
+          state.sources[provider][key].propertyType = propertyType;
         }
         // update ancestors
-        for (let i = 1; i < keyParts.length - 1; i++) {
-          const grandParent = i === 1 ? undefined:  keyParts.slice(0, i - 1).join("/");
+        for (let i = 1; i < keyParts.length; i++) {
+          const grandParent =
+            i === 1 ? undefined : keyParts.slice(0, i - 1).join("/");
           const parent = keyParts.slice(0, i).join("/");
           const child = keyParts.slice(0, i + 1).join("/");
           if (!state.sources[provider][parent]) {
             state.sources[provider][parent] = {
+              provider,
+              name: keyParts[i - 1],
+              key: parent,
               parent: grandParent,
               children: [],
             };
@@ -84,21 +108,21 @@ export const sourceSlice = createAppSlice({
         }
         if (state.sources[provider][key].children.length === 0) {
           delete state.sources[provider][key];
-        } else { 
+        } else {
           state.sources[provider][key].value = undefined;
           state.sources[provider][key].type = undefined;
         }
-        const keyParts = key.split('/');
+        const keyParts = key.split("/");
         for (let i = keyParts.length - 1; i > 0; i--) {
-          const parent = keyParts.slice(0, i).join('/');
-          const child = keyParts.slice(0, i + 1).join('/');
+          const parent = keyParts.slice(0, i).join("/");
+          const child = keyParts.slice(0, i + 1).join("/");
           if (!state.sources[provider][child]) {
             const children = state.sources[provider][parent].children;
             children.splice(children.indexOf(child), 1);
           }
         }
       }
-    )
+    ),
   }),
 });
 

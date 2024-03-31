@@ -210,7 +210,7 @@ function Tab({ tabId }: Props) {
               [Styles.selected]: selectedComponent?.id === id,
             })}
           >
-            <TabComponent Component={Component} properties={properties} componentSource={selectedComponent?.source} />
+            <TabComponent componentId={id} Component={Component} properties={properties} componentSource={selectedComponent?.source} />
           </div>
         );
       })}
