@@ -1,43 +1,57 @@
 import { Nt4Client } from "@frc-web-components/fwc/source-providers";
 import { AppStore } from "../../app/store";
-import { setSource, removeSource, PropertyType } from "../../slices/sourceSlice";
+import {
+  setSource,
+  removeSource,
+  PropertyType,
+} from "../../slices/sourceSlice";
 import {
   NT4_Client,
   NT4_Topic,
 } from "@frc-web-components/fwc/source-providers/nt4/NT4";
 import StructDecoder from "./StructDecoder";
 
+const basicTypes = [
+  "boolean",
+  "int",
+  "float",
+  "double",
+  "string",
+  "int[]",
+  "float[]",
+  "double[]",
+  "string[]",
+];
+
 const propTypeMap: Record<string, PropertyType> = {
-  'boolean': 'Boolean',
-  'int': 'Number',
-  'float': 'Number',
-  'double': 'Number',
-  'string': 'String',
-  'int[]': 'Number[]',
-  'float[]': 'Number[]',
-  'double[]': 'Number[]',
-  'string[]': 'String[]',
-  'structschema': 'Object',
+  boolean: "Boolean",
+  int: "Number",
+  float: "Number",
+  double: "Number",
+  string: "String",
+  "int[]": "Number[]",
+  "float[]": "Number[]",
+  "double[]": "Number[]",
+  "string[]": "String[]",
+  structschema: "Object",
 };
 
 function getPropType(type: string, value?: unknown): PropertyType {
-
   if (type in propTypeMap) {
     return propTypeMap[type];
   }
-  if (type === 'json') {
-    return value instanceof Array ? 'Object[]' : 'Object'
+  if (type === "json") {
+    return value instanceof Array ? "Object[]" : "Object";
   }
 
   if (type.startsWith(NT4Provider.STRUCT_PREFIX)) {
-    return value instanceof Array ? 'Object[]' : 'Object';
+    return value instanceof Array ? "Object[]" : "Object";
   }
 
-  return 'Object';
+  return "Object";
 }
 
-
-abstract class Provider {
+export abstract class SourceProvider {
   #store: AppStore;
 
   constructor(store: AppStore) {
@@ -46,13 +60,20 @@ abstract class Provider {
 
   abstract componentUpdate(key: string, value: unknown, type: string): unknown;
 
-  update(key: string, value: unknown, type: string, propertyType: PropertyType) {
+  update(
+    key: string,
+    value: unknown,
+    type: string,
+    propertyType: PropertyType
+  ) {
     // dispatch action from store
-    this.#store.dispatch(setSource({ key, value, provider: "NT", type, propertyType }));
+    this.#store.dispatch(
+      setSource({ key, value, provider: "NT", type, propertyType })
+    );
   }
 }
 
-export class NT4Provider extends Provider {
+export class NT4Provider extends SourceProvider {
   #nt4: NT4_Client;
   #structDecoder = new StructDecoder();
   static STRUCT_PREFIX = "struct:";
@@ -73,17 +94,6 @@ export class NT4Provider extends Provider {
         delete this.#topics[topic.name];
       },
       (topic: NT4_Topic, timestamp_us: number, value: unknown) => {
-        const basicTypes = [
-          "boolean",
-          "int",
-          "float",
-          "double",
-          "string",
-          "int[]",
-          "float[]",
-          "double[]",
-          "string[]",
-        ];
         if (topic.type === "structschema") {
           this.#addStructSchema(topic, value as Uint8Array);
         } else if (basicTypes.includes(topic.type)) {
@@ -134,7 +144,12 @@ export class NT4Provider extends Provider {
           const decodedData = isArray
             ? this.#structDecoder.decodeArray(schemaType, value)
             : this.#structDecoder.decode(schemaType, value);
-          this.update(topic.name, decodedData.data, topic.type, isArray ? 'Object[]' : 'Object');
+          this.update(
+            topic.name,
+            decodedData.data,
+            topic.type,
+            isArray ? "Object[]" : "Object"
+          );
         } catch {}
       }
       // else if (topic.type.startsWith(PROTO_PREFIX)) {
@@ -170,21 +185,51 @@ export class NT4Provider extends Provider {
       );
       const { schemas } = this.#structDecoder.toSerialized();
       Object.entries(schemas).forEach(([name, schema]) => {
-        this.update(`/.schema/${NT4Provider.STRUCT_PREFIX}${name}`, schema, 'structschema', 'Object');
+        this.update(
+          `/.schema/${NT4Provider.STRUCT_PREFIX}${name}`,
+          schema,
+          "structschema",
+          "Object"
+        );
       });
     }
   }
 
+  #serializeValue(value: unknown, type: string): unknown {
+    if (basicTypes.includes(type)) {
+      return value;
+    } else if (type === "json") {
+      return JSON.stringify(value);
+    } else if (type.startsWith(NT4Provider.STRUCT_PREFIX)) {
+      let schemaType = type.split(NT4Provider.STRUCT_PREFIX)[1];
+      const isArray = schemaType.endsWith("[]");
+      if (isArray) {
+        schemaType = schemaType.slice(0, -2);
+      }
+      if (!isArray && value instanceof Array) {
+        return undefined;
+      }
+      return isArray
+        ? this.#structDecoder.encodeArray(schemaType, value as any)
+        : this.#structDecoder.encode(schemaType, value);
+    }
+  }
+
   componentUpdate(key: string, value: unknown, type: string) {
+    if (type === "structschema") {
+      return;
+    }
+    const serializedValue = this.#serializeValue(value, type);
     const topic = this.#topics[key];
     const propType = getPropType(type);
+    // console.log("COMPONENT UPDATE:", )
     if (topic) {
       this.#nt4.publishNewTopic(topic.name, topic.type);
-      this.#nt4.addSample(topic.name, value);
+      this.#nt4.addSample(topic.name, serializedValue);
       this.update(topic.name, value, type, propType);
     } else if (type !== undefined) {
       this.#nt4.publishNewTopic(key, type);
-      this.#nt4.addSample(key, value);
+      this.#nt4.addSample(key, serializedValue);
       this.update(key, value, type, propType);
     }
   }

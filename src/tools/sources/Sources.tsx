@@ -5,14 +5,20 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import collapseIcon from "/collapse.svg";
 import expandIcon from "/expand.svg";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDropZone } from "../../context-providers/DropZoneContext";
 import { useAppSelector } from "../../store/app/hooks";
-import { selectSourceTree, SourceTree } from "../../store/selectors/sourceSelectors";
+import {
+  selectSourceTree,
+  SourceTree,
+} from "../../store/selectors/sourceSelectors";
+import useResizeObserver from "@react-hook/resize-observer";
+import styles from './Sources.module.scss';
 
 export interface SourceData {
   name: string;
   value: unknown;
+  type: string;
   parent: boolean;
   expanded: boolean;
   id: string;
@@ -20,11 +26,25 @@ export interface SourceData {
 }
 
 function Sources() {
-  
-  const sourceTree = useAppSelector(state => selectSourceTree(state, 'NT', ''));
+  const sourceTree = useAppSelector((state) =>
+    selectSourceTree(state, "NT", "")
+  );
 
   const [expandedSources, setExpandedSources] = useState<string[]>([]);
-  const { setSourceGrid } = useDropZone(); // Use the context
+  const { sourceGrid, setSourceGrid } = useDropZone(); // Use the context
+  const containerElementRef = useRef<HTMLElement>(null);
+
+  useResizeObserver(containerElementRef, () => {
+    if (sourceGrid) {
+      sourceGrid.sizeColumnsToFit();
+    }
+  });
+
+  useEffect(() => {
+    if (sourceGrid) {
+      sourceGrid.sizeColumnsToFit();
+    }
+  }, [sourceGrid]);
 
   const NameCellRenderer = (
     props: CustomCellRendererProps<SourceData, number>
@@ -124,6 +144,10 @@ function Sources() {
         }
       },
     },
+    {
+      field: "type",
+      sortable: false,
+    },
     // Show default header name
   ]);
 
@@ -142,6 +166,7 @@ function Sources() {
       const sourceData: SourceData = {
         name,
         value: tree.value,
+        type: tree.type ?? "",
         id,
         expanded,
         parent,
@@ -150,22 +175,31 @@ function Sources() {
       data.push(sourceData);
 
       if (parent && expanded) {
-        tree.childrenSources.forEach(childSource => {
-          addData(childSource.key.split('/').pop() ?? '', childSource, id, level + 1);
+        tree.childrenSources.forEach((childSource) => {
+          addData(
+            childSource.key.split("/").pop() ?? "",
+            childSource,
+            id,
+            level + 1
+          );
         });
       }
     };
 
     if (sourceTree) {
-      sourceTree.childrenSources.forEach(childSource => {
-        addData(childSource.key.split('/').pop() ?? '', childSource, "", 0);
+      sourceTree.childrenSources.forEach((childSource) => {
+        addData(childSource.key.split("/").pop() ?? "", childSource, "", 0);
       });
     }
     return data;
   }, [sourceTree, expandedSources]);
 
   return (
-    <div style={{ height: "100%", width: "100%" }}>
+    <div
+      ref={containerElementRef as any}
+      style={{ height: "100%", width: "100%" }}
+      className={styles.sources}
+    >
       <div style={{ height: "100%", boxSizing: "border-box" }}>
         <div
           style={{ height: "100%", width: "100%" }}

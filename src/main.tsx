@@ -8,21 +8,20 @@ import { store } from "./store/app/store";
 import { DropZoneProvider } from "./context-providers/DropZoneContext.tsx";
 import { ComponentConfigProvider } from "./context-providers/ComponentConfigContext.tsx";
 import { componentMap } from "./components";
-import { NT4Provider as NTProvider } from './store/sources/nt4';
-
-
-const provider = new NTProvider(store);
+import { SourceProviderProvider } from "./context-providers/SourceProviderContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <DropZoneProvider>
-        <ComponentConfigProvider components={componentMap}>
-          <NT4Provider address="localhost">
-            <App />
-          </NT4Provider>
-        </ComponentConfigProvider>
-      </DropZoneProvider>
+      <SourceProviderProvider>
+        <DropZoneProvider>
+          <ComponentConfigProvider components={componentMap}>
+            <NT4Provider address="localhost">
+              <App />
+            </NT4Provider>
+          </ComponentConfigProvider>
+        </DropZoneProvider>
+      </SourceProviderProvider>
     </Provider>
   </React.StrictMode>
 );
