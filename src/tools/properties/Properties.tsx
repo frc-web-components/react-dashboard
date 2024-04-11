@@ -22,6 +22,7 @@ import { SourceCellRenderer } from "./SourceCellRenderer";
 import { ColorCellRenderer } from "./ColorCellRenderer";
 import PropertyNameCellRenderer from "./NameCellRenderer";
 import styles from "./Properties.module.scss";
+import { NumberArrayEditor } from "./NumberArrayEditor";
 
 export interface SourceData {
   key: string;
@@ -86,6 +87,15 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     cellEditorSelector: (params) => {
       const { type, componentConfig, name } = params.data;
       const { input } = componentConfig.properties[name];
+      console.log('param:', params);
+      if (type === 'Number[]') {
+        return {
+          component: NumberArrayEditor,
+          popup: true,
+          popupPosition: 'under',
+
+        }
+      }
       if (type === "Markdown") {
         return {
           component: MarkdownEditor,
