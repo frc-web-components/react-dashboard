@@ -6,7 +6,7 @@ import {
 import { PropertyData } from "./Properties";
 import styles from "./NumberArrayEditor.module.scss";
 import { ColDef } from "ag-grid-community";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import SimpleDialog from "./SimpleDialog";
 
 export interface NumberValue {
@@ -64,6 +64,7 @@ const colDefs: ColDef[] = [
 export const NumberArrayEditor = (
   props: CustomCellEditorProps<PropertyData, number[]>
 ) => {
+  const [isOpen, setIsOpen] = useState(true);
   const numberArray: NumberValue[] = useMemo(() => {
     if (!props.value) {
       return [];
@@ -77,29 +78,39 @@ export const NumberArrayEditor = (
   }, [props.value]);
 
   return (
-    <>
-      <SimpleDialog title="Array Editor">
+    <SimpleDialog
+      title="Array Editor"
+      buttons={[
+        { label: "Add to Start", action: () => {} },
+        { label: "Apply", action: () => {} },
+      ]}
+      onClose={() => {
+        setIsOpen(false);
+        props.stopEditing();
+      }}
+      isOpen={isOpen}
+
+    >
+      <div
+        style={{
+          height: "200px",
+          width: "230px",
+          display: "flex",
+          flexDirection: "column",
+        }}
+        className={styles["number-array-editor"]}
+      >
         <div
-          style={{
-            height: "200px",
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-          }}
-          className={styles["number-array-editor"]}
+          style={{ flex: "1", width: "100%" }}
+          className={"ag-theme-balham-dark"}
         >
-          <div
-            style={{ flex: "1", width: "100%" }}
-            className={"ag-theme-balham-dark"}
-          >
-            <AgGridReact<NumberValue>
-              columnDefs={colDefs}
-              rowData={numberArray}
-              headerHeight={0}
-            />
-          </div>
+          <AgGridReact<NumberValue>
+            columnDefs={colDefs}
+            rowData={numberArray}
+            headerHeight={0}
+          />
         </div>
-      </SimpleDialog>
-    </>
+      </div>
+    </SimpleDialog>
   );
 };

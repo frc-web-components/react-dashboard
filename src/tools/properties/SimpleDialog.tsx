@@ -5,14 +5,15 @@ import "./SimpleDialog.css"; // Assuming you have a CSS file for styling
 interface Props {
   children: ReactNode;
   title: string;
+  buttons?: {
+    label: string;
+    action: () => unknown;
+  }[];
+  isOpen: boolean;
+  onClose?: () => unknown;
 }
 
-const SimpleDialog = ({ children, title }: Props) => {
-  const [isOpen, setIsOpen] = useState(true);
-
-  const openDialog = () => setIsOpen(true);
-  const closeDialog = () => setIsOpen(false);
-
+const SimpleDialog = ({ children, title, buttons = [], isOpen, onClose }: Props) => {
   return (
     <>
       {/* <button onClick={openDialog}>Open Dialog</button> */}
@@ -24,9 +25,10 @@ const SimpleDialog = ({ children, title }: Props) => {
             </div>
             <div className="dialog-content">{children}</div>
             <div className="dialog-actions">
-              <button className="close-button" onClick={closeDialog}>
-                Close
-              </button>
+              <button onClick={onClose}>Close</button>
+              {buttons.map((button) => (
+                <button key={button.label} className="primary" onClick={button.action}>{button.label}</button>
+              ))}
             </div>
           </div>
         </Draggable>
