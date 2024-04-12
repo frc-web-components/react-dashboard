@@ -6,7 +6,7 @@ import {
 import { PropertyData } from "./Properties";
 import styles from "./NumberArrayEditor.module.scss";
 import { ColDef } from "ag-grid-community";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import SimpleDialog from "./SimpleDialog";
 
 export interface NumberValue {
@@ -17,6 +17,10 @@ export interface NumberValue {
 export const NumberRenderer = (
   props: CustomCellRendererProps<NumberValue, number>
 ) => {
+  const [value, setValue] = useState(props.value ?? 0);
+  useEffect(() => {
+    setValue(props.value ?? 0);
+  }, [props.value]);
   return (
     <div
       style={{
@@ -36,13 +40,20 @@ export const NumberRenderer = (
         [{props.data?.index}]
       </span>
       <input
+        onChange={(ev) => {
+          const newValue = parseFloat(ev.target.value);
+          setValue(newValue);
+          if (!Number.isNaN(newValue)) {
+            props.setValue?.(newValue);
+          }
+        }}
         style={{
           flex: "1",
           minWidth: 0,
           border: "none",
         }}
         type="number"
-        value={props.value ?? 0}
+        value={Number.isNaN(value) ? "" : value}
       />
       <button className={styles["action-buttons"]}>+</button>
       <button className={styles["action-buttons"]}>-</button>
@@ -65,17 +76,15 @@ export const NumberArrayEditor = (
   props: CustomCellEditorProps<PropertyData, number[]>
 ) => {
   const [isOpen, setIsOpen] = useState(true);
+  const [value, setValue] = useState(props.value ?? []);
   const numberArray: NumberValue[] = useMemo(() => {
-    if (!props.value) {
-      return [];
-    }
-    return props.value.map((value, index) => {
+    return value.map((value, index) => {
       return {
         index,
         value,
       };
     });
-  }, [props.value]);
+  }, [value]);
 
   return (
     <SimpleDialog
@@ -89,7 +98,6 @@ export const NumberArrayEditor = (
         props.stopEditing();
       }}
       isOpen={isOpen}
-
     >
       <div
         style={{
@@ -108,6 +116,50 @@ export const NumberArrayEditor = (
             columnDefs={colDefs}
             rowData={numberArray}
             headerHeight={0}
+            getRowId={(params) => {
+              return params.data.index.toString();
+            }}
+            onCellValueChanged={(event) => {
+              const {
+                newValue,
+                data: { index },
+              } = event;
+              setValue((currentArray) => {
+                const newArray = [...currentArray];
+                newArray[index] = newValue;
+                return newArray;
+              });
+            }}
+            rowDragManaged={true}
+            suppressMoveWhenRowDragging={true}
+            onRowDragEnd={(event) => {
+              const { overIndex, node, y, overNode } = event;
+              if (
+                !overNode ||
+                typeof overNode.rowTop !== "number" ||
+                typeof overNode.rowHeight !== "number"
+              ) {
+                return;
+              }
+              const isPrev = y < overNode.rowTop + overNode.rowHeight / 2;
+              const isNext = y > overNode.rowTop + overNode.rowHeight / 2;
+              setValue((currentArray) => {
+                const newArray = [...currentArray];
+                if (!node.data) {
+                  return newArray;
+                }
+                const newIndex =
+                  node.data.index < overIndex
+                    ? Math.max(0, isPrev ? overIndex - 1 : overIndex)
+                    : isNext
+                    ? overIndex + 1
+                    : overIndex;
+                const element = currentArray[node.data.index];
+                newArray.splice(node.data.index, 1);
+                newArray.splice(newIndex, 0, element);
+                return newArray;
+              });
+            }}
           />
         </div>
       </div>
