@@ -1,6 +1,5 @@
-
 .action-buttons {
-  background: rgba(0,0,0, .3);
+  background: rgba(0, 0, 0, 0.3);
   border: none;
   border-radius: 0;
   color: white;
@@ -20,5 +19,19 @@
     .ag-drag-handle {
       margin-right: 4px;
     }
+
+    // .ag-body-viewport {
+    //   /* Ensures the scrollbar is always visible */
+    //   overflow-y: scroll !important;
+    // }
+
+    // .ag-body-viewport.ag-layout-normal {
+    //   overflow-y: scroll;
+    // }
+
+    // .ag-body-vertical-scroll {
+    //   // overflow-y: scroll;
+    //   display: block;
+    // }
   }
 }

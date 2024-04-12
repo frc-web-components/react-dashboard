@@ -9,13 +9,18 @@ import { ColDef } from "ag-grid-community";
 import { useEffect, useMemo, useState } from "react";
 import SimpleDialog from "./SimpleDialog";
 
+interface NumberArrayContext {
+  removeElement: (index: number) => unknown;
+  addElementAfter: (index: number) => unknown;
+}
+
 export interface NumberValue {
   index: number;
   value: number;
 }
 
 export const NumberRenderer = (
-  props: CustomCellRendererProps<NumberValue, number>
+  props: CustomCellRendererProps<NumberValue, number, NumberArrayContext>
 ) => {
   const [value, setValue] = useState(props.value ?? 0);
   useEffect(() => {
@@ -55,8 +60,26 @@ export const NumberRenderer = (
         type="number"
         value={Number.isNaN(value) ? "" : value}
       />
-      <button className={styles["action-buttons"]}>+</button>
-      <button className={styles["action-buttons"]}>-</button>
+      <button
+        className={styles["action-buttons"]}
+        onClick={() => {
+          if (typeof props.data?.index === "number") {
+            props.context.addElementAfter(props.data.index);
+          }
+        }}
+      >
+        +
+      </button>
+      <button
+        className={styles["action-buttons"]}
+        onClick={() => {
+          if (typeof props.data?.index === "number") {
+            props.context.removeElement(props.data.index);
+          }
+        }}
+      >
+        -
+      </button>
     </div>
   );
 };
@@ -90,8 +113,24 @@ export const NumberArrayEditor = (
     <SimpleDialog
       title="Array Editor"
       buttons={[
-        { label: "Add to Start", action: () => {} },
-        { label: "Apply", action: () => {} },
+        {
+          label: "Add to Start",
+          action: () => {
+            setValue((currentArray) => {
+              const newArray = [...currentArray];
+              newArray.splice(0, 0, 0);
+              return newArray;
+            });
+          },
+        },
+        {
+          label: "Apply",
+          action: () => {
+            setIsOpen(false);
+            props.onValueChange(value);
+            props.stopEditing();
+          },
+        },
       ]}
       onClose={() => {
         setIsOpen(false);
@@ -113,6 +152,22 @@ export const NumberArrayEditor = (
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<NumberValue>
+            context={{
+              removeElement: (index: number) => {
+                setValue((currentArray) => {
+                  const newArray = [...currentArray];
+                  newArray.splice(index, 1);
+                  return newArray;
+                });
+              },
+              addElementAfter: (index: number) => {
+                setValue((currentArray) => {
+                  const newArray = [...currentArray];
+                  newArray.splice(index + 1, 0, 0);
+                  return newArray;
+                });
+              },
+            }}
             columnDefs={colDefs}
             rowData={numberArray}
             headerHeight={0}
