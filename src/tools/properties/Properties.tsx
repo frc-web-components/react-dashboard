@@ -76,6 +76,15 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     valueGetter: (params) => {
       return params.data?.defaultValue;
     },
+    valueFormatter: (params) => {
+      if (params.data?.type) {
+        const { type } = params.data;
+        if (type === 'Number[]' && params.value instanceof Array) {
+          return `[${params.value.join(',')}]`;
+        }
+      }
+      return params.value;
+    },
     editable: (params) => {
       if (!params.data) {
         return true;
@@ -88,6 +97,15 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       const { type, componentConfig, name } = params.data;
       const { input } = componentConfig.properties[name];
       console.log('param:', params);
+      if (type === 'StringDropdown') {
+        const { options } = input as any;
+        return {
+          component: 'agSelectCellEditor',
+          params: {
+            values: options instanceof Array ? options : options(params.node.data?.defaultValue)
+          }
+        }
+      }
       if (type === 'Number[]') {
         return {
           component: NumberArrayEditor,

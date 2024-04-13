@@ -80,6 +80,30 @@ export function stringProp(prop?: { defaultValue?: string }): {
   };
 }
 
+export function stringDropdownProp(prop?: {
+  defaultValue?: string;
+  options?: string[] | ((propValues: Record<string, unknown>) => string[]);
+  allowCustomValues?: boolean;
+}): {
+  type: "String";
+  defaultValue: string;
+  input: {
+    type: "StringDropdown";
+    options: string[] | ((propValues: Record<string, unknown>) => string[]);
+    allowCustomValues: boolean;
+  };
+} {
+  return {
+    type: "String",
+    defaultValue: prop?.defaultValue ?? "",
+    input: {
+      type: "StringDropdown",
+      options: prop?.options ?? [],
+      allowCustomValues: prop?.allowCustomValues ?? false,
+    },
+  };
+}
+
 export function colorProp(prop?: { defaultValue?: string }): {
   type: "String";
   defaultValue: string;
@@ -119,5 +143,15 @@ export function booleanProp(prop?: { defaultValue?: boolean }): {
   return {
     type: "Boolean",
     defaultValue: prop?.defaultValue ?? false,
+  };
+}
+
+export function numberArrayProp(prop?: { defaultValue?: number[] }): {
+  type: "Number[]";
+  defaultValue: number[];
+} {
+  return {
+    type: "Number[]",
+    defaultValue: prop?.defaultValue ?? [],
   };
 }
