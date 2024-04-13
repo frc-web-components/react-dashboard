@@ -19,7 +19,7 @@ import useResizeObserver from "@react-hook/resize-observer";
 import MarkdownEditor from "./MarkdownEditor";
 import { selectSelectedComponent } from "../../store/selectors/layoutSelectors";
 import { SourceCellRenderer } from "./SourceCellRenderer";
-import { ColorCellRenderer } from "./ColorCellRenderer";
+import { ColorCellEditor, ColorCellRenderer } from "./ColorCellRenderer";
 import PropertyNameCellRenderer from "./NameCellRenderer";
 import styles from "./Properties.module.scss";
 import { NumberArrayEditor } from "./NumberArrayEditor";
@@ -69,11 +69,9 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       if (!params.data) {
         return false;
       }
-      const { componentConfig, name } = params.data;
-      const { input } = componentConfig.properties[name];
-      return input?.type === "Markdown";
+      const { type } = params.data;
+      return type === "Markdown";
     },
-
     valueGetter: (params) => {
       return params.data?.defaultValue;
     },
@@ -90,9 +88,10 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       if (!params.data) {
         return true;
       }
-      const { componentConfig, name } = params.data;
-      const { input } = componentConfig.properties[name];
-      return input?.type !== "Color";
+      return true;
+      // const { componentConfig, name } = params.data;
+      // const { input } = componentConfig.properties[name];
+      // return input?.type !== "Color";
     },
     cellEditorSelector: (params) => {
       const { type, componentConfig, name } = params.data;
@@ -107,6 +106,12 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
                 ? options
                 : options(params.context.propertyValues),
           },
+        };
+      }
+      if (type === "Color") {
+        return {
+          component: ColorCellEditor,
+          popup: true,
         };
       }
       if (type === "Number[]") {
