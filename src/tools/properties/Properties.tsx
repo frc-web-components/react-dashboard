@@ -42,6 +42,7 @@ export interface PropertyData {
 export interface PropertyContext {
   expanded: boolean;
   toggleExpanded: () => unknown;
+  propertyValues: Record<string, unknown>;
 }
 
 const defaultColumnDefs: ColDef<PropertyData>[] = [
@@ -79,8 +80,8 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     valueFormatter: (params) => {
       if (params.data?.type) {
         const { type } = params.data;
-        if (type === 'Number[]' && params.value instanceof Array) {
-          return `[${params.value.join(',')}]`;
+        if (type === "Number[]" && params.value instanceof Array) {
+          return `[${params.value.join(",")}]`;
         }
       }
       return params.value;
@@ -96,23 +97,24 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     cellEditorSelector: (params) => {
       const { type, componentConfig, name } = params.data;
       const { input } = componentConfig.properties[name];
-      console.log('param:', params);
-      if (type === 'StringDropdown') {
+      if (type === "StringDropdown") {
         const { options } = input as any;
         return {
-          component: 'agSelectCellEditor',
+          component: "agSelectCellEditor",
           params: {
-            values: options instanceof Array ? options : options(params.node.data?.defaultValue)
-          }
-        }
+            values:
+              options instanceof Array
+                ? options
+                : options(params.context.propertyValues),
+          },
+        };
       }
-      if (type === 'Number[]') {
+      if (type === "Number[]") {
         return {
           component: NumberArrayEditor,
           popup: true,
-          popupPosition: 'under',
-
-        }
+          popupPosition: "under",
+        };
       }
       if (type === "Markdown") {
         return {
@@ -197,6 +199,21 @@ function Properties() {
     }
   });
 
+  const componentPropertyValues = useMemo(() => {
+    if (!selectedComponent || !components) {
+      return {};
+    }
+    const component = components[selectedComponent.type];
+    const values: Record<string, unknown> = {};
+
+    Object.entries(component?.properties).forEach(([name, property]) => {
+      values[name] =
+        selectedComponent.properties[name]?.value ?? property.defaultValue;
+    });
+    return values;
+  }, [selectedComponent, components]);
+
+
   const rowData: PropertyData[] = useMemo(() => {
     if (!selectedComponent || !components) {
       return [];
@@ -243,8 +260,9 @@ function Properties() {
     return {
       expanded: isExpanded,
       toggleExpanded,
+      propertyValues: componentPropertyValues,
     };
-  }, [isExpanded]);
+  }, [isExpanded, componentPropertyValues]);
 
   useEffect(() => {
     if (gridApi) {

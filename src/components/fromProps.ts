@@ -82,14 +82,14 @@ export function stringProp(prop?: { defaultValue?: string }): {
 
 export function stringDropdownProp(prop?: {
   defaultValue?: string;
-  options?: string[] | ((propValues: Record<string, unknown>) => string[]);
+  options?: string[] | ((propValues: Record<string, any>) => string[]);
   allowCustomValues?: boolean;
 }): {
   type: "String";
   defaultValue: string;
   input: {
     type: "StringDropdown";
-    options: string[] | ((propValues: Record<string, unknown>) => string[]);
+    options: string[] | ((propValues: Record<string, any>) => string[]);
     allowCustomValues: boolean;
   };
 } {
