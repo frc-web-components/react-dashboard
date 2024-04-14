@@ -10,6 +10,7 @@ import {
   NT4_Topic,
 } from "@frc-web-components/fwc/source-providers/nt4/NT4";
 import StructDecoder from "./StructDecoder";
+import SourceProvider from "./source-provider";
 
 const basicTypes = [
   "boolean",
@@ -51,27 +52,27 @@ function getPropType(type: string, value?: unknown): PropertyType {
   return "Object";
 }
 
-export abstract class SourceProvider {
-  #store: AppStore;
+// export abstract class SourceProvider {
+//   #store: AppStore;
 
-  constructor(store: AppStore) {
-    this.#store = store;
-  }
+//   constructor(store: AppStore) {
+//     this.#store = store;
+//   }
 
-  abstract componentUpdate(key: string, value: unknown, type: string): unknown;
+//   abstract componentUpdate(key: string, value: unknown, type: string): unknown;
 
-  update(
-    key: string,
-    value: unknown,
-    type: string,
-    propertyType: PropertyType
-  ) {
-    // dispatch action from store
-    this.#store.dispatch(
-      setSource({ key, value, provider: "NT", type, propertyType })
-    );
-  }
-}
+//   update(
+//     key: string,
+//     value: unknown,
+//     type: string,
+//     propertyType: PropertyType
+//   ) {
+//     // dispatch action from store
+//     this.#store.dispatch(
+//       setSource({ key, value, provider: "NT", type, propertyType })
+//     );
+//   }
+// }
 
 export class NT4Provider extends SourceProvider {
   #nt4: NT4_Client;
@@ -80,7 +81,7 @@ export class NT4Provider extends SourceProvider {
   #topics: Record<string, NT4_Topic> = {};
 
   constructor(store: AppStore) {
-    super(store);
+    super(store, 1000 / 60);
     // this.#store = store;
 
     this.#nt4 = new Nt4Client(

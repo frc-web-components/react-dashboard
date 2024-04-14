@@ -1,7 +1,7 @@
 import { RootState } from "../app/store";
 import { createSelector } from "@reduxjs/toolkit";
-// import { memoize, memoizeWithArgs } from "proxy-memoize";
-import { Source } from "../slices/sourceSlice";
+import { memoize, memoizeWithArgs } from "proxy-memoize";
+import { PropertyType, Source } from "../slices/sourceSlice";
 
 export const selectSources = (state: RootState) => state.source.sources;
 
@@ -20,6 +20,15 @@ export const selectSource = (
 export interface SourceTree extends Source {
   childrenSources: Record<string, SourceTree>;
 }
+
+export interface SourceTreePreview {
+  provider: string;
+  key: string;
+  type?: string;
+  propertyType?: PropertyType;
+  name: string,
+  children: Record<string, SourceTreePreview>
+};
 
 export const selectSourceTree = createSelector(
   [selectProviderSources, selectSource],
@@ -42,5 +51,36 @@ export const selectSourceTree = createSelector(
     };
 
     return getTree(source.key);
+  }
+);
+
+export const selectSourceTreePreview = memoizeWithArgs(
+  (state: RootState, provider: string, key: string) => {
+    const sources = state.source.sources?.[provider];
+    const source = sources?.[key];
+
+    if (!sources || !source) {
+      return undefined;
+    }
+
+    const getTree = (sourceKey: string): SourceTreePreview => {
+      const source = sources[sourceKey];
+      const children: Record<string, SourceTreePreview> = {};
+      source.children.forEach((key) => {
+        const childSource = sources[key];
+        children[childSource.name] = getTree(key);
+      });
+      return {
+        provider,
+        key: sourceKey,
+        type: source.type,
+        propertyType: source.propertyType,
+        name: source.name,
+        children,
+      };
+    };
+
+    return getTree(source.key);
+
   }
 );

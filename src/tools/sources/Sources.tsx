@@ -9,6 +9,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDropZone } from "../../context-providers/DropZoneContext";
 import { useAppSelector } from "../../store/app/hooks";
 import {
+  selectSourceTreePreview,
+  SourceTreePreview,
   selectSourceTree,
   SourceTree,
 } from "../../store/selectors/sourceSelectors";
@@ -27,7 +29,7 @@ export interface SourceData {
 
 function Sources() {
   const sourceTree = useAppSelector((state) =>
-    selectSourceTree(state, "NT", "")
+    selectSourceTreePreview(state, "NT", "")
   );
 
   const [expandedSources, setExpandedSources] = useState<string[]>([]);
@@ -156,16 +158,16 @@ function Sources() {
 
     const addData = (
       name: string,
-      tree: SourceTree,
+      tree: SourceTreePreview,
       parentId: string,
       level: number
     ) => {
       const id = [parentId, name].join("/");
-      const parent = tree.children.length > 0;
+      const parent = Object.keys(tree.children).length > 0;
       const expanded = expandedSources.includes(id);
       const sourceData: SourceData = {
         name,
-        value: tree.value,
+        value: '', // tree.value,
         type: tree.type ?? "",
         id,
         expanded,
@@ -175,7 +177,7 @@ function Sources() {
       data.push(sourceData);
 
       if (parent && expanded) {
-        Object.values(tree.childrenSources).forEach((childSource) => {
+        Object.values(tree.children).forEach((childSource) => {
           addData(
             childSource.key.split("/").pop() ?? "",
             childSource,
@@ -187,7 +189,7 @@ function Sources() {
     };
 
     if (sourceTree) {
-      Object.values(sourceTree.childrenSources).forEach((childSource) => {
+      Object.values(sourceTree.children).forEach((childSource) => {
         addData(childSource.key.split("/").pop() ?? "", childSource, "", 0);
       });
     }
