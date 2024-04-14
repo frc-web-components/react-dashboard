@@ -16,14 +16,10 @@ export const numberSlider = createComponent(
       blockIncrement: numberProp({ defaultValue: .05 }),
     },
   },
-  ({ blockIncrement, value, min, max, className, setProperty }) => {
+  ({ setProperty, ...props }) => {
     return (
       <NumberSlider
-        className={className}
-        value={value}
-        min={min}
-        max={max}
-        blockIncrement={blockIncrement}
+        {...props}
         onchange={(ev: any) => {
           setProperty('value', ev.detail.value);
         }}

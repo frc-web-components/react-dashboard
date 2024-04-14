@@ -21,15 +21,7 @@ export const booleanBox = createComponent(
       label: stringProp(),
     },
   },
-  ({ value, trueColor, falseColor, label, className }) => {
-    return (
-      <BooleanBox
-        className={className}
-        value={value}
-        trueColor={trueColor}
-        falseColor={falseColor}
-        label={label}
-      />
-    );
+  ({ setProperty, ...props }) => {
+    return <BooleanBox {...props} />;
   }
 );

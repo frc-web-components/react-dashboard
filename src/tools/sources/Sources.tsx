@@ -175,7 +175,7 @@ function Sources() {
       data.push(sourceData);
 
       if (parent && expanded) {
-        tree.childrenSources.forEach((childSource) => {
+        Object.values(tree.childrenSources).forEach((childSource) => {
           addData(
             childSource.key.split("/").pop() ?? "",
             childSource,
@@ -187,7 +187,7 @@ function Sources() {
     };
 
     if (sourceTree) {
-      sourceTree.childrenSources.forEach((childSource) => {
+      Object.values(sourceTree.childrenSources).forEach((childSource) => {
         addData(childSource.key.split("/").pop() ?? "", childSource, "", 0);
       });
     }

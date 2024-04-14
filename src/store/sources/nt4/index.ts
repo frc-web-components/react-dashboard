@@ -222,7 +222,6 @@ export class NT4Provider extends SourceProvider {
     const serializedValue = this.#serializeValue(value, type);
     const topic = this.#topics[key];
     const propType = getPropType(type);
-    // console.log("COMPONENT UPDATE:", )
     if (topic) {
       this.#nt4.publishNewTopic(topic.name, topic.type);
       this.#nt4.addSample(topic.name, serializedValue);

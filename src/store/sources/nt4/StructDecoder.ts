@@ -12,7 +12,6 @@ export default class StructDecoder {
 
   addSchema(name: string, schema: Uint8Array): void {
     let schemaStr = StructDecoder.textDecoder.decode(schema);
-    console.log("schemaStr:", { name, schemaStr });
     if (name in this.schemaStrings) return;
     this.schemaStrings[name] = schemaStr;
 
@@ -299,7 +298,6 @@ export default class StructDecoder {
     if (!(name in this.schemas)) {
       throw new Error("Schema not defined");
     }
-    console.log("DECODE " + name);
     let outputData: { [key: string]: unknown } = {};
     let outputSchemaTypes: { [key: string]: string } = {};
     let schema = this.schemas[name];

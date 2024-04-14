@@ -16,6 +16,7 @@ import {
   stringDropdownProp,
   stringProp,
 } from "./fromProps";
+import { field } from "./Field";
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -33,16 +34,7 @@ export const componentMap: Record<string, ComponentConfig> = {
     },
     component: BasicFmsInfo,
   },
-  field: {
-    dashboard: {
-      name: "Field",
-      description: "",
-      defaultSize: { width: 300, height: 150 },
-      minSize: { width: 60, height: 60 },
-    },
-    properties: {},
-    component: Field,
-  },
+  field,
   gyro: {
     dashboard: {
       name: "Gyro",

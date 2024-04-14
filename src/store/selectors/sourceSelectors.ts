@@ -5,15 +5,20 @@ import { Source } from "../slices/sourceSlice";
 
 export const selectSources = (state: RootState) => state.source.sources;
 
-export const selectProviderSources = (state: RootState, provider: string) =>
-  state.source.sources[provider];
+export const selectProviderSources = (state: RootState, provider?: string) =>
+  typeof provider === "undefined" ? undefined : state.source.sources[provider];
 
-export const selectSource = (state: RootState, provider: string, key: string) =>
-  state.source.sources[provider]?.[key];
-
+export const selectSource = (
+  state: RootState,
+  provider?: string,
+  key?: string
+) =>
+  typeof provider === "undefined" || typeof key === "undefined"
+    ? undefined
+    : state.source.sources[provider]?.[key];
 
 export interface SourceTree extends Source {
-  childrenSources: SourceTree[];
+  childrenSources: Record<string, SourceTree>;
 }
 
 export const selectSourceTree = createSelector(
@@ -25,12 +30,17 @@ export const selectSourceTree = createSelector(
 
     const getTree = (sourceKey: string): SourceTree => {
       const source = sources[sourceKey];
+      const childrenSources: Record<string, SourceTree> = {};
+      source.children.forEach((key) => {
+        const childSource = sources[key];
+        childrenSources[childSource.name] = getTree(key);
+      });
       return {
         ...source,
-        childrenSources: source.children.map(getTree)
-      }
+        childrenSources,
+      };
     };
 
-    return getTree('');
+    return getTree(source.key);
   }
 );

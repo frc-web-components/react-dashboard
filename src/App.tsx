@@ -182,15 +182,12 @@ function App() {
                 cursor: "pointer",
               }}
               onClick={() => {
-                const node = layoutRef!.current!.addTabToTabSet(tabSetNode.getId(), {
+                layoutRef!.current!.addTabToTabSet(tabSetNode.getId(), {
                   component: "components",
                   name: "Unnamed Tab",
                   enableFloat: true,
-                });
-                console.log('added node:', node?.getId())
-                
+                });                
               }}
-              
             />
           );
         }
