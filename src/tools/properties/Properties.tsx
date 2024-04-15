@@ -17,7 +17,7 @@ import {
 } from "../../context-providers/ComponentConfigContext";
 import useResizeObserver from "@react-hook/resize-observer";
 import MarkdownEditor from "./MarkdownEditor";
-import { selectSelectedComponent } from "../../store/selectors/layoutSelectors";
+import { makeSelectSelectedComponent } from "../../store/selectors/layoutSelectors";
 import { SourceCellRenderer } from "./SourceCellRenderer";
 import { ColorCellEditor, ColorCellRenderer } from "./ColorCellRenderer";
 import PropertyNameCellRenderer from "./NameCellRenderer";
@@ -192,6 +192,7 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
 function Properties() {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
   const [gridApi, setGridApi] = useState<GridApi>();
+  const selectSelectedComponent = useMemo(makeSelectSelectedComponent, []);
   const selectedComponent = useAppSelector(selectSelectedComponent);
   const { components } = useComponentConfigs();
   const [isExpanded, setIsExpanded] = useState(true);

@@ -6,9 +6,10 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { NT4Provider, SourceProvider } from "../store/sources/nt4";
+import { NT4Provider } from "../store/sources/nt4";
 import { store } from "../store/app/store";
-import { selectSource } from "../store/selectors/sourceSelectors";
+import { selectSource, selectSourceValue } from "../store/selectors/sourceSelectors";
+import SourceProvider from "../store/sources/nt4/source-provider";
 
 export type SourceInfo =
   | {
@@ -70,7 +71,7 @@ export const SourceProviderProvider: React.FC<ProviderProps> = ({
           store.getState(),
           sourceInfo.source.provider,
           sourceInfo.source.key
-        );
+        )!;
         const provider = providers[sourceInfo.source.provider];
         if (provider) {
           provider.componentUpdate(sourceInfo.source.key, value, source.type!);
@@ -80,12 +81,17 @@ export const SourceProviderProvider: React.FC<ProviderProps> = ({
           store.getState(),
           sourceInfo.source.provider,
           sourceInfo.source.key
+        )!;
+        const sourceValue = selectSourceValue(
+          store.getState(),
+          sourceInfo.source.provider,
+          sourceInfo.source.key
         );
         const provider = providers[sourceInfo.source.provider];
         if (provider) {
           const property = sourceInfo.source.property;
           const newValue = {
-            ...(source.value as any),
+            ...(sourceValue as any),
             [property]: value,
           };
           provider.componentUpdate(

@@ -12,9 +12,8 @@ import {
   updateComponentSize,
 } from "../store/slices/layoutSlice";
 import {
-  selectSelectedComponentId,
-  selectSelectedComponent,
-  selectTabComponents,
+  makeSelectSelectedComponent,
+  makeSelectTabComponents,
 } from "../store/selectors/layoutSelectors";
 import { useDropZone } from "../context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
@@ -43,6 +42,8 @@ interface Props {
 
 function Tab({ tabId }: Props) {
   const dispatch = useAppDispatch();
+  const selectSelectedComponent = useMemo(makeSelectSelectedComponent, []);
+  const selectTabComponents = useMemo(makeSelectTabComponents, []);
   const selectedComponent = useAppSelector(selectSelectedComponent);
   const layoutComponents = useAppSelector((state) =>
     selectTabComponents(state, tabId)

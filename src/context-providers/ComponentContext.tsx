@@ -1,19 +1,10 @@
-import { GridApi } from "ag-grid-community";
-import React, {
-  createContext,
-  useContext,
-  ReactNode,
-  useState,
-  useMemo,
-} from "react";
-import { SourceData } from "../tools/sources/Sources";
-import { ComponentConfig } from "./ComponentConfigContext";
+import React, { createContext, useContext, ReactNode, useMemo } from "react";
 import { SourceInfo } from "./SourceProviderContext";
 import { useAppSelector } from "../store/app/hooks";
 import { selectComponent } from "../store/selectors/layoutSelectors";
 import {
   SourceTree,
-  selectSourceTree,
+  makeSelectSourceTree,
 } from "../store/selectors/sourceSelectors";
 
 // Interface for the context value
@@ -70,6 +61,7 @@ export const useParentSourceTree = (): SourceTree | undefined => {
   const component = useAppSelector((state) =>
     selectComponent(state, componentId)
   );
+  const selectSourceTree = useMemo(() => makeSelectSourceTree(), []);
   return useAppSelector((state) =>
     selectSourceTree(state, component.source?.provider, component.source?.key)
   );

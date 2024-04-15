@@ -16,7 +16,6 @@ export interface Source {
   key: string;
   type?: string;
   propertyType?: PropertyType;
-  value?: unknown;
   parent?: string;
   children: string[];
   name: string;
@@ -28,10 +27,16 @@ export interface SourceSlice {
       [sourceKey: string]: Source;
     };
   };
+  sourceValues: {
+    [providerName: string]: {
+      [sourceKey: string]: unknown;
+    };
+  };
 }
 
 const initialState: SourceSlice = {
   sources: {},
+  sourceValues: {},
 };
 
 export const sourceSlice = createAppSlice({
@@ -63,14 +68,19 @@ export const sourceSlice = createAppSlice({
             children: [],
             type,
             propertyType,
-            value,
             parent:
               keyParts.length > 1 ? keyParts.slice(0, -1).join("/") : undefined,
           };
         } else {
-          state.sources[provider][key].value = value;
           state.sources[provider][key].propertyType = propertyType;
         }
+        if (!state.sourceValues[provider]) {
+          state.sourceValues[provider] = {};
+        }
+        if (typeof value !== "undefined") {
+          state.sourceValues[provider][key] = value;
+        }
+
         // update ancestors
         for (let i = 1; i < keyParts.length; i++) {
           const grandParent =
@@ -109,9 +119,9 @@ export const sourceSlice = createAppSlice({
         if (state.sources[provider][key].children.length === 0) {
           delete state.sources[provider][key];
         } else {
-          state.sources[provider][key].value = undefined;
           state.sources[provider][key].type = undefined;
         }
+        delete state.sourceValues[provider][key];
         const keyParts = key.split("/");
         for (let i = keyParts.length - 1; i > 0; i--) {
           const parent = keyParts.slice(0, i).join("/");

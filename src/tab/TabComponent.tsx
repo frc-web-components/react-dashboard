@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import Styles from "./Tab.module.scss";
-import { selectComponentPropertyValues as selectComponentPropertyData } from "../store/selectors/componentSelectors";
+import { makeSelectComponentPropertyValues } from "../store/selectors/componentSelectors";
 import { useAppSelector } from "../store/app/hooks";
 import {
   SourceInfo,
@@ -32,6 +32,7 @@ function TabComponent({
   componentSource,
   componentId,
 }: Props) {
+  const selectComponentPropertyData = useMemo(makeSelectComponentPropertyValues, []);
   const componentPropertyData = useAppSelector((state) =>
     selectComponentPropertyData(state, componentId)
   );

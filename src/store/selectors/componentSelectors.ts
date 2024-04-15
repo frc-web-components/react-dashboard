@@ -1,21 +1,21 @@
-import { createSelector } from "@reduxjs/toolkit";
-import { selectComponent } from "./layoutSelectors";
-import { selectProviderSources } from "./sourceSelectors";
-
 import camelCase from "lodash.camelcase";
-import { memoize, memoizeWithArgs } from "proxy-memoize";
+import { memoizeWithArgs } from "proxy-memoize";
 import { RootState } from "../app/store";
-import { SourceInfo } from '../../context-providers/SourceProviderContext';
+import { SourceInfo } from "../../context-providers/SourceProviderContext";
 
-export const selectComponentPropertyValues = memoizeWithArgs(
-  (state: RootState, componentId: string) => {
+export function makeSelectComponentPropertyValues() {
+  return memoizeWithArgs((state: RootState, componentId: string) => {
     const component = state.layout.components[componentId];
     const sources = state.source.sources;
+    const sourceValues = state.source.sourceValues;
     if (!component) {
       return undefined;
     }
     const parentSource = component.source
       ? sources[component.source.provider]?.[component.source.key]
+      : undefined;
+    const parentSourceValue = component.source
+      ? sourceValues[component.source.provider]?.[component.source.key]
       : undefined;
     const propertyValues: Record<
       string,
@@ -26,12 +26,13 @@ export const selectComponentPropertyValues = memoizeWithArgs(
     > = {};
     Object.entries(component.properties).forEach(([name, property]) => {
       const defaultValue = property.value;
-      const sourceValue = property.source
+      const propertySource = property.source
         ? sources[property.source.provider]?.[property.source.key]
         : undefined;
-      if (sourceValue) {
+      const value = propertySource ? sourceValues[propertySource.provider][propertySource.key] : undefined;
+      if (propertySource) {
         propertyValues[name] = {
-          value: sourceValue.value,
+          value,
           sourceInfo: {
             type: "source",
             source: {
@@ -48,8 +49,9 @@ export const selectComponentPropertyValues = memoizeWithArgs(
               return name === camelCase(source.name);
             });
           if (matchingSource) {
+            const value = sourceValues[matchingSource.provider][matchingSource.key];
             propertyValues[name] = {
-              value: matchingSource.value,
+              value,
               sourceInfo: {
                 type: "source",
                 source: {
@@ -68,10 +70,10 @@ export const selectComponentPropertyValues = memoizeWithArgs(
           }
         } else if (
           parentSource.propertyType === "Object" &&
-          name in (parentSource.value as any)
+          name in (parentSourceValue as any)
         ) {
           propertyValues[name] = {
-            value: (parentSource.value as any)[name],
+            value: (parentSourceValue as any)[name],
             sourceInfo: {
               type: "sourceProperty",
               source: {
@@ -93,18 +95,11 @@ export const selectComponentPropertyValues = memoizeWithArgs(
         propertyValues[name] = {
           value: defaultValue,
           sourceInfo: {
-            type: 'defaultValue',
-          }
+            type: "defaultValue",
+          },
         };
       }
     });
     return propertyValues;
-  }
-);
-
-// const selectComponentPropertyValues = createSelector(
-//     [selectComponent, selectProviderSources],
-//     (a, b) => {
-
-//     }
-// )
+  });
+}

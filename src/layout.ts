@@ -4,6 +4,7 @@ import {
   IJsonTabSetNode,
   IJsonTabNode,
 } from "flexlayout-react";
+import { v4 as uuidv4 } from "uuid";
 
 export const sourceTabJson: IJsonTabNode = {
   type: "tab",
@@ -27,7 +28,7 @@ export const componentListTabJson: IJsonTabNode = {
   id: "componentList",
 };
 
-export const propertiesTabJson: IJsonTabNode ={
+export const propertiesTabJson: IJsonTabNode = {
   type: "tab",
   enableClose: false,
   enableDrag: false,
@@ -46,7 +47,6 @@ export const toolsTabsetJson: IJsonTabSetNode = {
   weight: 50,
   enableDrag: false,
   children: [sourceTabJson, componentListTabJson],
-
 };
 
 export const propertiesTabsetJson: IJsonTabSetNode = {
@@ -55,9 +55,7 @@ export const propertiesTabsetJson: IJsonTabSetNode = {
   weight: 50,
   id: "properties",
   enableDrag: false,
-  children: [
-    propertiesTabJson,
-  ],
+  children: [propertiesTabJson],
 };
 
 export const editorLayoutJson: IJsonRowNode = {
@@ -92,18 +90,21 @@ export const layoutJson: IJsonModel = {
       {
         type: "tabset",
         weight: 50,
+        id: uuidv4(),
         children: [
           {
             type: "tab",
             name: "TeleOperated",
             component: "components",
             enableFloat: true,
+            id: uuidv4(),
           },
           {
             type: "tab",
             name: "Autonomous",
             component: "components",
             enableFloat: true,
+            id: uuidv4(),
           },
         ],
       },

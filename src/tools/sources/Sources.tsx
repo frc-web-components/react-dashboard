@@ -9,17 +9,24 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useDropZone } from "../../context-providers/DropZoneContext";
 import { useAppSelector } from "../../store/app/hooks";
 import {
-  selectSourceTreePreview,
+  makeSelectSourceTreePreview,
   SourceTreePreview,
-  selectSourceTree,
-  SourceTree,
+  selectSourceValue,
 } from "../../store/selectors/sourceSelectors";
 import useResizeObserver from "@react-hook/resize-observer";
-import styles from './Sources.module.scss';
+import styles from "./Sources.module.scss";
+
+interface SourceContext {
+  expand: (id: string) => unknown;
+  collapse: (id: string) => unknown;
+}
 
 export interface SourceData {
   name: string;
-  value: unknown;
+  source: {
+    key: string;
+    provider: string;
+  };
   type: string;
   parent: boolean;
   expanded: boolean;
@@ -27,134 +34,139 @@ export interface SourceData {
   level: number;
 }
 
+const ValueCellRenderer = (
+  props: CustomCellRendererProps<SourceData, unknown>
+) => {
+  const value = useAppSelector((state) =>
+    selectSourceValue(
+      state,
+      props.data?.source.provider,
+      props.data?.source.key
+    )
+  );
+  return <div>{JSON.stringify(value)}</div>;
+};
+
+const NameCellRenderer = (
+  props: CustomCellRendererProps<SourceData, number, SourceContext>
+) => {
+  const level = props.data?.level ?? 0;
+  if (!props.data?.parent) {
+    return (
+      <span style={{ paddingLeft: Math.max(level * 13, 5) }}>
+        {props.data?.name}
+      </span>
+    );
+  }
+  return (
+    <div
+      style={{
+        cursor: "pointer",
+        zIndex: 100,
+        paddingLeft: level * 8,
+        display: "flex",
+        gap: 0,
+        alignItems: "center",
+      }}
+      onClick={() => {
+        if (props.data) {
+          if (props.data.expanded) {
+            props.context.collapse(props.data.id);
+          } else {
+            props.context.expand(props.data.id);
+          }
+        }
+      }}
+    >
+      <img src={props.data.expanded ? collapseIcon : expandIcon} />
+      <span
+        style={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {props.data?.name}
+      </span>
+    </div>
+  );
+};
+
+const colDefs: ColDef[] = [
+  {
+    field: "name",
+    cellRenderer: NameCellRenderer,
+    editable: false,
+    valueGetter: (params: ValueGetterParams) =>
+      params.data.expanded ? "-" : "+",
+    rowDrag: true,
+    sortable: false,
+  },
+  // Using dot notation to access nested property
+  {
+    field: "value",
+    editable: false,
+    sortable: false,
+    cellEditorSelector: (params) => {
+      const value = params.data.value;
+      if (typeof value === "number") {
+        return {
+          component: "agNumberCellEditor",
+        };
+      } else if (typeof value === "string") {
+        return {
+          component: "agTextCellEditor",
+        };
+      } else if (typeof value === "boolean") {
+        return {
+          component: "agCheckboxCellEditor",
+        };
+      } else {
+        return {
+          component: "adsfs",
+        };
+      }
+    },
+    cellRenderer: ValueCellRenderer,
+  },
+  {
+    field: "type",
+    sortable: false,
+  },
+  // Show default header name
+];
+
 function Sources() {
+  const selectSourceTreePreview = useMemo(makeSelectSourceTreePreview, []);
   const sourceTree = useAppSelector((state) =>
     selectSourceTreePreview(state, "NT", "")
   );
+
+  console.log("....");
 
   const [expandedSources, setExpandedSources] = useState<string[]>([]);
   const { sourceGrid, setSourceGrid } = useDropZone(); // Use the context
   const containerElementRef = useRef<HTMLElement>(null);
 
   useResizeObserver(containerElementRef, () => {
+    console.log("useResizeObserver");
     if (sourceGrid) {
       sourceGrid.sizeColumnsToFit();
     }
   });
 
   useEffect(() => {
+    console.log("sizeColumnsToFit");
+
     if (sourceGrid) {
       sourceGrid.sizeColumnsToFit();
     }
   }, [sourceGrid]);
 
-  const NameCellRenderer = (
-    props: CustomCellRendererProps<SourceData, number>
-  ) => {
-    const level = props.data?.level ?? 0;
-    if (!props.data?.parent) {
-      return (
-        <span style={{ paddingLeft: Math.max(level * 13, 5) }}>
-          {props.data?.name}
-        </span>
-      );
-    }
-    return (
-      <div
-        style={{
-          cursor: "pointer",
-          zIndex: 100,
-          paddingLeft: level * 8,
-          display: "flex",
-          gap: 0,
-          alignItems: "center",
-        }}
-        onClick={() => {
-          setExpandedSources((prev) => {
-            const prevSet = new Set(prev);
-            if (props.data?.expanded) {
-              prevSet.delete(props.data.id);
-            } else if (props.data) {
-              prevSet.add(props.data.id);
-            }
-            return [...prevSet];
-          });
-        }}
-      >
-        <img src={props.data.expanded ? collapseIcon : expandIcon} />
-        <span
-          style={{
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {props.data?.name}
-        </span>
-      </div>
-    );
-  };
-
-  const [columnDefs] = useState<ColDef[]>([
-    {
-      field: "name",
-      cellRenderer: NameCellRenderer,
-      editable: false,
-      valueGetter: (params: ValueGetterParams) =>
-        params.data.expanded ? "-" : "+",
-      rowDrag: true,
-      sortable: false,
-    },
-    // Using dot notation to access nested property
-    {
-      field: "value",
-      editable: true,
-      sortable: false,
-      cellEditorSelector: (params) => {
-        const value = params.data.value;
-        if (typeof value === "number") {
-          return {
-            component: "agNumberCellEditor",
-          };
-        } else if (typeof value === "string") {
-          return {
-            component: "agTextCellEditor",
-          };
-        } else if (typeof value === "boolean") {
-          return {
-            component: "agCheckboxCellEditor",
-          };
-        } else {
-          return {
-            component: "adsfs",
-          };
-        }
-      },
-      cellRendererSelector: (params) => {
-        const value = params.data.value;
-        if (typeof value === "number") {
-          return {
-            component: "agNumberCellRenderer",
-          };
-        } else if (typeof value === "string") {
-          return {
-            component: "agTextCellRenderer",
-          };
-        } else if (typeof value === "boolean") {
-          return {
-            component: "agCheckboxCellRenderer",
-          };
-        }
-      },
-    },
-    {
-      field: "type",
-      sortable: false,
-    },
-    // Show default header name
-  ]);
+  const [columnDefs] = useState<ColDef[]>(colDefs);
 
   const nt4Data = useMemo(() => {
     const data: SourceData[] = [];
+    console.log("ntData");
 
     const addData = (
       name: string,
@@ -162,22 +174,26 @@ function Sources() {
       parentId: string,
       level: number
     ) => {
+      console.log("add data");
       const id = [parentId, name].join("/");
       const parent = Object.keys(tree.children).length > 0;
       const expanded = expandedSources.includes(id);
       const sourceData: SourceData = {
         name,
-        value: '', // tree.value,
         type: tree.type ?? "",
         id,
         expanded,
         parent,
         level,
+        source: {
+          provider: tree.provider,
+          key: tree.key,
+        },
       };
       data.push(sourceData);
 
       if (parent && expanded) {
-        Object.values(tree.children).forEach((childSource) => {
+        Object.values(tree.childrenSources).forEach((childSource) => {
           addData(
             childSource.key.split("/").pop() ?? "",
             childSource,
@@ -189,7 +205,7 @@ function Sources() {
     };
 
     if (sourceTree) {
-      Object.values(sourceTree.children).forEach((childSource) => {
+      Object.values(sourceTree.childrenSources).forEach((childSource) => {
         addData(childSource.key.split("/").pop() ?? "", childSource, "", 0);
       });
     }
@@ -210,6 +226,7 @@ function Sources() {
           <AgGridReact<SourceData>
             onGridReady={(params) => {
               setSourceGrid(params.api);
+              console.log("onGridReady");
             }}
             localeText={{
               noRowsToShow: "No sources to show",
@@ -219,8 +236,22 @@ function Sources() {
             }}
             rowData={nt4Data}
             columnDefs={columnDefs}
-            rowDragManaged={true}
-            suppressMoveWhenRowDragging={true}
+            context={{
+              expand: (id: string) => {
+                setExpandedSources((prev) => {
+                  const prevSet = new Set(prev);
+                  prevSet.add(id);
+                  return [...prevSet];
+                });
+              },
+              collapse: (id: string) => {
+                setExpandedSources((prev) => {
+                  const prevSet = new Set(prev);
+                  prevSet.delete(id);
+                  return [...prevSet];
+                });
+              },
+            }}
           />
         </div>
       </div>

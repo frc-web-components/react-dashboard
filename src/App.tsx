@@ -28,7 +28,7 @@ import {
   sourceTabJson,
 } from "./layout";
 import { useAppSelector } from "./store/app/hooks";
-import { selectSelectedComponent } from "./store/selectors/layoutSelectors";
+import { makeSelectSelectedComponent } from "./store/selectors/layoutSelectors";
 import { useComponentConfigs } from "./context-providers/ComponentConfigContext";
 import EditButton from "./sidebar/EditButton";
 import { selectEditing } from "./store/slices/appSlice";
@@ -40,6 +40,7 @@ function App() {
   const layoutRef = useRef<Layout>();
   const { nt4Provider } = useNt4();
   const [isNt4Connected, setIsNt4Connected] = useState(false);
+  const selectSelectedComponent = useMemo(makeSelectSelectedComponent, []);
   const selectedComponent = useAppSelector(selectSelectedComponent);
   const { components } = useComponentConfigs();
   const editing = useAppSelector(selectEditing);
