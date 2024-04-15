@@ -104,6 +104,72 @@ export const sourceSlice = createAppSlice({
         }
       }
     ),
+    setSources: create.reducer(
+      (
+        state,
+        action: PayloadAction<
+          {
+            provider: string;
+            key: string;
+            value: unknown;
+            type: string;
+            propertyType: PropertyType;
+          }[]
+        >
+      ) => {
+        // add source
+        action.payload.forEach(actionPayload => {
+
+          const { provider, type, propertyType, key, value } = actionPayload;
+          const keyParts = key.split("/");
+          if (!state.sources[provider]) {
+            state.sources[provider] = {};
+          }
+          if (!state.sources[provider][key]) {
+            state.sources[provider][key] = {
+              provider,
+              key,
+              name: keyParts[keyParts.length - 1],
+              children: [],
+              type,
+              propertyType,
+              parent:
+                keyParts.length > 1 ? keyParts.slice(0, -1).join("/") : undefined,
+            };
+          } else {
+            state.sources[provider][key].propertyType = propertyType;
+          }
+          if (!state.sourceValues[provider]) {
+            state.sourceValues[provider] = {};
+          }
+          if (typeof value !== "undefined") {
+            state.sourceValues[provider][key] = value;
+          }
+  
+          // update ancestors
+          for (let i = 1; i < keyParts.length; i++) {
+            const grandParent =
+              i === 1 ? undefined : keyParts.slice(0, i - 1).join("/");
+            const parent = keyParts.slice(0, i).join("/");
+            const child = keyParts.slice(0, i + 1).join("/");
+            if (!state.sources[provider][parent]) {
+              state.sources[provider][parent] = {
+                provider,
+                name: keyParts[i - 1],
+                key: parent,
+                parent: grandParent,
+                children: [],
+              };
+            }
+            const hasChild =
+              state.sources[provider][parent].children.includes(child);
+            if (!hasChild) {
+              state.sources[provider][parent].children.push(child);
+            }
+          }
+        });
+      }
+    ),
     removeSource: create.reducer(
       (
         state,
@@ -136,4 +202,4 @@ export const sourceSlice = createAppSlice({
   }),
 });
 
-export const { removeSource, setSource } = sourceSlice.actions;
+export const { removeSource, setSource, setSources } = sourceSlice.actions;

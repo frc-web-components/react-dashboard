@@ -1,7 +1,7 @@
 // import { noop } from './util';
 
 import { AppStore } from "../../app/store";
-import { PropertyType, setSource } from "../../slices/sourceSlice";
+import { PropertyType, setSource, setSources } from "../../slices/sourceSlice";
 
 type SourceUpdate = {
   updateType: string;
@@ -192,19 +192,18 @@ class SourceProvider {
     });
     if (Object.keys(changes).length > 0) {
       // dispatch action from store
-      Object.entries(changes).forEach(
+      const sources = Object.entries(changes).map(
         ([key, { value, propertyType, type }]) => {
-          this.#store.dispatch(
-            setSource({
-              key,
-              value,
-              provider: "NT",
-              type: type!,
-              propertyType: propertyType!,
-            })
-          );
+          return {
+            key,
+            value,
+            provider: "NT",
+            type: type!,
+            propertyType: propertyType!,
+          };
         }
       );
+      this.#store.dispatch(setSources(sources));
     }
   }
 

@@ -78,6 +78,8 @@ export function makeSelectSourceTreePreview() {
         return undefined;
       }
 
+      console.log('!?!?!?');
+
       const getTree = (sourceKey: string): SourceTreePreview => {
         const source = sources[sourceKey];
         const childrenSources: Record<string, SourceTreePreview> = {};
