@@ -1,7 +1,9 @@
 import { Field, FieldPath, FieldRobot } from "@frc-web-components/react";
 import {
   booleanProp,
+  colorProp,
   createComponent,
+  numberArrayProp,
   numberProp,
   stringDropdownProp,
 } from "./fromProps";
@@ -10,10 +12,7 @@ import {
   fieldConfigs,
   toBaseUnitConversions,
 } from "@frc-web-components/fwc";
-import {
-  useParentSourceJson,
-  useParentSourceTree,
-} from "../context-providers/ComponentContext";
+import { useParentSourceTree } from "../context-providers/ComponentContext";
 import { SourceTree } from "../store/selectors/sourceSelectors";
 import getPoses from "./get-poses";
 
@@ -66,6 +65,7 @@ export const field = createComponent(
       defaultSize: { width: 300, height: 150 },
       minSize: { width: 60, height: 60 },
     },
+    children: [{ type: "fieldRobot", propertyTabName: 'Robots' }, { type: "fieldPath", propertyTabName: 'Paths' }],
     properties: {
       game: stringDropdownProp({
         defaultValue: "Crescendo",
@@ -93,6 +93,7 @@ export const field = createComponent(
     },
   },
   ({
+    children,
     setProperty,
     className,
     cropLeft,
@@ -102,7 +103,7 @@ export const field = createComponent(
     ...props
   }) => {
     const tree = useParentSourceTree();
-    const children = getChildren(tree);
+    const sourceChildren = getChildren(tree);
     return (
       <Field
         className={className}
@@ -112,7 +113,7 @@ export const field = createComponent(
         cropBottom={cropBottom / 100}
         {...(props as any)}
       >
-        {children.map((child) => {
+        {sourceChildren.map((child) => {
           if (child.type === "robot") {
             return (
               <FieldRobot
@@ -123,7 +124,64 @@ export const field = createComponent(
           }
           return <FieldPath key={child.sourceKey} poses={child.poses} />;
         })}
+        {children}
       </Field>
     );
+  }
+);
+
+export const fieldRobot = createComponent(
+  {
+    dashboard: {
+      name: "Field Robot",
+      description: "",
+      defaultSize: { width: 0, height: 0 },
+      minSize: { width: 0, height: 0 },
+      topLevel: false,
+    },
+    properties: {
+      pose: numberArrayProp({ defaultValue: [0, 0, 0] }),
+      rotationUnit: stringDropdownProp({
+        defaultValue: "inherit",
+        options: ["inherit", "deg", "rad"],
+      }),
+      unit: stringDropdownProp({
+        defaultValue: "inherit",
+        options: ["inherit", ...Object.keys(toBaseUnitConversions)],
+      }),
+      color: colorProp({ defaultValue: "#0000ff" }),
+      opacity: numberProp({ defaultValue: 1, min: 0, max: 1, step: 0.1 }),
+      rotation: numberProp({ min: -360, max: 360 }),
+      width: numberProp({ defaultValue: 0.6 }),
+      length: numberProp({ defaultValue: 0.9 }),
+    },
+  },
+  ({ children, setProperty, className, ...props }) => {
+    return <FieldRobot {...props} />;
+  }
+);
+
+export const fieldPath = createComponent(
+  {
+    dashboard: {
+      name: "Field Path",
+      description: "",
+      defaultSize: { width: 0, height: 0 },
+      minSize: { width: 0, height: 0 },
+      topLevel: false,
+    },
+    properties: {
+      poses: numberArrayProp(),
+      color: colorProp({ defaultValue: "#FFA500" }),
+      unit: stringDropdownProp({
+        defaultValue: "inherit",
+        options: ["inherit", ...Object.keys(toBaseUnitConversions)],
+      }),
+      lineWidth: numberProp({ defaultValue: 4, min: 0 }),
+      opacity: numberProp({ defaultValue: 0.7, min: 0, max: 1, step: 0.1 }),
+    },
+  },
+  ({ children, setProperty, className, ...props }) => {
+    return <FieldPath {...props} />;
   }
 );

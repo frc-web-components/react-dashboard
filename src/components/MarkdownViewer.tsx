@@ -14,7 +14,7 @@ export const markdownViewer = createComponent(
       markdown: markdownProp({ defaultValue: "## Hello there" }),
     },
   },
-  ({ markdown, className }) => {
+  ({ markdown }) => {
     return (
       <div className={`${styles["markdown-viewer"]}`} data-color-mode="dark">
         <MDEditor.Markdown

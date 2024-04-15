@@ -21,6 +21,7 @@ export interface Component {
   position: { x: number; y: number };
   size: { width: number; height: number };
   minSize: { width: number; height: number };
+  parent?: string;
   children: string[];
 }
 
@@ -62,6 +63,14 @@ export const layoutSlice = createAppSlice({
         action: PayloadAction<{ component: Component; tabId: string }>
       ) => {
         const { component, tabId } = action.payload;
+        const parentComponent = component.parent
+          ? state.components[component.parent]
+          : undefined;
+        if (component.parent && !parentComponent) {
+          return;
+        }
+        parentComponent?.children.push(component.id);
+        
         state.components[component.id] = component;
         if (!state.tabs[tabId]) {
           state.tabs[tabId] = {

@@ -16,7 +16,7 @@ export const numberSlider = createComponent(
       blockIncrement: numberProp({ defaultValue: .05 }),
     },
   },
-  ({ setProperty, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return (
       <NumberSlider
         {...props}

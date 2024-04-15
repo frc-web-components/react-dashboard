@@ -5,7 +5,10 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import { useMemo, useState } from "react";
 import { useDropZone } from "../context-providers/DropZoneContext";
-import { ComponentConfig, useComponentConfigs } from "../context-providers/ComponentConfigContext";
+import {
+  ComponentConfig,
+  useComponentConfigs,
+} from "../context-providers/ComponentConfigContext";
 
 export interface ComponentListItem extends ComponentConfig {
   type: string;
@@ -14,14 +17,14 @@ export interface ComponentListItem extends ComponentConfig {
 const defaultColumnDefs: ColDef[] = [
   {
     field: "dashboard.name",
-    headerName: 'Name',
+    headerName: "Name",
     editable: false,
     sortable: true,
     rowDrag: true,
   },
   {
     field: "dashboard.description",
-    headerName: 'Description',
+    headerName: "Description",
     sortable: false,
   },
 ];
@@ -31,12 +34,15 @@ function ComponentPicker() {
   const { components } = useComponentConfigs();
   const { setComponentGrid } = useDropZone();
 
-
   const rowData = useMemo(() => {
-    return Object.entries(components).map(([type, component]) => ({
-      ...component,
-      type
-    }))
+    return Object.entries(components)
+      .map(([type, component]) => ({
+        ...component,
+        type,
+      }))
+      .filter(({ dashboard: { topLevel } }) => {
+        return topLevel !== false;
+      });
   }, [components]);
 
   return (
@@ -48,7 +54,9 @@ function ComponentPicker() {
         >
           <AgGridReact<ComponentListItem>
             onGridReady={(params) => setComponentGrid(params.api as any)}
-            rowData={Object.values(rowData).sort((a, b) => a.dashboard.name.localeCompare(b.dashboard.name))}
+            rowData={Object.values(rowData).sort((a, b) =>
+              a.dashboard.name.localeCompare(b.dashboard.name)
+            )}
             columnDefs={columnDefs}
             rowDragManaged={true}
             suppressMoveWhenRowDragging={true}

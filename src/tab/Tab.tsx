@@ -25,15 +25,6 @@ import { selectEditing } from "../store/slices/appSlice";
 
 interface ComponentLayout extends Layout {
   Component: React.ComponentType<any>;
-  properties: {
-    [name: string]: {
-      value: unknown;
-      source?: {
-        provider: string;
-        key: string;
-      };
-    };
-  };
 }
 
 interface Props {
@@ -70,7 +61,6 @@ function Tab({ tabId }: Props) {
           y: item.position.y,
           minW: item.minSize.width,
           minH: item.minSize.height,
-          properties: item.properties,
         };
       }
     );
@@ -203,7 +193,7 @@ function Tab({ tabId }: Props) {
         dispatch(setSelectedComponent(newItem.i));
       }}
     >
-      {gridLayout.map(({ i: id, Component, properties }) => {
+      {gridLayout.map(({ i: id, Component }) => {
         return (
           <div
             key={id}
@@ -211,7 +201,7 @@ function Tab({ tabId }: Props) {
               [Styles.selected]: selectedComponent?.id === id,
             })}
           >
-            <TabComponent componentId={id} Component={Component} properties={properties} componentSource={selectedComponent?.source} />
+            <TabComponent componentId={id} Component={Component} />
           </div>
         );
       })}

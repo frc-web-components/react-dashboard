@@ -20,6 +20,11 @@ export interface ComponentProperty {
   }
 }
 
+export interface ChildComponentConfig {
+  type: string;
+  propertyTabName?: string;
+}
+
 export interface ComponentConfig {
   dashboard: {
     name: string;
@@ -32,9 +37,11 @@ export interface ComponentConfig {
       width: number;
       height: number;
     };
+    topLevel?: boolean;
   };
   properties: Record<string, ComponentProperty>;
   component: React.ComponentType<any>;
+  children?: ChildComponentConfig[];
 }
 
 // Interface for the context value

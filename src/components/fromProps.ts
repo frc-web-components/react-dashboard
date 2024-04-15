@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { ComponentProperty } from "../context-providers/ComponentConfigContext";
 import { ComponentConfig } from "../context-providers/ComponentConfigContext";
 
@@ -24,17 +25,20 @@ export type FromProps<T extends Record<string, ComponentProperty>> = {
 } & {
   className: string;
   setProperty: (property: string, value: unknown) => unknown;
+  children: ReactNode;
 };
 
 export function createComponent<P extends Record<string, ComponentProperty>>(
   {
     dashboard,
+    children,
     properties,
-  }: { dashboard: ComponentConfig["dashboard"]; properties: P },
+  }: { dashboard: ComponentConfig["dashboard"]; children?: ComponentConfig["children"], properties: P },
   component: React.ComponentType<FromProps<P>>
 ): ComponentConfig {
   return {
     dashboard,
+    children,
     properties,
     component,
   };

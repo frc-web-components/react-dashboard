@@ -141,22 +141,17 @@ function Sources() {
     selectSourceTreePreview(state, "NT", "")
   );
 
-  console.log("....");
-
   const [expandedSources, setExpandedSources] = useState<string[]>([]);
   const { sourceGrid, setSourceGrid } = useDropZone(); // Use the context
   const containerElementRef = useRef<HTMLElement>(null);
 
   useResizeObserver(containerElementRef, () => {
-    console.log("useResizeObserver");
     if (sourceGrid) {
       sourceGrid.sizeColumnsToFit();
     }
   });
 
   useEffect(() => {
-    console.log("sizeColumnsToFit");
-
     if (sourceGrid) {
       sourceGrid.sizeColumnsToFit();
     }
@@ -166,7 +161,6 @@ function Sources() {
 
   const nt4Data = useMemo(() => {
     const data: SourceData[] = [];
-    console.log("ntData");
 
     const addData = (
       name: string,
@@ -174,7 +168,6 @@ function Sources() {
       parentId: string,
       level: number
     ) => {
-      console.log("add data");
       const id = [parentId, name].join("/");
       const parent = Object.keys(tree.children).length > 0;
       const expanded = expandedSources.includes(id);
@@ -226,7 +219,6 @@ function Sources() {
           <AgGridReact<SourceData>
             onGridReady={(params) => {
               setSourceGrid(params.api);
-              console.log("onGridReady");
             }}
             localeText={{
               noRowsToShow: "No sources to show",

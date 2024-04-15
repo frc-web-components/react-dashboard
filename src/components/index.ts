@@ -2,7 +2,6 @@ import { ComponentConfig } from "../context-providers/ComponentConfigContext";
 import {
   Accelerometer,
   BasicFmsInfo,
-  Field,
   Gyro,
   Swerve,
 } from "@frc-web-components/react";
@@ -16,7 +15,7 @@ import {
   stringDropdownProp,
   stringProp,
 } from "./fromProps";
-import { field } from "./Field";
+import { field, fieldPath, fieldRobot } from "./Field";
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -35,6 +34,8 @@ export const componentMap: Record<string, ComponentConfig> = {
     component: BasicFmsInfo,
   },
   field,
+  fieldPath,
+  fieldRobot,
   gyro: {
     dashboard: {
       name: "Gyro",

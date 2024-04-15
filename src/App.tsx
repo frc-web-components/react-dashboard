@@ -8,6 +8,7 @@ import {
   Actions,
   BorderNode,
   DockLocation,
+  IJsonTabNode,
   ITabSetRenderValues,
   Layout,
   Model,
@@ -32,6 +33,7 @@ import { makeSelectSelectedComponent } from "./store/selectors/layoutSelectors";
 import { useComponentConfigs } from "./context-providers/ComponentConfigContext";
 import EditButton from "./sidebar/EditButton";
 import { selectEditing } from "./store/slices/appSlice";
+import { v4 as uuidv4 } from "uuid";
 
 const themes = new DashboardThemes();
 themes.addThemeRules("dark", darkTheme);
@@ -45,9 +47,10 @@ function App() {
   const { components } = useComponentConfigs();
   const editing = useAppSelector(selectEditing);
   const [layoutJson] = useState(defaultLayoutJson);
+  const modelRef = useRef<Model>();
 
-  const model = useMemo(() => {
-    return Model.fromJson(layoutJson);
+  useEffect(() => {
+    modelRef.current = Model.fromJson(layoutJson);
   }, [layoutJson]);
 
   useEffect(() => {
@@ -57,33 +60,49 @@ function App() {
   }, [nt4Provider]);
 
   useEffect(() => {
+    const model = modelRef.current!;
     if (!editing) {
       model.doAction(Actions.deleteTab("sources"));
       model.doAction(Actions.deleteTab("componentList"));
       model.doAction(Actions.deleteTab("mainProperties"));
-      
     } else {
       const sourcesTab = model.getNodeById("sources");
       if (!sourcesTab) {
         const node = model.doAction(
           Actions.addNode(sourceTabJson, "layout", DockLocation.LEFT, 0)
         );
-        
+
         const tabset = node?.getParent() as TabSetNode | undefined;
         if (tabset) {
-          model.doAction(Actions.updateNodeAttributes(tabset.getId(), {
-            enableMaximize: false,
-          }));
           model.doAction(
-            Actions.addNode(componentListTabJson, tabset.getId(), DockLocation.CENTER, 1)
-          );
-          const propertiesTabset = model.doAction(
-            Actions.addNode(propertiesTabJson, tabset.getId(), DockLocation.BOTTOM, 1)
-          )?.getParent();
-          if (propertiesTabset) {
-            model.doAction(Actions.updateNodeAttributes(propertiesTabset.getId(), {
+            Actions.updateNodeAttributes(tabset.getId(), {
               enableMaximize: false,
-            }));
+            })
+          );
+          model.doAction(
+            Actions.addNode(
+              componentListTabJson,
+              tabset.getId(),
+              DockLocation.CENTER,
+              1
+            )
+          );
+          const propertiesTabset = model
+            .doAction(
+              Actions.addNode(
+                propertiesTabJson,
+                tabset.getId(),
+                DockLocation.BOTTOM,
+                1
+              )
+            )
+            ?.getParent();
+          if (propertiesTabset) {
+            model.doAction(
+              Actions.updateNodeAttributes(propertiesTabset.getId(), {
+                enableMaximize: false,
+              })
+            );
           }
         }
       }
@@ -91,12 +110,14 @@ function App() {
   }, [editing]);
 
   useEffect(() => {
+    const model = modelRef.current!;
     let propertiesTabName = "Properties";
     if (selectedComponent && components) {
       propertiesTabName =
         components[selectedComponent.type].dashboard.name ?? "Properties";
     }
     const node = model.getNodeById("mainProperties") as TabNode;
+    const propertiesTabSet = node.getParent() as TabSetNode;
     if (!node) {
       return;
     }
@@ -104,6 +125,50 @@ function App() {
       node
         .getModel()
         .doAction(Actions.renameTab(node.getId(), propertiesTabName));
+    }
+
+    const children = selectedComponent
+      ? components[selectedComponent.type].children ?? []
+      : [];
+    const tabData = children.map((child) => {
+      return {
+        name: child.propertyTabName ?? components[child.type].dashboard.name,
+        id: `${child.type}Properties`,
+      };
+    });
+
+    propertiesTabSet.getChildren().forEach((childTab) => {
+      const id = childTab.getId();
+      const childPropertyTab = tabData.find((data) => data.id === id);
+      if (id === "mainProperties" || childPropertyTab) {
+        return;
+      }
+      model.doAction(Actions.deleteTab(childTab.getId()));
+    });
+
+    if (selectedComponent && components) {
+      // Actions.
+      // propertiesTabSet.getChildren().
+
+      tabData.forEach((data) => {
+        const tabJson: IJsonTabNode = {
+          type: "tab",
+          enableClose: false,
+          enableDrag: false,
+          enableFloat: false,
+          enableRename: false,
+          component: "properties",
+          id: data.id,
+          name: data.name,
+        };
+        const node = model.getNodeById(data.id) as TabNode;
+
+        if (!node) {
+          layoutRef.current?.addTabToTabSet(propertiesTabSet.getId(), tabJson);
+        }
+
+        model.doAction(Actions.selectTab("mainProperties"));
+      });
     }
   }, [selectedComponent]);
 
@@ -130,14 +195,16 @@ function App() {
   return (
     <Layout
       ref={layoutRef as any}
-      model={model}
+      model={modelRef.current ?? Model.fromJson(layoutJson)}
       factory={factory}
       onRenderTabSet={(
         tabSetNode: TabSetNode | BorderNode,
         renderValues: ITabSetRenderValues
       ) => {
-        const hasTools = tabSetNode.getChildren().some(node => {
-          return ['sources', 'componentList', 'mainProperties'].includes(node.getId());
+        const hasTools = tabSetNode.getChildren().some((node) => {
+          return ["sources", "componentList", "mainProperties"].includes(
+            node.getId()
+          );
         });
 
         if (tabSetNode instanceof BorderNode) {
@@ -187,7 +254,7 @@ function App() {
                   component: "components",
                   name: "Unnamed Tab",
                   enableFloat: true,
-                });                
+                });
               }}
             />
           );

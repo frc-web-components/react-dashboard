@@ -21,7 +21,7 @@ export const booleanBox = createComponent(
       label: stringProp(),
     },
   },
-  ({ setProperty, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return <BooleanBox {...props} />;
   }
 );
