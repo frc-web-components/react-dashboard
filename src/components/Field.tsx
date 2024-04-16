@@ -65,7 +65,7 @@ export const field = createComponent(
       defaultSize: { width: 300, height: 150 },
       minSize: { width: 60, height: 60 },
     },
-    children: [{ type: "fieldRobot", propertyTabName: 'Robots' }, { type: "fieldPath", propertyTabName: 'Paths' }],
+    children: [{ type: "fieldRobot", propertyTabName: 'Robot' }, { type: "fieldPath", propertyTabName: 'Path' }],
     properties: {
       game: stringDropdownProp({
         defaultValue: "Crescendo",
@@ -133,7 +133,7 @@ export const field = createComponent(
 export const fieldRobot = createComponent(
   {
     dashboard: {
-      name: "Field Robot",
+      name: "Robot",
       description: "",
       defaultSize: { width: 0, height: 0 },
       minSize: { width: 0, height: 0 },
@@ -164,7 +164,7 @@ export const fieldRobot = createComponent(
 export const fieldPath = createComponent(
   {
     dashboard: {
-      name: "Field Path",
+      name: "Path",
       description: "",
       defaultSize: { width: 0, height: 0 },
       minSize: { width: 0, height: 0 },

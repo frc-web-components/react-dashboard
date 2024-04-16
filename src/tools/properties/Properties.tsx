@@ -2,7 +2,7 @@ import { ColDef, GridApi, IsFullWidthRowParams } from "ag-grid-community";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridReact } from "ag-grid-react";
+import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/app/hooks";
 import {
@@ -17,12 +17,40 @@ import {
 } from "../../context-providers/ComponentConfigContext";
 import useResizeObserver from "@react-hook/resize-observer";
 import MarkdownEditor from "./MarkdownEditor";
-import { makeSelectSelectedComponent } from "../../store/selectors/layoutSelectors";
+import {
+  makeSelectSelectedComponent,
+  makeSelectSelectedComponentChildren,
+} from "../../store/selectors/layoutSelectors";
 import { SourceCellRenderer } from "./SourceCellRenderer";
 import { ColorCellEditor, ColorCellRenderer } from "./ColorCellRenderer";
 import PropertyNameCellRenderer from "./NameCellRenderer";
 import styles from "./Properties.module.scss";
 import { NumberArrayEditor } from "./NumberArrayEditor";
+
+export const AddChildCellRenderer = (
+  props: CustomCellRendererProps<{
+    onAdd: () => unknown;
+    componentName: string;
+    parentName: string;
+  }>
+) => {
+  return (
+    <button
+      style={{
+        background: "rgba(0, 0, 0, 0.3)",
+        border: "none",
+        borderRadius: 0,
+        color: "white",
+        width: "100%",
+        height: "100%",
+        padding: 0,
+      }}
+      onClick={props.data?.onAdd}
+    >
+      + Add {props.data?.componentName} to {props.data?.parentName}
+    </button>
+  );
+};
 
 export interface SourceData {
   key: string;
@@ -189,13 +217,40 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
   },
 ];
 
-function Properties() {
+interface Props {
+  childComponentConfig?: ComponentConfig;
+  configType?: string;
+}
+
+function Properties({ childComponentConfig, configType }: Props) {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
   const [gridApi, setGridApi] = useState<GridApi>();
   const selectSelectedComponent = useMemo(makeSelectSelectedComponent, []);
+  const selectSelectedComponentChildren = useMemo(
+    makeSelectSelectedComponentChildren,
+    []
+  );
   const selectedComponent = useAppSelector(selectSelectedComponent);
+  const selectedComponentChildren = useAppSelector(
+    selectSelectedComponentChildren
+  );
   const { components } = useComponentConfigs();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const { displayChildren, componentConfig } = useMemo(() => {
+    if (!childComponentConfig) {
+      return {
+        displayChildren: false,
+        componentConfig: selectedComponent
+          ? components[selectedComponent.type]
+          : undefined,
+      };
+    }
+    return {
+      displayChildren: true,
+      componentConfig: childComponentConfig,
+    };
+  }, [components, childComponentConfig, selectedComponent]);
+
+  const [isExpanded, setIsExpanded] = useState<Record<string, boolean>>({});
 
   const dispatch = useAppDispatch();
   const containerElementRef = useRef<HTMLElement>(null);
@@ -205,52 +260,73 @@ function Properties() {
     }
   });
 
-  const componentPropertyValues = useMemo(() => {
-    if (!selectedComponent || !components) {
+  const displayedComponents = useMemo(() => {
+    if (!displayChildren) {
+      return selectedComponent ? [selectedComponent] : [];
+    }
+    return (
+      selectedComponentChildren?.filter((child) => child.type === configType) ??
+      []
+    );
+  }, [
+    selectedComponentChildren,
+    configType,
+    displayChildren,
+    selectedComponent,
+  ]);
+
+  const componentPropertyValuesList = useMemo(() => {
+    if (!componentConfig) {
       return {};
     }
-    const component = components[selectedComponent.type];
-    const values: Record<string, unknown> = {};
+    const list: Record<string, Record<string, unknown>> = {};
+    displayedComponents.forEach((displayedComponent) => {
+      const values: Record<string, unknown> = {};
 
-    Object.entries(component?.properties).forEach(([name, property]) => {
-      values[name] =
-        selectedComponent.properties[name]?.value ?? property.defaultValue;
+      Object.entries(componentConfig.properties).forEach(([name, property]) => {
+        values[name] =
+          displayedComponent.properties[name]?.value ?? property.defaultValue;
+      });
+      list[displayedComponent.id] = values;
     });
-    return values;
-  }, [selectedComponent, components]);
-
+    return list;
+  }, [displayedComponents, componentConfig]);
 
   const rowData: PropertyData[] = useMemo(() => {
-    if (!selectedComponent || !components) {
+    if (!componentConfig) {
       return [];
     }
-    const component = components[selectedComponent.type];
-    const parentCell: PropertyData = {
-      componentId: selectedComponent.id,
-      componentConfig: component,
-      defaultValue: isExpanded,
-      name: selectedComponent.name,
-      type: "",
-      source: selectedComponent.source,
-      isParent: true,
-    };
-    const propertyRows = !isExpanded
-      ? []
-      : Object.entries(component?.properties).map(([name, property]) => {
-          return {
-            componentId: selectedComponent.id,
-            name,
-            defaultValue:
-              selectedComponent.properties[name]?.value ??
-              property.defaultValue,
-            type: property.input?.type ?? property.type,
-            source: selectedComponent.properties[name].source,
-            componentConfig: component,
-          };
-        }) ?? [];
+    return displayedComponents.flatMap((displayedComponent) => {
+      const { id, name, source, properties } = displayedComponent;
+      const parentCell: PropertyData = {
+        componentId: id,
+        componentConfig,
+        defaultValue: isExpanded[id] !== false,
+        name,
+        type: "",
+        source,
+        isParent: true,
+      };
+      const propertyRows =
+        isExpanded[id] === false
+          ? []
+          : Object.entries(componentConfig?.properties).map(
+              ([name, property]) => {
+                return {
+                  componentId: id,
+                  name,
+                  defaultValue:
+                    properties[name]?.value ?? property.defaultValue,
+                  type: property.input?.type ?? property.type,
+                  source: properties[name].source,
+                  componentConfig,
+                };
+              }
+            ) ?? [];
 
-    return [parentCell, ...propertyRows];
-  }, [selectedComponent, components, isExpanded]);
+      return [parentCell, ...propertyRows];
+    });
+  }, [displayedComponents, componentConfig, isExpanded]);
 
   useEffect(() => {
     if (gridApi) {
@@ -258,17 +334,30 @@ function Properties() {
     }
   }, [gridApi]);
 
-  const toggleExpanded = useCallback(() => {
-    setIsExpanded((current) => !current);
+  const toggleExpanded = useCallback((componentId: string) => {
+    setIsExpanded((current) => {
+      const next = { ...current };
+      next[componentId] = componentId in next ? !next[componentId] : false;
+      return next;
+    });
   }, []);
 
-  const context: PropertyContext = useMemo(() => {
-    return {
-      expanded: isExpanded,
-      toggleExpanded,
-      propertyValues: componentPropertyValues,
-    };
-  }, [isExpanded, componentPropertyValues]);
+  const context: Record<string, PropertyContext> = useMemo(() => {
+    const value: Record<string, PropertyContext> = {};
+    displayedComponents.forEach((displayedComponent) => {
+      value[displayedComponent.id] = {
+        expanded: isExpanded[displayedComponent.id] ?? true,
+        toggleExpanded: () => toggleExpanded(displayedComponent.id),
+        propertyValues: componentPropertyValuesList[displayedComponent.id],
+      };
+    });
+    return value;
+  }, [
+    isExpanded,
+    componentPropertyValuesList,
+    toggleExpanded,
+    displayedComponents,
+  ]);
 
   useEffect(() => {
     if (gridApi) {
@@ -277,11 +366,56 @@ function Properties() {
     }
   }, [context, gridApi]);
 
+  if (displayedComponents.length === 0 && childComponentConfig) {
+    return (
+      <div
+        style={{ height: "100%", width: "100%" }}
+        className={styles["properties-grid"]}
+        key={1}
+      >
+        <div style={{ height: "100%", boxSizing: "border-box" }}>
+          <div
+            style={{ height: "100%", width: "100%" }}
+            className={"ag-theme-balham-dark"}
+          >
+            <AgGridReact<any>
+              context={{
+                onAdd: () => console.log("Add!!"),
+                componentName: childComponentConfig?.dashboard.name ?? "",
+              }}
+              onGridReady={(params) => setGridApi(params.api)}
+              localeText={{
+                noRowsToShow: "No properties to show",
+              }}
+              rowData={[
+                {
+                  onAdd: () => console.log("Add!!"),
+                  componentName: childComponentConfig?.dashboard.name ?? "",
+                  parentName: selectedComponent?.name,
+                },
+              ]}
+              columnDefs={columnDefs}
+              headerHeight={0}
+              rowDragManaged={true}
+              suppressMoveWhenRowDragging={true}
+              suppressRowDrag={true}
+              animateRows={false}
+              reactiveCustomComponents
+              isFullWidthRow={() => true}
+              fullWidthCellRenderer={AddChildCellRenderer}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerElementRef as any}
       style={{ height: "100%", width: "100%" }}
       className={styles["properties-grid"]}
+      key={2}
     >
       <div style={{ height: "100%", boxSizing: "border-box" }}>
         <div
@@ -310,19 +444,17 @@ function Properties() {
             onCellValueChanged={(event) => {
               const {
                 newValue,
-                data: { isParent },
+                data: { isParent, componentId },
               } = event;
               const colId = event.column.getColId();
-              if (!selectedComponent) {
-                return;
-              }
+
               if (!("name" in event.data)) {
                 return;
               }
               if (colId === "defaultValue") {
                 dispatch(
                   updateComponentProperty({
-                    componentId: selectedComponent.id,
+                    componentId,
                     propertyName: event.data.name,
                     propertyValue: newValue,
                   })
@@ -331,7 +463,7 @@ function Properties() {
                 if (!isParent) {
                   dispatch(
                     updateComponentPropertySource({
-                      componentId: selectedComponent.id,
+                      componentId,
                       propertyName: event.data.name,
                       source: newValue,
                     })
@@ -339,7 +471,7 @@ function Properties() {
                 } else {
                   dispatch(
                     updateComponentSource({
-                      componentId: selectedComponent.id,
+                      componentId,
                       source: newValue,
                     })
                   );
@@ -347,7 +479,7 @@ function Properties() {
               } else if (colId === "name") {
                 dispatch(
                   setComponentName({
-                    componentId: selectedComponent.id,
+                    componentId,
                     name: newValue,
                   })
                 );

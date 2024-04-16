@@ -30,3 +30,17 @@ export function makeSelectSelectedComponent() {
     }
   );
 }
+
+export function makeSelectSelectedComponentChildren() {
+  return createSelector(
+    [selectSelectedComponentId, selectComponents],
+    (selectedComponentId, components) => {
+      if (!selectedComponentId) {
+        return undefined;
+      }
+      const selectedComponent = components[selectedComponentId];
+      return selectedComponent?.children.map(childId => components[childId]);
+
+    }
+  );
+}

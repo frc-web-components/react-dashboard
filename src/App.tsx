@@ -132,18 +132,11 @@ function App() {
       : [];
     const tabData = children.map((child) => {
       return {
+        type: child.type,
+        componentConfig: components[child.type],
         name: child.propertyTabName ?? components[child.type].dashboard.name,
         id: `${child.type}Properties`,
       };
-    });
-
-    propertiesTabSet.getChildren().forEach((childTab) => {
-      const id = childTab.getId();
-      const childPropertyTab = tabData.find((data) => data.id === id);
-      if (id === "mainProperties" || childPropertyTab) {
-        return;
-      }
-      model.doAction(Actions.deleteTab(childTab.getId()));
     });
 
     if (selectedComponent && components) {
@@ -157,7 +150,11 @@ function App() {
           enableDrag: false,
           enableFloat: false,
           enableRename: false,
-          component: "properties",
+          component: "childProperties",
+          config: {
+            componentConfig: data.componentConfig,
+            configType: data.type,
+          },
           id: data.id,
           name: data.name,
         };
@@ -165,15 +162,25 @@ function App() {
 
         if (!node) {
           layoutRef.current?.addTabToTabSet(propertiesTabSet.getId(), tabJson);
+          model.doAction(Actions.selectTab("mainProperties"));
         }
 
-        model.doAction(Actions.selectTab("mainProperties"));
       });
     }
+
+    propertiesTabSet.getChildren().forEach((childTab) => {
+      const id = childTab.getId();
+      const childPropertyTab = tabData.find((data) => data.id === id);
+      if (id === "mainProperties" || childPropertyTab) {
+        return;
+      }
+      model.doAction(Actions.deleteTab(childTab.getId()));
+    });
   }, [selectedComponent]);
 
   const factory = (node: TabNode) => {
     var component = node.getComponent();
+    const config = node.getConfig();
 
     if (component === "components") {
       return <Tab tabId={node.getId()} />;
@@ -185,6 +192,10 @@ function App() {
 
     if (component === "properties") {
       return <Properties />;
+    }
+
+    if (component === 'childProperties') {
+      return <Properties childComponentConfig={config.componentConfig} configType={config.configType} />
     }
 
     if (component === "componentList") {

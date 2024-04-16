@@ -9,14 +9,14 @@ import { useAppDispatch } from "../../store/app/hooks";
 import { updateComponentPropertySource } from "../../store/slices/layoutSlice";
 
 const NameCellRenderer = (
-  props: CustomCellRendererProps<PropertyData, string, PropertyContext>
+  props: CustomCellRendererProps<PropertyData, string, Record<string, PropertyContext>>
 ) => {
   const dispatch = useAppDispatch();
 
   const { data } = props;
 
   const isParent = !!props.data?.isParent;
-  const expanded = props.context.expanded;
+  const expanded = data ? props.context[data.componentId].expanded !== false : false;
 
   const { sourceGrid } = useDropZone(); // Use the context
   const [element, setElement] = useState<HTMLElement>();
@@ -89,7 +89,10 @@ const NameCellRenderer = (
         }}
         onClick={() => {
           if (isParent) {
-            props.context.toggleExpanded();
+            if (props.data) {
+              const { componentId } = props.data;
+              props.context[componentId].toggleExpanded();
+            }
           }
         }}
       >
