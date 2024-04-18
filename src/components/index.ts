@@ -16,6 +16,12 @@ import {
   stringProp,
 } from "./fromProps";
 import { field, fieldPath, fieldRobot } from "./Field";
+import {
+  lineChart,
+  lineChartAxis,
+  lineChartData,
+  lineChartLegend,
+} from "./LineChart";
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -103,6 +109,10 @@ export const componentMap: Record<string, ComponentConfig> = {
   markdownViewer,
   numberSlider,
   booleanBox,
+  lineChart,
+  lineChartData,
+  lineChartAxis,
+  lineChartLegend,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);

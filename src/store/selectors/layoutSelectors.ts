@@ -13,7 +13,7 @@ export const selectComponent = (state: RootState, componentId?: string) =>
 
 export function makeSelectTabComponents() {
   return createSelector([selectTab, selectComponents], (tab, components) => {
-    return tab?.componentIds.map((id) => components[id]);
+    return tab?.componentIds.map((id) => components[id]).filter(component => !component.parent);
   });
 }
 

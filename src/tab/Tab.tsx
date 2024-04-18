@@ -93,7 +93,7 @@ function Tab({ tabId }: Props) {
             return;
           }
           const {
-            dashboard: { defaultSize, minSize },
+            dashboard: { defaultSize, minSize, children },
             type,
             properties,
           } = node.data;
@@ -117,21 +117,53 @@ function Tab({ tabId }: Props) {
               value: prop.defaultValue,
             };
           });
+          const parentId = uuidv4();
           dispatch(
             addComponent({
               tabId,
               component: {
-                id: uuidv4(),
+                id: parentId,
                 children: [],
                 minSize: { width: minWidth, height: minHeight },
                 size: { width, height },
                 position: { x, y },
                 properties: props,
                 type,
-                name: node.data.dashboard.name
+                name: node.data.dashboard.name,
               },
             })
           );
+
+          if (children) {
+            children.forEach((child) => {
+              const component = components[child.type];
+              const props: Record<string, { value: unknown }> = {};
+              Object.entries(component.properties).forEach(([name, prop]) => {
+                props[name] = {
+                  value:
+                    child.properties && name in child.properties
+                      ? child.properties[name]
+                      : prop.defaultValue,
+                };
+              });
+              dispatch(
+                addComponent({
+                  tabId,
+                  component: {
+                    id: uuidv4(),
+                    parent: parentId,
+                    children: [],
+                    minSize: { width: 0, height: 0 },
+                    size: { width: 0, height: 0 },
+                    position: { x: 0, y: 0 },
+                    properties: props,
+                    type: child.type,
+                    name: child.name,
+                  },
+                })
+              );
+            });
+          }
         },
       };
       componentGrid.addRowDropZone(dropZoneParms);

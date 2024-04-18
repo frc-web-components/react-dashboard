@@ -15,9 +15,9 @@ export interface ComponentProperty {
     | "Object[]";
   defaultValue: unknown;
   input?: {
-    type: string,
-    [props: string]: unknown
-  }
+    type: string;
+    [props: string]: unknown;
+  };
 }
 
 export interface ChildComponentConfig {
@@ -38,6 +38,11 @@ export interface ComponentConfig {
       height: number;
     };
     topLevel?: boolean;
+    children?: {
+      type: string;
+      name: string;
+      properties?: Record<string, unknown>;
+    }[];
   };
   properties: Record<string, ComponentProperty>;
   component: React.ComponentType<any>;
@@ -53,35 +58,36 @@ interface ComponentConfigContextType {
 }
 
 // Create the context with a default value
-const ComponentConfigContext = createContext<ComponentConfigContextType | undefined>(
-  undefined
-);
+const ComponentConfigContext = createContext<
+  ComponentConfigContextType | undefined
+>(undefined);
 
 // Create a provider component
 interface ProviderProps {
   children: ReactNode;
-  components?: Record<string, ComponentConfig>
+  components?: Record<string, ComponentConfig>;
 }
 
 export const ComponentConfigProvider: React.FC<ProviderProps> = ({
   children,
-  components: initialComponents = {}
+  components: initialComponents = {},
 }) => {
-  const [components, setComponents] = useState<Record<string, ComponentConfig>>(initialComponents);
+  const [components, setComponents] =
+    useState<Record<string, ComponentConfig>>(initialComponents);
 
   const hasComponent = (id: string) => {
     return id in components;
   };
 
   const addComponent = (id: string, component: ComponentConfig) => {
-    setComponents(currentComponents => ({
+    setComponents((currentComponents) => ({
       ...currentComponents,
-      [id]: component
+      [id]: component,
     }));
   };
-  
+
   const addComponents = (newComponents: Record<string, ComponentConfig>) => {
-    setComponents(currentComponents => ({
+    setComponents((currentComponents) => ({
       ...currentComponents,
       ...newComponents,
     }));

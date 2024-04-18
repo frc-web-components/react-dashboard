@@ -41,12 +41,10 @@ export const ParentActionsCellRenderer = (
     if (!component || !selectedComponentChildren) {
       return 0;
     }
-    console.log('...');
     return selectedComponentChildren.filter((child) => {
       return child.type === component.type;
     }).length;
   }, [selectedComponentChildren, component]);
-  console.log('selectedComponentChildren:', {selectedComponentChildren, childCount, component});
 
   return (
     <div
