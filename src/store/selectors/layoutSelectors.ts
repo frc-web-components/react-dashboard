@@ -8,15 +8,13 @@ export const selectComponents = (state: RootState) => state.layout.components;
 export const selectTab = (state: RootState, tabId: string) =>
   state.layout.tabs[tabId];
 
-export const selectComponent = (state: RootState, componentId: string) => state.layout.components[componentId];
+export const selectComponent = (state: RootState, componentId?: string) =>
+  componentId ? state.layout.components[componentId] : undefined;
 
 export function makeSelectTabComponents() {
-  return createSelector(
-    [selectTab, selectComponents],
-    (tab, components) => {
-      return tab?.componentIds.map((id) => components[id]);
-    }
-  );
+  return createSelector([selectTab, selectComponents], (tab, components) => {
+    return tab?.componentIds.map((id) => components[id]);
+  });
 }
 
 export function makeSelectSelectedComponent() {
@@ -39,8 +37,7 @@ export function makeSelectSelectedComponentChildren() {
         return undefined;
       }
       const selectedComponent = components[selectedComponentId];
-      return selectedComponent?.children.map(childId => components[childId]);
-
+      return selectedComponent?.children.map((childId) => components[childId]);
     }
   );
 }

@@ -33,7 +33,6 @@ import { makeSelectSelectedComponent } from "./store/selectors/layoutSelectors";
 import { useComponentConfigs } from "./context-providers/ComponentConfigContext";
 import EditButton from "./sidebar/EditButton";
 import { selectEditing } from "./store/slices/appSlice";
-import { v4 as uuidv4 } from "uuid";
 
 const themes = new DashboardThemes();
 themes.addThemeRules("dark", darkTheme);

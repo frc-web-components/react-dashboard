@@ -6,6 +6,7 @@ import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../store/app/hooks";
 import {
+  addComponent,
   setComponentName,
   updateComponentProperty,
   updateComponentPropertySource,
@@ -26,31 +27,8 @@ import { ColorCellEditor, ColorCellRenderer } from "./ColorCellRenderer";
 import PropertyNameCellRenderer from "./NameCellRenderer";
 import styles from "./Properties.module.scss";
 import { NumberArrayEditor } from "./NumberArrayEditor";
-
-export const AddChildCellRenderer = (
-  props: CustomCellRendererProps<{
-    onAdd: () => unknown;
-    componentName: string;
-    parentName: string;
-  }>
-) => {
-  return (
-    <button
-      style={{
-        background: "rgba(0, 0, 0, 0.3)",
-        border: "none",
-        borderRadius: 0,
-        color: "white",
-        width: "100%",
-        height: "100%",
-        padding: 0,
-      }}
-      onClick={props.data?.onAdd}
-    >
-      + Add {props.data?.componentName} to {props.data?.parentName}
-    </button>
-  );
-};
+import { v4 as uuidv4 } from "uuid";
+import { ParentActionsCellRenderer } from "./ParentActionsCellRenderer";
 
 export interface SourceData {
   key: string;
@@ -113,6 +91,9 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       return params.value;
     },
     editable: (params) => {
+      if (params.data?.isParent) {
+        return false;
+      }
       if (!params.data) {
         return true;
       }
@@ -183,7 +164,7 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     cellRendererSelector: (params) => {
       if (params.data?.isParent) {
         return {
-          component: () => <></>,
+          component: ParentActionsCellRenderer,
         };
       }
       if (!params.data) {
@@ -378,32 +359,45 @@ function Properties({ childComponentConfig, configType }: Props) {
             style={{ height: "100%", width: "100%" }}
             className={"ag-theme-balham-dark"}
           >
-            <AgGridReact<any>
-              context={{
-                onAdd: () => console.log("Add!!"),
-                componentName: childComponentConfig?.dashboard.name ?? "",
+            <button
+              style={{
+                background: "rgba(0, 0, 0, 0.3)",
+                border: "none",
+                borderRadius: 0,
+                color: "white",
+                width: "100%",
+                height: "100%",
+                padding: 0,
+                fontSize: '20px'
               }}
-              onGridReady={(params) => setGridApi(params.api)}
-              localeText={{
-                noRowsToShow: "No properties to show",
+              onClick={() => {
+                const props: Record<string, { value: unknown }> = {};
+                Object.entries(childComponentConfig.properties).forEach(([name, prop]) => {
+                  props[name] = {
+                    value: prop.defaultValue,
+                  };
+                });
+                dispatch(
+                  addComponent({
+                    tabId: "",
+                    component: {
+                      id: uuidv4(),
+                      children: [],
+                      minSize: { width: 0, height: 0 },
+                      size: { width: 0, height: 0 },
+                      position: { x: 0, y: 0 },
+                      properties: props,
+                      type: configType!,
+                      name: childComponentConfig.dashboard.name,
+                      parent: selectedComponent?.id,
+                    },
+                  })
+                );
               }}
-              rowData={[
-                {
-                  onAdd: () => console.log("Add!!"),
-                  componentName: childComponentConfig?.dashboard.name ?? "",
-                  parentName: selectedComponent?.name,
-                },
-              ]}
-              columnDefs={columnDefs}
-              headerHeight={0}
-              rowDragManaged={true}
-              suppressMoveWhenRowDragging={true}
-              suppressRowDrag={true}
-              animateRows={false}
-              reactiveCustomComponents
-              isFullWidthRow={() => true}
-              fullWidthCellRenderer={AddChildCellRenderer}
-            />
+            >
+              + Add {childComponentConfig?.dashboard.name ?? ""} to{" "}
+              {selectedComponent?.name}
+            </button>
           </div>
         </div>
       </div>
@@ -435,7 +429,7 @@ function Properties({ childComponentConfig, configType }: Props) {
             suppressRowDrag={true}
             getRowId={(params) => {
               if (!params.data.isParent) {
-                return params.data.name;
+                return `${params.data.componentId}-${params.data.name}`;
               }
               return `${params.data.componentId}parent`;
             }}
