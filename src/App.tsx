@@ -61,9 +61,17 @@ function App() {
   useEffect(() => {
     const model = modelRef.current!;
     if (!editing) {
+      const node = model.getNodeById("mainProperties") as TabNode;
+      const propertiesTabSet = node.getParent() as TabSetNode;
+      const childIds = propertiesTabSet.getChildren().map(child => child.getId());
+      // console.log('propertiesTabSet.getChildren():', propertiesTabSet.getChildren().length);
+      childIds.forEach((id) => {
+        model.doAction(Actions.deleteTab(id));
+        console.log('delete', id)
+      });
+      // model.doAction(Actions.deleteTab("mainProperties"));
       model.doAction(Actions.deleteTab("sources"));
       model.doAction(Actions.deleteTab("componentList"));
-      model.doAction(Actions.deleteTab("mainProperties"));
     } else {
       const sourcesTab = model.getNodeById("sources");
       if (!sourcesTab) {
@@ -116,10 +124,10 @@ function App() {
         components[selectedComponent.type].dashboard.name ?? "Properties";
     }
     const node = model.getNodeById("mainProperties") as TabNode;
-    const propertiesTabSet = node.getParent() as TabSetNode;
     if (!node) {
       return;
     }
+    const propertiesTabSet = node.getParent() as TabSetNode;
     if (node.getType?.() === "tab") {
       node
         .getModel()
@@ -163,7 +171,6 @@ function App() {
           layoutRef.current?.addTabToTabSet(propertiesTabSet.getId(), tabJson);
           model.doAction(Actions.selectTab("mainProperties"));
         }
-
       });
     }
 
@@ -193,8 +200,13 @@ function App() {
       return <Properties />;
     }
 
-    if (component === 'childProperties') {
-      return <Properties childComponentConfig={config.componentConfig} configType={config.configType} />
+    if (component === "childProperties") {
+      return (
+        <Properties
+          childComponentConfig={config.componentConfig}
+          configType={config.configType}
+        />
+      );
     }
 
     if (component === "componentList") {

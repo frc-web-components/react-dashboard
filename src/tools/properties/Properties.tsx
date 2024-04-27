@@ -417,6 +417,7 @@ function Properties({ childComponentConfig, configType }: Props) {
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<PropertyData>
+            alwaysShowVerticalScroll
             context={context}
             onGridReady={(params) => setGridApi(params.api)}
             localeText={{

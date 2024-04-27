@@ -53,7 +53,7 @@ export const layoutSlice = createAppSlice({
   reducers: (create) => ({
     // Use the `PayloadAction` type to declare the contents of `action.payload`
     setSelectedComponent: create.reducer(
-      (state, action: PayloadAction<string>) => {
+      (state, action: PayloadAction<string | undefined>) => {
         state.selectedComponentId = action.payload;
       }
     ),

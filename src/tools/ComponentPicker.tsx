@@ -53,6 +53,7 @@ function ComponentPicker() {
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<ComponentListItem>
+            alwaysShowVerticalScroll
             onGridReady={(params) => setComponentGrid(params.api as any)}
             rowData={Object.values(rowData).sort((a, b) =>
               a.dashboard.name.localeCompare(b.dashboard.name)

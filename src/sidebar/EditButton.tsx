@@ -2,6 +2,7 @@ import editIcon from "/edit.svg";
 import checkIcon from "/check.svg";
 import { selectEditing, toggleEditing } from "../store/slices/appSlice";
 import { useAppDispatch, useAppSelector } from "../store/app/hooks";
+import { setSelectedComponent } from "../store/slices/layoutSlice";
 
 function EditButton() {
   const dispatch = useAppDispatch();
@@ -16,6 +17,7 @@ function EditButton() {
       }}
       src={editing ? checkIcon : editIcon}
       onClick={() => {
+        dispatch(setSelectedComponent(undefined));
         dispatch(toggleEditing());
       }}
     />

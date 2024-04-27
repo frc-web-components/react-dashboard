@@ -152,6 +152,7 @@ export const NumberArrayEditor = (
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<NumberValue>
+            alwaysShowVerticalScroll
             context={{
               removeElement: (index: number) => {
                 setValue((currentArray) => {

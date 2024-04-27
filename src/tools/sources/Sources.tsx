@@ -5,7 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import collapseIcon from "/collapse.svg";
 import expandIcon from "/expand.svg";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useDropZone } from "../../context-providers/DropZoneContext";
 import { useAppSelector } from "../../store/app/hooks";
 import {
@@ -34,6 +34,37 @@ export interface SourceData {
   level: number;
 }
 
+interface ExpandToggleProps {
+  level: number;
+  children?: ReactNode;
+  expanded: boolean;
+  onToggle: () => unknown;
+}
+
+const ExpandToggle = ({
+  level,
+  children,
+  expanded,
+  onToggle,
+}: ExpandToggleProps) => {
+  return (
+    <div
+      style={{
+        cursor: "pointer",
+        zIndex: 100,
+        paddingLeft: level * 8,
+        display: "flex",
+        gap: 0,
+        alignItems: "center",
+      }}
+      onClick={onToggle}
+    >
+      <img src={expanded ? collapseIcon : expandIcon} />
+      {children}
+    </div>
+  );
+};
+
 const ValueCellRenderer = (
   props: CustomCellRendererProps<SourceData, unknown>
 ) => {
@@ -44,7 +75,40 @@ const ValueCellRenderer = (
       props.data?.source.key
     )
   );
-  return <div>{JSON.stringify(value)}</div>;
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        boxSizing: "border-box",
+        // justifyContent: "space-between",
+      }}
+    >
+      {typeof value === "object" && (
+        <img style={{ cursor: 'pointer'}} src={false ? collapseIcon : expandIcon} />
+      )}
+      <span
+        style={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          flex: 1,
+        }}
+      >
+        {" "}
+        {JSON.stringify(value)}
+      </span>
+      <span
+        style={{
+          color: "lightblue",
+          fontSize: "11px",
+          marginLeft: "7px",
+        }}
+      >
+        {" "}
+        {props.data?.type}
+      </span>
+    </div>
+  );
 };
 
 const NameCellRenderer = (
@@ -59,16 +123,10 @@ const NameCellRenderer = (
     );
   }
   return (
-    <div
-      style={{
-        cursor: "pointer",
-        zIndex: 100,
-        paddingLeft: level * 8,
-        display: "flex",
-        gap: 0,
-        alignItems: "center",
-      }}
-      onClick={() => {
+    <ExpandToggle
+      expanded={props.data.expanded}
+      level={level}
+      onToggle={() => {
         if (props.data) {
           if (props.data.expanded) {
             props.context.collapse(props.data.id);
@@ -78,7 +136,6 @@ const NameCellRenderer = (
         }
       }}
     >
-      <img src={props.data.expanded ? collapseIcon : expandIcon} />
       <span
         style={{
           overflow: "hidden",
@@ -87,7 +144,7 @@ const NameCellRenderer = (
       >
         {props.data?.name}
       </span>
-    </div>
+    </ExpandToggle>
   );
 };
 
@@ -128,10 +185,10 @@ const colDefs: ColDef[] = [
     },
     cellRenderer: ValueCellRenderer,
   },
-  {
-    field: "type",
-    sortable: false,
-  },
+  // {
+  //   field: "type",
+  //   sortable: false,
+  // },
   // Show default header name
 ];
 
@@ -153,6 +210,7 @@ function Sources() {
 
   useEffect(() => {
     if (sourceGrid) {
+      console.log("RESIZE!!!!");
       sourceGrid.sizeColumnsToFit();
     }
   }, [sourceGrid]);
@@ -217,6 +275,7 @@ function Sources() {
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<SourceData>
+            alwaysShowVerticalScroll
             onGridReady={(params) => {
               setSourceGrid(params.api);
             }}

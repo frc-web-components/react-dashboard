@@ -5,6 +5,8 @@ import {
   Gyro,
   Swerve,
 } from "@frc-web-components/react";
+import { threeAxisAccelerometer } from "./ThreeAxisAccelerometer";
+import { camera } from "./Camera";
 import { markdownViewer } from "./MarkdownViewer";
 import { numberSlider } from "./NumberSlider";
 import { booleanBox } from "./BooleanBox";
@@ -24,40 +26,7 @@ import {
 } from "./LineChart";
 
 export const componentMap: Record<string, ComponentConfig> = {
-  basicFmsInfo: {
-    dashboard: {
-      name: "Basic FMS Info",
-      description: "",
-      defaultSize: { width: 380, height: 100 },
-      minSize: { width: 150, height: 90 },
-    },
-    properties: {
-      eventName: { type: "String", defaultValue: "" },
-      matchNumber: { type: "Number", defaultValue: 0 },
-      matchType: { type: "Number", defaultValue: 0 },
-      fmsControlData: { type: "Number", defaultValue: 0 },
-    },
-    component: BasicFmsInfo,
-  },
-  field,
-  fieldPath,
-  fieldRobot,
-  gyro: {
-    dashboard: {
-      name: "Gyro",
-      description: "",
-      defaultSize: { width: 200, height: 240 },
-      minSize: { width: 120, height: 120 },
-    },
-    properties: {
-      value: numberProp(),
-      hideLabel: booleanProp(),
-      precision: numberProp({ defaultValue: 2, min: 0, precision: 0 }),
-      counterClockwise: booleanProp(),
-      fromRadians: booleanProp(),
-    },
-    component: Gyro,
-  },
+  threeAxisAccelerometer,
   accelerometer: {
     dashboard: {
       name: "Accelerometer",
@@ -77,6 +46,43 @@ export const componentMap: Record<string, ComponentConfig> = {
     },
     component: Accelerometer,
   },
+  basicFmsInfo: {
+    dashboard: {
+      name: "Basic FMS Info",
+      description: "",
+      defaultSize: { width: 380, height: 100 },
+      minSize: { width: 150, height: 90 },
+    },
+    properties: {
+      eventName: { type: "String", defaultValue: "" },
+      matchNumber: { type: "Number", defaultValue: 0 },
+      matchType: { type: "Number", defaultValue: 0 },
+      fmsControlData: { type: "Number", defaultValue: 0 },
+    },
+    component: BasicFmsInfo,
+  },
+  booleanBox,
+  camera,
+  field,
+  fieldPath,
+  fieldRobot,
+  gyro: {
+    dashboard: {
+      name: "Gyro",
+      description: "",
+      defaultSize: { width: 200, height: 240 },
+      minSize: { width: 120, height: 120 },
+    },
+    properties: {
+      value: numberProp(),
+      hideLabel: booleanProp(),
+      precision: numberProp({ defaultValue: 2, min: 0, precision: 0 }),
+      counterClockwise: booleanProp(),
+      fromRadians: booleanProp(),
+    },
+    component: Gyro,
+  },
+
   swerveDrivebase: {
     dashboard: {
       name: "Swerve Drivebase",
@@ -108,7 +114,6 @@ export const componentMap: Record<string, ComponentConfig> = {
   },
   markdownViewer,
   numberSlider,
-  booleanBox,
   lineChart,
   lineChartData,
   lineChartAxis,
