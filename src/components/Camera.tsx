@@ -3,6 +3,7 @@ import {
   booleanProp,
   colorProp,
   createComponent,
+  stringArrayProp,
   stringProp,
 } from "./fromProps";
 
@@ -15,7 +16,7 @@ export const camera = createComponent(
       minSize: { width: 50, height: 50 },
     },
     properties: {
-      // streams: { type: "Array" },
+      streams: stringArrayProp(),
       backgroundColor: colorProp({ defaultValue: "#000000" }),
       waitImage: stringProp({ defaultValue: "./no-camera-stream.jpg" }),
       hideCrosshair: booleanProp(),

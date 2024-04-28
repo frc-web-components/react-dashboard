@@ -159,3 +159,14 @@ export function numberArrayProp(prop?: { defaultValue?: number[] }): {
     defaultValue: prop?.defaultValue ?? [],
   };
 }
+
+
+export function stringArrayProp(prop?: { defaultValue?: string[] }): {
+  type: "String[]";
+  defaultValue: string[];
+} {
+  return {
+    type: "String[]",
+    defaultValue: prop?.defaultValue ?? [],
+  };
+}

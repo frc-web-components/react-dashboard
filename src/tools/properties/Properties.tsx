@@ -27,6 +27,7 @@ import { ColorCellEditor, ColorCellRenderer } from "./ColorCellRenderer";
 import PropertyNameCellRenderer from "./NameCellRenderer";
 import styles from "./Properties.module.scss";
 import { NumberArrayEditor } from "./NumberArrayEditor";
+import { StringArrayEditor } from "./StringArrayEditor";
 import { v4 as uuidv4 } from "uuid";
 import { ParentActionsCellRenderer } from "./ParentActionsCellRenderer";
 
@@ -84,8 +85,11 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     valueFormatter: (params) => {
       if (params.data?.type) {
         const { type } = params.data;
-        if (type === "Number[]" && params.value instanceof Array) {
-          return `[${params.value.join(",")}]`;
+        if (
+          (type === "Number[]" || type === "String[]") &&
+          params.value instanceof Array
+        ) {
+          return JSON.stringify(params.value);
         }
       }
       return params.value;
@@ -126,6 +130,13 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
       if (type === "Number[]") {
         return {
           component: NumberArrayEditor,
+          popup: true,
+          popupPosition: "under",
+        };
+      }
+      if (type === "String[]") {
+        return {
+          component: StringArrayEditor,
           popup: true,
           popupPosition: "under",
         };
@@ -368,15 +379,17 @@ function Properties({ childComponentConfig, configType }: Props) {
                 width: "100%",
                 height: "100%",
                 padding: 0,
-                fontSize: '20px'
+                fontSize: "20px",
               }}
               onClick={() => {
                 const props: Record<string, { value: unknown }> = {};
-                Object.entries(childComponentConfig.properties).forEach(([name, prop]) => {
-                  props[name] = {
-                    value: prop.defaultValue,
-                  };
-                });
+                Object.entries(childComponentConfig.properties).forEach(
+                  ([name, prop]) => {
+                    props[name] = {
+                      value: prop.defaultValue,
+                    };
+                  }
+                );
                 dispatch(
                   addComponent({
                     tabId: "",

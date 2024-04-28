@@ -64,10 +64,8 @@ function App() {
       const node = model.getNodeById("mainProperties") as TabNode;
       const propertiesTabSet = node.getParent() as TabSetNode;
       const childIds = propertiesTabSet.getChildren().map(child => child.getId());
-      // console.log('propertiesTabSet.getChildren():', propertiesTabSet.getChildren().length);
       childIds.forEach((id) => {
         model.doAction(Actions.deleteTab(id));
-        console.log('delete', id)
       });
       // model.doAction(Actions.deleteTab("mainProperties"));
       model.doAction(Actions.deleteTab("sources"));

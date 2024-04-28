@@ -4,7 +4,7 @@ import { useAppSelector } from "../store/app/hooks";
 import { selectComponent } from "../store/selectors/layoutSelectors";
 import {
   SourceTree,
-  makeSelectSourceTree,
+  useSourceTree,
 } from "../store/selectors/sourceSelectors";
 
 // Interface for the context value
@@ -61,10 +61,7 @@ export const useParentSourceTree = (): SourceTree | undefined => {
   const component = useAppSelector((state) =>
     selectComponent(state, componentId)
   );
-  const selectSourceTree = useMemo(() => makeSelectSourceTree(), []);
-  return useAppSelector((state) =>
-    selectSourceTree(state, component.source?.provider, component.source?.key)
-  );
+  return useSourceTree(component?.source?.provider, component?.source?.key)
 };
 
 function treeToJson(tree: SourceTree): Record<string, unknown> | unknown {

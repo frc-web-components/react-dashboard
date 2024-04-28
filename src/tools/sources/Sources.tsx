@@ -210,7 +210,6 @@ function Sources() {
 
   useEffect(() => {
     if (sourceGrid) {
-      console.log("RESIZE!!!!");
       sourceGrid.sizeColumnsToFit();
     }
   }, [sourceGrid]);

@@ -1,22 +1,13 @@
 import { ComponentConfig } from "../context-providers/ComponentConfigContext";
-import {
-  Accelerometer,
-  BasicFmsInfo,
-  Gyro,
-  Swerve,
-} from "@frc-web-components/react";
+import { Accelerometer, BasicFmsInfo, Gyro } from "@frc-web-components/react";
 import { threeAxisAccelerometer } from "./ThreeAxisAccelerometer";
 import { camera } from "./Camera";
 import { markdownViewer } from "./MarkdownViewer";
 import { numberSlider } from "./NumberSlider";
 import { booleanBox } from "./BooleanBox";
-import {
-  booleanProp,
-  numberArrayProp,
-  numberProp,
-  stringDropdownProp,
-  stringProp,
-} from "./fromProps";
+import { checkboxGroup } from "./CheckboxGroup";
+import { robotCommand, robotSubsystem } from "./CommandBased";
+import { booleanProp, numberProp, stringProp } from "./fromProps";
 import { field, fieldPath, fieldRobot } from "./Field";
 import {
   lineChart,
@@ -24,6 +15,16 @@ import {
   lineChartData,
   lineChartLegend,
 } from "./LineChart";
+import {
+  swerveDrivebase,
+  differentialDrivebase,
+  mecanumDrivebase,
+} from "./Drivebases";
+import { gauge } from "./Gauge";
+import { icon } from "./Icon";
+import { label, numberLabel } from "./Labels";
+import { mechanism2d } from "./Mechanism2d";
+
 
 export const componentMap: Record<string, ComponentConfig> = {
   threeAxisAccelerometer,
@@ -63,6 +64,9 @@ export const componentMap: Record<string, ComponentConfig> = {
   },
   booleanBox,
   camera,
+  checkboxGroup,
+  robotCommand,
+  robotSubsystem,
   field,
   fieldPath,
   fieldRobot,
@@ -82,42 +86,20 @@ export const componentMap: Record<string, ComponentConfig> = {
     },
     component: Gyro,
   },
-
-  swerveDrivebase: {
-    dashboard: {
-      name: "Swerve Drivebase",
-      description: "",
-      defaultSize: { width: 300, height: 300 },
-      minSize: { width: 50, height: 50 },
-    },
-    properties: {
-      moduleCount: numberProp({ defaultValue: 4 }),
-      wheelLocations: numberArrayProp({
-        defaultValue: [1, -1, 1, 1, -1, -1, -1, 1],
-      }),
-      measuredStates: numberArrayProp({
-        defaultValue: [0, 0, 0, 0, 0, 0, 0, 0],
-      }),
-      desiredStates: numberArrayProp({
-        defaultValue: [0, 0, 0, 0, 0, 0, 0, 0],
-      }),
-      robotRotation: numberProp(),
-      maxSpeed: numberProp({ defaultValue: 1 }),
-      rotationUnit: stringDropdownProp({
-        defaultValue: "radians",
-        options: ["radians", "degrees"],
-      }),
-      sizeLeftRight: numberProp({ defaultValue: 2 }),
-      sizeFrontBack: numberProp({ defaultValue: 2 }),
-    },
-    component: Swerve,
-  },
+  swerveDrivebase,
+  differentialDrivebase,
+  mecanumDrivebase,
   markdownViewer,
   numberSlider,
   lineChart,
   lineChartData,
   lineChartAxis,
   lineChartLegend,
+  gauge,
+  icon,
+  label,
+  numberLabel,
+  mechanism2d,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);
