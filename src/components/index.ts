@@ -24,7 +24,10 @@ import { gauge } from "./Gauge";
 import { icon } from "./Icon";
 import { label, numberLabel } from "./Labels";
 import { mechanism2d } from "./Mechanism2d";
-
+import { networkAlerts } from "./NetworkAlerts";
+import { numberBar } from "./NumberBar";
+import { pidCommand, pidController, profiledPidController } from "./Pid";
+import { preferences } from './Preferences';
 
 export const componentMap: Record<string, ComponentConfig> = {
   threeAxisAccelerometer,
@@ -100,6 +103,12 @@ export const componentMap: Record<string, ComponentConfig> = {
   label,
   numberLabel,
   mechanism2d,
+  networkAlerts,
+  numberBar,
+  pidCommand,
+  pidController,
+  profiledPidController,
+  preferences,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);

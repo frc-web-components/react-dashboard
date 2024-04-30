@@ -1,16 +1,15 @@
 import React, { createContext, useContext, ReactNode, useMemo } from "react";
-import { SourceInfo } from "./SourceProviderContext";
+import { SourceInfo, useSourceProvider } from "./SourceProviderContext";
 import { useAppSelector } from "../store/app/hooks";
 import { selectComponent } from "../store/selectors/layoutSelectors";
-import {
-  SourceTree,
-  useSourceTree,
-} from "../store/selectors/sourceSelectors";
+import { SourceTree, useSourceTree } from "../store/selectors/sourceSelectors";
+import { Component } from "../store/slices/layoutSlice";
 
 // Interface for the context value
 interface ComponentContextType {
-  propertySourceInfos?: Record<string, SourceInfo>;
-  componentId: string;
+  propertySources?: Record<string, SourceInfo>;
+  component: Component;
+  setSourceValue: (value: unknown, sourceInfo: SourceInfo) => unknown;
 }
 
 // Create the context with a default value
@@ -21,19 +20,25 @@ const ComponentContext = createContext<ComponentContextType | undefined>(
 // Create a provider component
 interface ProviderProps {
   children: ReactNode;
-  propertySourceInfos?: Record<string, SourceInfo>;
+  propertySources?: Record<string, SourceInfo>;
   componentId: string;
 }
 
 export const ComponentProvider: React.FC<ProviderProps> = ({
   children,
-  propertySourceInfos,
+  propertySources,
   componentId,
 }) => {
+  const component = useAppSelector((state) =>
+    selectComponent(state, componentId)
+  );
+  const { setSourceValue } = useSourceProvider();
+
   // The value that will be given to the context consumers
   const value = {
-    propertySourceInfos,
-    componentId,
+    propertySources,
+    component: component!,
+    setSourceValue,
   };
 
   return (
@@ -57,11 +62,8 @@ export const useParentSourceTree = (): SourceTree | undefined => {
   if (context === undefined) {
     throw new Error("useComponent must be used within a ComponentProvider");
   }
-  const { componentId } = context;
-  const component = useAppSelector((state) =>
-    selectComponent(state, componentId)
-  );
-  return useSourceTree(component?.source?.provider, component?.source?.key)
+  const { component } = context;
+  return useSourceTree(component?.source?.provider, component?.source?.key);
 };
 
 function treeToJson(tree: SourceTree): Record<string, unknown> | unknown {

@@ -92,7 +92,7 @@ export function useSourceTree(provider?: string, key?: string) {
       if (prevKeys.size > 0) {
         hasChanged = true;
       }
-
+      
       if (hasChanged) {
         const sources: Record<string, Source> = {};
         const values: Record<string, unknown> = {};

@@ -74,7 +74,7 @@ function TabComponent({ Component, componentId }: Props) {
   return (
     <ComponentProvider
       componentId={componentId}
-      propertySourceInfos={propertySourceInfos}
+      propertySources={propertySourceInfos}
     >
       <Component
         className={Styles["component-child"]}
