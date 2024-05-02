@@ -70,7 +70,7 @@ export const layoutSlice = createAppSlice({
           return;
         }
         parentComponent?.children.push(component.id);
-        
+
         state.components[component.id] = component;
         if (!state.tabs[tabId]) {
           state.tabs[tabId] = {
@@ -78,6 +78,43 @@ export const layoutSlice = createAppSlice({
           };
         }
         state.tabs[tabId].componentIds.push(component.id);
+      }
+    ),
+    removeComponent: create.reducer(
+      (state, action: PayloadAction<{ componentId: string }>) => {
+        const { componentId } = action.payload;
+        const component = state.components[componentId];
+
+        let tabId = Object.keys(state.tabs).find(id => {
+          return state.tabs[id].componentIds.includes(componentId);
+        });
+
+        console.log('tabId:', tabId);
+
+        const componentIds = new Set(tabId ? state.tabs[tabId].componentIds : []);
+
+        if (componentId === state.selectedComponentId) {
+          state.selectedComponentId = undefined;
+        }
+        if (component) {
+          if (component.parent) {
+            const children = state.components[component.parent].children;
+            children.splice(children.indexOf(componentId), 1);
+          }
+          component.children.forEach(child => {
+            delete state.components[child];
+            componentIds.delete(child);
+            
+            if (state.selectedComponentId === child) {
+              state.selectedComponentId = undefined;
+            }
+          });
+          componentIds.delete(componentId);
+          delete state.components[componentId];
+        }
+        if (tabId) {
+          state.tabs[tabId].componentIds = [...componentIds];
+        }
       }
     ),
     setComponentName: create.reducer(
@@ -154,6 +191,7 @@ export const layoutSlice = createAppSlice({
 export const {
   setSelectedComponent,
   addComponent,
+  removeComponent,
   updateComponentPosition,
   updateComponentSize,
   updateComponentProperty,

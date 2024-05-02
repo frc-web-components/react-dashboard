@@ -94,6 +94,7 @@ function Tab({ tabId }: Props) {
           }
           const {
             dashboard: { defaultSize, minSize, children },
+            defaultSource,
             type,
             properties,
           } = node.data;
@@ -124,6 +125,7 @@ function Tab({ tabId }: Props) {
               component: {
                 id: parentId,
                 children: [],
+                source: defaultSource,
                 minSize: { width: minWidth, height: minHeight },
                 size: { width, height },
                 position: { x, y },
@@ -169,7 +171,7 @@ function Tab({ tabId }: Props) {
       componentGrid.addRowDropZone(dropZoneParms);
     }
   }, [gridElement, componentGrid]);
-
+  
   return (
     <GridLayout
       style={{
@@ -220,7 +222,10 @@ function Tab({ tabId }: Props) {
       autoSize
       compactType={null}
       preventCollision
-      resizeHandles={["ne", "nw", "se", "sw", "s", "e", "w", "n"]}
+      resizeHandles={["nw", "se"]}
+      onResizeStart={(layout, oldItem, newItem) => {
+        dispatch(setSelectedComponent(newItem.i));
+      }}
       onDragStart={(layout, oldItem, newItem) => {
         dispatch(setSelectedComponent(newItem.i));
       }}

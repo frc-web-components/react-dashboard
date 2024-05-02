@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from "react";
 import Styles from "./Tab.module.scss";
-import { makeSelectComponentPropertyValues } from "../store/selectors/componentSelectors";
+import { useComponentPropertyValues } from "../store/selectors/componentSelectors";
 import { useAppSelector } from "../store/app/hooks";
 import {
   SourceInfo,
@@ -30,14 +30,10 @@ interface Props {
 }
 
 function TabComponent({ Component, componentId }: Props) {
-  const selectComponentPropertyData = useMemo(
-    makeSelectComponentPropertyValues,
-    []
-  );
+  
   const selectChildren = useMemo(makeSelectChildren, []);
-  const componentPropertyData = useAppSelector((state) =>
-    selectComponentPropertyData(state, componentId)
-  );
+  const componentPropertyData = useComponentPropertyValues(componentId);
+
   const { setSourceValue } = useSourceProvider();
   const { components } = useComponentConfigs();
   const childComponents = useAppSelector((state) =>

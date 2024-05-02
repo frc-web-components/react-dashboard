@@ -81,7 +81,7 @@ export class NT4Provider extends SourceProvider {
   #topics: Record<string, NT4_Topic> = {};
 
   constructor(store: AppStore) {
-    super(store, 1000 / 60);
+    super(store, 1000 / 20);
     // this.#store = store;
 
     this.#nt4 = new Nt4Client(

@@ -9,6 +9,7 @@ export const numberSlider = createComponent(
       defaultSize: { width: 200, height: 60 },
       minSize: { width: 80, height: 30 },
     },
+    primaryProperty: 'value',
     properties: {
       value: numberProp(),
       min: numberProp({ defaultValue: -1 }),

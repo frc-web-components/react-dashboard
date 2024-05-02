@@ -65,6 +65,10 @@ export const field = createComponent(
       defaultSize: { width: 300, height: 150 },
       minSize: { width: 60, height: 60 },
     },
+    defaultSource: {
+      key: '/SmartDashboard/Field',
+      provider: 'NT',
+    },
     children: [{ type: "fieldRobot", propertyTabName: 'Robot' }, { type: "fieldPath", propertyTabName: 'Path' }],
     properties: {
       game: stringDropdownProp({

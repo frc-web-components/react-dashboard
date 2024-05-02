@@ -11,7 +11,11 @@ import {
   selectComponent,
 } from "../../store/selectors/layoutSelectors";
 import { useComponentConfigs } from "../../context-providers/ComponentConfigContext";
-import { addComponent } from "../../store/slices/layoutSlice";
+import {
+  addComponent,
+  removeComponent,
+  setSelectedComponent,
+} from "../../store/slices/layoutSlice";
 import { v4 as uuidv4 } from "uuid";
 
 export const ParentActionsCellRenderer = (
@@ -108,6 +112,10 @@ export const ParentActionsCellRenderer = (
           lineHeight: "20px",
         }}
         onClick={() => {
+          if (!component) {
+            return;
+          }
+          dispatch(removeComponent({ componentId: component.id }));
           // if (typeof props.data?.index === "number") {
           //   props.context.addElementAfter(props.data.index);
           // }

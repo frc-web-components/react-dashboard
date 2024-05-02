@@ -38,6 +38,7 @@ export const componentMap: Record<string, ComponentConfig> = {
       defaultSize: { width: 200, height: 60 },
       minSize: { width: 80, height: 60 },
     },
+    primaryProperty: 'value',
     properties: {
       value: numberProp(),
       max: numberProp({ defaultValue: 1 }),
@@ -56,6 +57,10 @@ export const componentMap: Record<string, ComponentConfig> = {
       description: "",
       defaultSize: { width: 380, height: 100 },
       minSize: { width: 150, height: 90 },
+    },
+    defaultSource: {
+      key: '/FMSInfo',
+      provider: 'NT',
     },
     properties: {
       eventName: { type: "String", defaultValue: "" },
@@ -80,6 +85,7 @@ export const componentMap: Record<string, ComponentConfig> = {
       defaultSize: { width: 200, height: 240 },
       minSize: { width: 120, height: 120 },
     },
+    primaryProperty: 'value',
     properties: {
       value: numberProp(),
       hideLabel: booleanProp(),

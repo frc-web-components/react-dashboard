@@ -44,6 +44,11 @@ export interface ComponentConfig {
       properties?: Record<string, unknown>;
     }[];
   };
+  defaultSource?: {
+    key: string;
+    provider: string;
+  };
+  primaryProperty?: string;
   properties: Record<string, ComponentProperty>;
   component: React.ComponentType<any>;
   children?: ChildComponentConfig[];

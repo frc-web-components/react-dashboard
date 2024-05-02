@@ -14,6 +14,10 @@ export const swerveDrivebase = createComponent(
       defaultSize: { width: 300, height: 300 },
       minSize: { width: 50, height: 50 },
     },
+    defaultSource: {
+      key: '/SmartDashboard/swerve',
+      provider: 'NT',
+    },
     properties: {
       moduleCount: numberProp({ defaultValue: 4 }),
       wheelLocations: numberArrayProp({

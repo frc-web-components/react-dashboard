@@ -32,13 +32,23 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
   {
     dashboard,
     children,
+    defaultSource,
+    primaryProperty,
     properties,
-  }: { dashboard: ComponentConfig["dashboard"]; children?: ComponentConfig["children"], properties: P },
+  }: {
+    dashboard: ComponentConfig["dashboard"];
+    children?: ComponentConfig["children"];
+    defaultSource?: ComponentConfig["defaultSource"];
+    primaryProperty?: string;
+    properties: P;
+  },
   component: React.ComponentType<FromProps<P>>
 ): ComponentConfig {
   return {
     dashboard,
     children,
+    defaultSource,
+    primaryProperty,
     properties,
     component,
   };
@@ -159,7 +169,6 @@ export function numberArrayProp(prop?: { defaultValue?: number[] }): {
     defaultValue: prop?.defaultValue ?? [],
   };
 }
-
 
 export function stringArrayProp(prop?: { defaultValue?: string[] }): {
   type: "String[]";

@@ -14,6 +14,7 @@ export const numberBar = createComponent(
       defaultSize: { width: 200, height: 60 },
       minSize: { width: 80, height: 60 },
     },
+    primaryProperty: 'value',
     properties: {
       value: numberProp(),
       max: numberProp({ defaultValue: 1 }),
@@ -26,7 +27,6 @@ export const numberBar = createComponent(
     },
   },
   ({ children, setProperty, ...props }) => {
-    console.log("NUMBER BAR!!");
     return <NumberBar {...props} />;
   }
 );

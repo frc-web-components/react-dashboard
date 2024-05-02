@@ -9,6 +9,7 @@ export const gauge = createComponent(
       defaultSize: { width: 150, height: 150 },
       minSize: { width: 50, height: 50 },
     },
+    primaryProperty: 'value',
     properties: {
       min: numberProp(),
       max: numberProp({ defaultValue: 100 }),

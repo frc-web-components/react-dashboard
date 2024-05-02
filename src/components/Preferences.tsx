@@ -1,7 +1,6 @@
 import { Preferences } from "@frc-web-components/react";
 import {
   booleanProp,
-  colorProp,
   createComponent,
   stringProp,
 } from "./fromProps";
@@ -41,6 +40,10 @@ export const preferences = createComponent(
       defaultSize: { width: 200, height: 200 },
       minSize: { width: 100, height: 100 },
     },
+    defaultSource: {
+      key: '/Preferences',
+      provider: 'NT',
+    },
     properties: {
       search: stringProp(),
       hideTitle: booleanProp(),
@@ -56,7 +59,6 @@ export const preferences = createComponent(
       component: { source },
     } = useComponent();
 
-    console.log("tree:", { tree, preferences });
     return (
       <Preferences
         {...props}

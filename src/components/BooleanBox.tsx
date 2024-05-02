@@ -14,6 +14,7 @@ export const booleanBox = createComponent(
       defaultSize: { width: 100, height: 100 },
       minSize: { width: 20, height: 20 },
     },
+    primaryProperty: 'value',
     properties: {
       value: booleanProp(),
       trueColor: colorProp({ defaultValue: "#00ff00" }),
