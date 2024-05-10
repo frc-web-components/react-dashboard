@@ -15,6 +15,7 @@ import {
 } from "../../store/selectors/sourceSelectors";
 import useResizeObserver from "@react-hook/resize-observer";
 import styles from "./Sources.module.scss";
+import { SourceMetadata } from "../../store/slices/sourceSlice";
 
 interface SourceContext {
   expand: (id: string) => unknown;
@@ -32,6 +33,7 @@ export interface SourceData {
   expanded: boolean;
   id: string;
   level: number;
+  metadata?: SourceMetadata;
 }
 
 interface ExpandToggleProps {
@@ -85,7 +87,10 @@ const ValueCellRenderer = (
       }}
     >
       {typeof value === "object" && (
-        <img style={{ cursor: 'pointer'}} src={false ? collapseIcon : expandIcon} />
+        <img
+          style={{ cursor: "pointer" }}
+          src={false ? collapseIcon : expandIcon}
+        />
       )}
       <span
         style={{
@@ -239,6 +244,7 @@ function Sources() {
           provider: tree.provider,
           key: tree.key,
         },
+        metadata: tree.metadata,
       };
       data.push(sourceData);
 

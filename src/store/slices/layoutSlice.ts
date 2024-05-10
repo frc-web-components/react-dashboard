@@ -89,8 +89,6 @@ export const layoutSlice = createAppSlice({
           return state.tabs[id].componentIds.includes(componentId);
         });
 
-        console.log('tabId:', tabId);
-
         const componentIds = new Set(tabId ? state.tabs[tabId].componentIds : []);
 
         if (componentId === state.selectedComponentId) {

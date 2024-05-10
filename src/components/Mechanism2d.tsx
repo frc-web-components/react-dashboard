@@ -51,6 +51,7 @@ export const mechanism2d = createComponent(
       defaultSize: { width: 100, height: 100 },
       minSize: { width: 50, height: 50 },
     },
+    acceptedSourceTypes: ['Mechanism2d'],
     properties: {
       backgroundColor: colorProp({ defaultValue: "#000020" }),
       dims: numberArrayProp({ defaultValue: [3, 3] }),

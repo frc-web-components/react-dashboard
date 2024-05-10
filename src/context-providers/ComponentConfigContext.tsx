@@ -48,6 +48,7 @@ export interface ComponentConfig {
     key: string;
     provider: string;
   };
+  acceptedSourceTypes?: string[];
   primaryProperty?: string;
   properties: Record<string, ComponentProperty>;
   component: React.ComponentType<any>;

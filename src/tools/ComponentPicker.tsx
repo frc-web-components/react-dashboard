@@ -10,20 +10,21 @@ import {
   useComponentConfigs,
 } from "../context-providers/ComponentConfigContext";
 
-export interface ComponentListItem extends ComponentConfig {
+export interface ComponentListItem {
+  config: ComponentConfig;
   type: string;
 }
 
 const defaultColumnDefs: ColDef[] = [
   {
-    field: "dashboard.name",
+    field: "config.dashboard.name",
     headerName: "Name",
     editable: false,
     sortable: true,
     rowDrag: true,
   },
   {
-    field: "dashboard.description",
+    field: "config.dashboard.description",
     headerName: "Description",
     sortable: false,
   },
@@ -37,12 +38,18 @@ function ComponentPicker() {
   const rowData = useMemo(() => {
     return Object.entries(components)
       .map(([type, component]) => ({
-        ...component,
+        config: component,
         type,
       }))
-      .filter(({ dashboard: { topLevel } }) => {
-        return topLevel !== false;
-      });
+      .filter(
+        ({
+          config: {
+            dashboard: { topLevel },
+          },
+        }) => {
+          return topLevel !== false;
+        }
+      );
   }, [components]);
 
   return (
@@ -56,13 +63,13 @@ function ComponentPicker() {
             alwaysShowVerticalScroll
             onGridReady={(params) => setComponentGrid(params.api as any)}
             rowData={Object.values(rowData).sort((a, b) =>
-              a.dashboard.name.localeCompare(b.dashboard.name)
+              a.config.dashboard.name.localeCompare(b.config.dashboard.name)
             )}
             columnDefs={columnDefs}
             rowDragManaged={true}
             suppressMoveWhenRowDragging={true}
             getRowId={(params) => {
-              return params.data.dashboard.name;
+              return params.data.config.dashboard.name;
             }}
           />
         </div>

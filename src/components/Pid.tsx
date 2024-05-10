@@ -18,6 +18,7 @@ export const pidCommand = createComponent(
       defaultSize: { width: 160, height: 250 },
       minSize: { width: 140, height: 200 },
     },
+    acceptedSourceTypes: ["Command"],
     properties: {
       p: numberProp(),
       i: numberProp(),
@@ -50,6 +51,7 @@ export const pidController = createComponent(
       defaultSize: { width: 160, height: 170 },
       minSize: { width: 140, height: 170 },
     },
+    acceptedSourceTypes: ["PIDController"],
     properties: {
       p: numberProp(),
       i: numberProp(),
@@ -80,6 +82,7 @@ export const profiledPidController = createComponent(
       defaultSize: { width: 160, height: 170 },
       minSize: { width: 140, height: 170 },
     },
+    acceptedSourceTypes: ["ProfiledPIDController"],
     properties: {
       p: numberProp(),
       i: numberProp(),

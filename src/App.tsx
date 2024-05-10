@@ -33,6 +33,9 @@ import { makeSelectSelectedComponent } from "./store/selectors/layoutSelectors";
 import { useComponentConfigs } from "./context-providers/ComponentConfigContext";
 import EditButton from "./sidebar/EditButton";
 import { selectEditing } from "./store/slices/appSlice";
+import SimpleDialog from "./tools/properties/SimpleDialog";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 const themes = new DashboardThemes();
 themes.addThemeRules("dark", darkTheme);
@@ -47,6 +50,7 @@ function App() {
   const editing = useAppSelector(selectEditing);
   const [layoutJson] = useState(defaultLayoutJson);
   const modelRef = useRef<Model>();
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
 
   useEffect(() => {
     modelRef.current = Model.fromJson(layoutJson);
@@ -63,7 +67,9 @@ function App() {
     if (!editing) {
       const node = model.getNodeById("mainProperties") as TabNode;
       const propertiesTabSet = node.getParent() as TabSetNode;
-      const childIds = propertiesTabSet.getChildren().map(child => child.getId());
+      const childIds = propertiesTabSet
+        .getChildren()
+        .map((child) => child.getId());
       childIds.forEach((id) => {
         model.doAction(Actions.deleteTab(id));
       });
@@ -213,74 +219,133 @@ function App() {
   };
 
   return (
-    <Layout
-      ref={layoutRef as any}
-      model={modelRef.current ?? Model.fromJson(layoutJson)}
-      factory={factory}
-      onRenderTabSet={(
-        tabSetNode: TabSetNode | BorderNode,
-        renderValues: ITabSetRenderValues
-      ) => {
-        const hasTools = tabSetNode.getChildren().some((node) => {
-          return ["sources", "componentList", "mainProperties"].includes(
-            node.getId()
-          );
-        });
+    <>
+      <SimpleDialog
+        title="Settings"
+        isOpen={isSettingsDialogOpen}
+        onClose={() => {
+          setIsSettingsDialogOpen(false);
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: "10px",
+              alignItems: "center",
+            }}
+          >
+            <div
+              style={{
+                width: "60px",
+                color: "white",
+              }}
+            >
+              Team/IP
+            </div>
+            <input
+              style={{
+                background: "#222",
+                border: "1px solid #555",
+                color: "white",
+                padding: "5px",
+                borderRadius: "2px",
+              }}
+              type="text"
+              list="addresses"
+              value={'localhost'}
+            />
+            <datalist id="addresses">
+              <option>localhost</option>
+            </datalist>
+            {/* <CreatableSelect
+              className="react-select-container"
+              classNamePrefix="react-select"
+              value={{ value: "127.0.0.1", label: "127.0.0.1" }}
+              options={[{ value: "127.0.0.1", label: "127.0.0.1" }]}
+            /> */}
+          </div>
+        </div>
+      </SimpleDialog>
+      <Layout
+        ref={layoutRef as any}
+        model={modelRef.current ?? Model.fromJson(layoutJson)}
+        factory={factory}
+        onRenderTabSet={(
+          tabSetNode: TabSetNode | BorderNode,
+          renderValues: ITabSetRenderValues
+        ) => {
+          const hasTools = tabSetNode.getChildren().some((node) => {
+            return ["sources", "componentList", "mainProperties"].includes(
+              node.getId()
+            );
+          });
 
-        if (tabSetNode instanceof BorderNode) {
-          const location = tabSetNode.getLocation();
+          if (tabSetNode instanceof BorderNode) {
+            const location = tabSetNode.getLocation();
 
-          if (location.getName() === "left") {
-            // buttons on bottom side
+            if (location.getName() === "left") {
+              // buttons on bottom side
+              renderValues.stickyButtons.push(
+                <img
+                  style={{
+                    transform: "rotate(90deg)",
+                    margin: "0 5px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    setIsSettingsDialogOpen((value) => !value);
+                  }}
+                  src={settingsIcon}
+                />
+              );
+
+              renderValues.stickyButtons.push(<EditButton />);
+            }
+
+            if (location.getName() === "bottom") {
+              // buttons on left side
+              renderValues.stickyButtons.push(
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    color: isNt4Connected ? "green" : "red",
+                    gap: "5px",
+                  }}
+                >
+                  <img
+                    src={isNt4Connected ? connectedIcon : disconnectedIcon}
+                  />
+                  NetworkTables
+                </div>
+              );
+            }
+          } else if (!hasTools) {
             renderValues.stickyButtons.push(
               <img
+                src={addIcon}
                 style={{
-                  transform: "rotate(90deg)",
-                  margin: "0 5px",
                   cursor: "pointer",
                 }}
-                src={settingsIcon}
+                onClick={() => {
+                  layoutRef!.current!.addTabToTabSet(tabSetNode.getId(), {
+                    component: "components",
+                    name: "Unnamed Tab",
+                    enableFloat: true,
+                  });
+                }}
               />
             );
-
-            renderValues.stickyButtons.push(<EditButton />);
           }
-
-          if (location.getName() === "bottom") {
-            // buttons on left side
-            renderValues.stickyButtons.push(
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: isNt4Connected ? "green" : "red",
-                  gap: "5px",
-                }}
-              >
-                <img src={isNt4Connected ? connectedIcon : disconnectedIcon} />
-                NetworkTables
-              </div>
-            );
-          }
-        } else if (!hasTools) {
-          renderValues.stickyButtons.push(
-            <img
-              src={addIcon}
-              style={{
-                cursor: "pointer",
-              }}
-              onClick={() => {
-                layoutRef!.current!.addTabToTabSet(tabSetNode.getId(), {
-                  component: "components",
-                  name: "Unnamed Tab",
-                  enableFloat: true,
-                });
-              }}
-            />
-          );
-        }
-      }}
-    />
+        }}
+      />
+    </>
   );
 }
 

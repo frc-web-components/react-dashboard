@@ -1,12 +1,15 @@
 import { RootState, store } from "../app/store";
 import { createSelector } from "@reduxjs/toolkit";
-import { Source } from "../slices/sourceSlice";
+import { Source, SourceMetadata } from "../slices/sourceSlice";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export const selectSources = (state: RootState) => state.source.sources;
 
 export const selectProviderSources = (state: RootState, provider?: string) =>
   typeof provider === "undefined" ? undefined : state.source.sources[provider];
+
+export const selectProviderMetadata = (state: RootState, provider?: string) =>
+  typeof provider === "undefined" ? undefined : state.source.metadata[provider];
 
 export const selectProviderSourceValues = (
   state: RootState,
@@ -41,6 +44,7 @@ export interface SourceTree extends Source {
 
 export interface SourceTreePreview extends Source {
   childrenSources: Record<string, SourceTreePreview>;
+  metadata?: SourceMetadata;
 }
 
 export function useSourceTree(provider?: string, key?: string) {
@@ -92,7 +96,7 @@ export function useSourceTree(provider?: string, key?: string) {
       if (prevKeys.size > 0) {
         hasChanged = true;
       }
-      
+
       if (hasChanged) {
         const sources: Record<string, Source> = {};
         const values: Record<string, unknown> = {};
@@ -142,8 +146,8 @@ export function makeSelectSourceTree() {
 
 export function makeSelectSourceTreePreview() {
   return createSelector(
-    [selectProviderSources, selectSource],
-    (sources, source) => {
+    [selectProviderSources, selectSource, selectProviderMetadata],
+    (sources, source, metadata) => {
       if (!sources || !source) {
         return undefined;
       }
@@ -157,6 +161,7 @@ export function makeSelectSourceTreePreview() {
         });
         return {
           ...source,
+          metadata: metadata?.[sourceKey],
           childrenSources,
         };
       };

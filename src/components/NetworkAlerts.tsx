@@ -1,11 +1,9 @@
 import { NetworkAlerts } from "@frc-web-components/react";
 import {
   booleanProp,
-  colorProp,
   createComponent,
   stringArrayProp,
   stringDropdownProp,
-  stringProp,
 } from "./fromProps";
 
 export const networkAlerts = createComponent(
@@ -16,6 +14,7 @@ export const networkAlerts = createComponent(
       defaultSize: { width: 300, height: 200 },
       minSize: { width: 100, height: 50 },
     },
+    acceptedSourceTypes: ['Alerts'],
     properties: {
 
       errors: stringArrayProp(),

@@ -21,6 +21,10 @@ export interface Source {
   name: string;
 }
 
+export interface SourceMetadata {
+  displayType?: string;
+}
+
 export interface SourceSlice {
   sources: {
     [providerName: string]: {
@@ -32,11 +36,17 @@ export interface SourceSlice {
       [sourceKey: string]: unknown;
     };
   };
+  metadata: {
+    [providerName: string]: {
+      [sourceKey: string]: SourceMetadata;
+    };
+  };
 }
 
 const initialState: SourceSlice = {
   sources: {},
   sourceValues: {},
+  metadata: {},
 };
 
 export const sourceSlice = createAppSlice({
@@ -118,8 +128,7 @@ export const sourceSlice = createAppSlice({
         >
       ) => {
         // add source
-        action.payload.forEach(actionPayload => {
-
+        action.payload.forEach((actionPayload) => {
           const { provider, type, propertyType, key, value } = actionPayload;
           const keyParts = key.split("/");
           if (!state.sources[provider]) {
@@ -134,7 +143,9 @@ export const sourceSlice = createAppSlice({
               type,
               propertyType,
               parent:
-                keyParts.length > 1 ? keyParts.slice(0, -1).join("/") : undefined,
+                keyParts.length > 1
+                  ? keyParts.slice(0, -1).join("/")
+                  : undefined,
             };
           } else {
             state.sources[provider][key].propertyType = propertyType;
@@ -145,7 +156,7 @@ export const sourceSlice = createAppSlice({
           if (typeof value !== "undefined") {
             state.sourceValues[provider][key] = value;
           }
-  
+
           // update ancestors
           for (let i = 1; i < keyParts.length; i++) {
             const grandParent =
@@ -167,6 +178,28 @@ export const sourceSlice = createAppSlice({
               state.sources[provider][parent].children.push(child);
             }
           }
+        });
+      }
+    ),
+    setSourceDisplayTypes: create.reducer(
+      (
+        state,
+        action: PayloadAction<
+          {
+            provider: string;
+            key: string;
+            type: string;
+          }[]
+        >
+      ) => {
+        action.payload.forEach(({ key, provider, type }) => {
+          if (!state.metadata[provider]) {
+            state.metadata[provider] = {};
+          }
+          if (!state.metadata[provider][key]) {
+            state.metadata[provider][key] = {};
+          }
+          state.metadata[provider][key].displayType = type;
         });
       }
     ),
@@ -202,4 +235,5 @@ export const sourceSlice = createAppSlice({
   }),
 });
 
-export const { removeSource, setSource, setSources } = sourceSlice.actions;
+export const { removeSource, setSource, setSources, setSourceDisplayTypes } =
+  sourceSlice.actions;

@@ -15,6 +15,7 @@ export const checkboxGroup = createComponent(
       defaultSize: { width: 65, height: 100 },
       minSize: { width: 20, height: 20 },
     },
+    acceptedSourceTypes: ['String[]'],
     primaryProperty: 'selected',
     properties: {
       disabled: booleanProp(),

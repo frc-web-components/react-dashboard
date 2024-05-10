@@ -44,6 +44,7 @@ export const preferences = createComponent(
       key: '/Preferences',
       provider: 'NT',
     },
+    acceptedSourceTypes: ['RobotPreferences'],
     properties: {
       search: stringProp(),
       hideTitle: booleanProp(),

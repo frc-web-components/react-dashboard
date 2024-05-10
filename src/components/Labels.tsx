@@ -10,6 +10,7 @@ export const label = createComponent(
       minSize: { width: 20, height: 20 },
     },
     primaryProperty: 'text',
+    acceptedSourceTypes: ['String'],
     properties: {
       text: stringProp({ defaultValue: "label" }),
     },
@@ -28,6 +29,7 @@ export const numberLabel = createComponent(
       minSize: { width: 20, height: 20 },
     },
     primaryProperty: 'value',
+    acceptedSourceTypes: ['Number'],
     properties: {
       value: numberProp(),
       precision: numberProp({ defaultValue: 2, min: 0 }),

@@ -10,6 +10,7 @@ export const numberSlider = createComponent(
       minSize: { width: 80, height: 30 },
     },
     primaryProperty: 'value',
+    acceptedSourceTypes: ['Number'],
     properties: {
       value: numberProp(),
       min: numberProp({ defaultValue: -1 }),

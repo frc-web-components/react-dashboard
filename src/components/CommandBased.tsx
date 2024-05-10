@@ -14,6 +14,7 @@ export const robotCommand = createComponent(
       defaultSize: { width: 100, height: 50 },
       minSize: { width: 40, height: 40 },
     },
+    acceptedSourceTypes: ['Command'],
     properties: {
       name: stringProp({ defaultValue: "Command" }),
       running: booleanProp(),
@@ -41,6 +42,7 @@ export const robotSubsystem = createComponent(
       defaultSize: { width: 200, height: 100 },
       minSize: { width: 50, height: 50 },
     },
+    acceptedSourceTypes: ['Subsystem'],
     properties: {
       default: stringProp(),
       command: stringProp(),

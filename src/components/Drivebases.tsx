@@ -18,6 +18,7 @@ export const swerveDrivebase = createComponent(
       key: '/SmartDashboard/swerve',
       provider: 'NT',
     },
+    acceptedSourceTypes: ['Swerve'],
     properties: {
       moduleCount: numberProp({ defaultValue: 4 }),
       wheelLocations: numberArrayProp({
@@ -52,6 +53,7 @@ export const differentialDrivebase = createComponent(
       defaultSize: { width: 300, height: 200 },
       minSize: { width: 100, height: 100 },
     },
+    acceptedSourceTypes: ['DifferentialDrive'],
     properties: {
       leftMotorSpeed: numberProp(),
       rightMotorSpeed: numberProp(),
@@ -77,6 +79,7 @@ export const mecanumDrivebase = createComponent(
       defaultSize: { width: 330, height: 240 },
       minSize: { width: 100, height: 100 },
     },
+    acceptedSourceTypes: ['MecanumDrive'],
     properties: {
       frontLeftMotorSpeed: numberProp(),
       frontRightMotorSpeed: numberProp(),

@@ -15,6 +15,7 @@ export const camera = createComponent(
       defaultSize: { width: 300, height: 250 },
       minSize: { width: 50, height: 50 },
     },
+    acceptedSourceTypes: ['Camera'],
     properties: {
       streams: stringArrayProp(),
       backgroundColor: colorProp({ defaultValue: "#000000" }),

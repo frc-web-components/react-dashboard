@@ -62,6 +62,7 @@ export const componentMap: Record<string, ComponentConfig> = {
       key: '/FMSInfo',
       provider: 'NT',
     },
+    acceptedSourceTypes: ['FMSInfo'],
     properties: {
       eventName: { type: "String", defaultValue: "" },
       matchNumber: { type: "Number", defaultValue: 0 },
@@ -78,6 +79,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   field,
   fieldPath,
   fieldRobot,
+  numberSlider,
   gyro: {
     dashboard: {
       name: "Gyro",
@@ -86,6 +88,7 @@ export const componentMap: Record<string, ComponentConfig> = {
       minSize: { width: 120, height: 120 },
     },
     primaryProperty: 'value',
+    acceptedSourceTypes: ['Number', 'Gyro'],
     properties: {
       value: numberProp(),
       hideLabel: booleanProp(),
@@ -99,7 +102,6 @@ export const componentMap: Record<string, ComponentConfig> = {
   differentialDrivebase,
   mecanumDrivebase,
   markdownViewer,
-  numberSlider,
   lineChart,
   lineChartData,
   lineChartAxis,

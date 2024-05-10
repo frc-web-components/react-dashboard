@@ -52,28 +52,6 @@ function getPropType(type: string, value?: unknown): PropertyType {
   return "Object";
 }
 
-// export abstract class SourceProvider {
-//   #store: AppStore;
-
-//   constructor(store: AppStore) {
-//     this.#store = store;
-//   }
-
-//   abstract componentUpdate(key: string, value: unknown, type: string): unknown;
-
-//   update(
-//     key: string,
-//     value: unknown,
-//     type: string,
-//     propertyType: PropertyType
-//   ) {
-//     // dispatch action from store
-//     this.#store.dispatch(
-//       setSource({ key, value, provider: "NT", type, propertyType })
-//     );
-//   }
-// }
-
 export class NT4Provider extends SourceProvider {
   #nt4: NT4_Client;
   #structDecoder = new StructDecoder();
@@ -90,6 +68,11 @@ export class NT4Provider extends SourceProvider {
       (topic: NT4_Topic) => {
         this.#topics[topic.name] = topic;
         this.update(topic.name, undefined, topic.type, getPropType(topic.type));
+
+        if (basicTypes.includes(topic.type)) {
+          const propType = getPropType(topic.type);
+          this.updateDisplayType(topic.name, propType);
+        }
       },
       (topic: NT4_Topic) => {
         delete this.#topics[topic.name];
@@ -100,6 +83,11 @@ export class NT4Provider extends SourceProvider {
         } else if (basicTypes.includes(topic.type)) {
           const propType = getPropType(topic.type);
           this.update(topic.name, value, topic.type, propType);
+          
+          const parts = topic.name.split('/');
+          if (parts.pop() === '.type') {
+            this.updateDisplayType(parts.join('/'), value as string);
+          }
         } else if (topic.type === "json") {
           if (typeof value === "string") {
             try {

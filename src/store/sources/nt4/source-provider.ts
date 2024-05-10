@@ -1,7 +1,7 @@
 // import { noop } from './util';
 
 import { AppStore } from "../../app/store";
-import { PropertyType, setSource, setSources } from "../../slices/sourceSlice";
+import { PropertyType, setSource, setSourceDisplayTypes, setSources } from "../../slices/sourceSlice";
 
 type SourceUpdate = {
   updateType: string;
@@ -20,6 +20,9 @@ type SourceUpdates = {
 class SourceProvider {
   #interval?;
   #sourceUpdates: SourceUpdates = {};
+  #displayTypeUpdates: {
+    [sourceKey: string]: string;
+  } = {};
   #clearSourcesTimeoutId?: number; //NodeJS.Timeout;
   #clearSourcesHandlers: Map<symbol, () => void> = new Map();
   #store: AppStore;
@@ -71,6 +74,10 @@ class SourceProvider {
     if (!this.#interval) {
       this.#sendUpdates();
     }
+  }
+
+  updateDisplayType(key: string, type: string) {
+    this.#displayTypeUpdates[key] = type;
   }
 
   /**
@@ -204,6 +211,18 @@ class SourceProvider {
         }
       );
       this.#store.dispatch(setSources(sources));
+    }
+    if (Object.keys(this.#displayTypeUpdates).length > 9) {
+      const updates = Object.entries(this.#displayTypeUpdates).map(
+        ([key, type]) => {
+          return {
+            key,
+            type,
+            provider: "NT",
+          };
+        }
+      );
+      this.#store.dispatch(setSourceDisplayTypes(updates));
     }
   }
 

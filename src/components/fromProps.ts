@@ -35,12 +35,14 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
     defaultSource,
     primaryProperty,
     properties,
+    acceptedSourceTypes,
   }: {
     dashboard: ComponentConfig["dashboard"];
     children?: ComponentConfig["children"];
     defaultSource?: ComponentConfig["defaultSource"];
     primaryProperty?: string;
     properties: P;
+    acceptedSourceTypes?: string[];
   },
   component: React.ComponentType<FromProps<P>>
 ): ComponentConfig {
@@ -50,6 +52,7 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
     defaultSource,
     primaryProperty,
     properties,
+    acceptedSourceTypes,
     component,
   };
 }

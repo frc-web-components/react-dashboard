@@ -15,6 +15,7 @@ export const numberBar = createComponent(
       minSize: { width: 80, height: 60 },
     },
     primaryProperty: 'value',
+    acceptedSourceTypes: ['Number'],
     properties: {
       value: numberProp(),
       max: numberProp({ defaultValue: 1 }),

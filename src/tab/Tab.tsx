@@ -3,7 +3,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import classNames from "classnames";
 import Styles from "./Tab.module.scss";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/app/hooks";
 import {
   setSelectedComponent,
@@ -17,11 +17,37 @@ import {
 } from "../store/selectors/layoutSelectors";
 import { useDropZone } from "../context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
-import { useComponentConfigs } from "../context-providers/ComponentConfigContext";
+import {
+  ComponentConfig,
+  useComponentConfigs,
+} from "../context-providers/ComponentConfigContext";
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "../tools/ComponentPicker";
 import TabComponent from "./TabComponent";
 import { selectEditing } from "../store/slices/appSlice";
+import { SourceData } from "../tools/sources/Sources";
+
+export const getComponentsWithDisplayType = (
+  type: string,
+  components: Record<string, ComponentConfig>
+): {
+  type: string;
+  config: ComponentConfig;
+}[] => {
+  if (!type) {
+    return [];
+  }
+  return Object.entries(components)
+    .filter(([, config]) => {
+      return config.acceptedSourceTypes?.includes(type);
+    })
+    .map(([componentType, config]) => {
+      return {
+        type: componentType,
+        config,
+      };
+    });
+};
 
 interface ComponentLayout extends Layout {
   Component: React.ComponentType<any>;
@@ -40,11 +66,16 @@ function Tab({ tabId }: Props) {
     selectTabComponents(state, tabId)
   );
   const { components } = useComponentConfigs();
+  const componentsRef = useRef(components);
   const editing = useAppSelector(selectEditing);
-  const { componentGrid } = useDropZone(); // Use the context
+  const { componentGrid, sourceGrid } = useDropZone(); // Use the context
   const [gridElement, setGridElement] = useState<HTMLElement>();
   const [cellSize, setCellSize] = useState(30);
   const [cellGap, setCellGap] = useState(5);
+
+  useEffect(() => {
+    componentsRef.current = components;
+  }, [components]);
 
   // layout is an array of objects, see the demo for more complete usage
   // const [layout, setLayout] = useState<ComponentLayout[]>([]);
@@ -79,99 +110,138 @@ function Tab({ tabId }: Props) {
     return maxX;
   }, [gridLayout]);
 
+  const addComponentToTab = useCallback(
+    (config: ComponentConfig, type: string, event: MouseEvent) => {
+      if (!gridElement) {
+        return;
+      }
+      const {
+        dashboard: { defaultSize, minSize, children },
+        defaultSource,
+        properties,
+      } = config;
+
+      const { clientX, clientY } = event;
+      const minWidth = Math.ceil(minSize.width / (cellSize + cellGap));
+      const minHeight = Math.ceil(minSize.height / (cellSize + cellGap));
+      const width = Math.max(
+        minWidth,
+        Math.round(defaultSize.width / (cellSize + cellGap))
+      );
+      const height = Math.max(
+        minHeight,
+        Math.round(defaultSize.height / (cellSize + cellGap))
+      );
+      const rect = gridElement.getBoundingClientRect();
+      const x = Math.round((clientX - rect.left) / (cellSize + cellGap));
+      const y = Math.round((clientY - rect.top) / (cellSize + cellGap));
+      const props: Record<string, { value: unknown }> = {};
+      Object.entries(properties).forEach(([name, prop]) => {
+        props[name] = {
+          value: prop.defaultValue,
+        };
+      });
+      const parentId = uuidv4();
+      dispatch(
+        addComponent({
+          tabId,
+          component: {
+            id: parentId,
+            children: [],
+            source: defaultSource,
+            minSize: { width: minWidth, height: minHeight },
+            size: { width, height },
+            position: { x, y },
+            properties: props,
+            type,
+            name: config.dashboard.name,
+          },
+        })
+      );
+
+      if (children) {
+        children.forEach((child) => {
+          const component = components[child.type];
+          const props: Record<string, { value: unknown }> = {};
+          Object.entries(component.properties).forEach(([name, prop]) => {
+            props[name] = {
+              value:
+                child.properties && name in child.properties
+                  ? child.properties[name]
+                  : prop.defaultValue,
+            };
+          });
+          dispatch(
+            addComponent({
+              tabId,
+              component: {
+                id: uuidv4(),
+                parent: parentId,
+                children: [],
+                minSize: { width: 0, height: 0 },
+                size: { width: 0, height: 0 },
+                position: { x: 0, y: 0 },
+                properties: props,
+                type: child.type,
+                name: child.name,
+              },
+            })
+          );
+        });
+      }
+    },
+    [gridElement, componentGrid, sourceGrid]
+  );
+
   useEffect(() => {
     if (componentGrid && gridElement) {
       const dropZoneParms: RowDropZoneParams = {
         getContainer() {
           return gridElement;
         },
-        onDragging(params) {
-          // params.event
-        },
         onDragStop({ node, event }: RowDragEndEvent<ComponentListItem>) {
           if (!node.data) {
             return;
           }
-          const {
-            dashboard: { defaultSize, minSize, children },
-            defaultSource,
-            type,
-            properties,
-          } = node.data;
-          const { clientX, clientY } = event;
-          const minWidth = Math.ceil(minSize.width / (cellSize + cellGap));
-          const minHeight = Math.ceil(minSize.height / (cellSize + cellGap));
-          const width = Math.max(
-            minWidth,
-            Math.round(defaultSize.width / (cellSize + cellGap))
-          );
-          const height = Math.max(
-            minHeight,
-            Math.round(defaultSize.height / (cellSize + cellGap))
-          );
-          const rect = gridElement.getBoundingClientRect();
-          const x = Math.round((clientX - rect.left) / (cellSize + cellGap));
-          const y = Math.round((clientY - rect.top) / (cellSize + cellGap));
-          const props: Record<string, { value: unknown }> = {};
-          Object.entries(properties).forEach(([name, prop]) => {
-            props[name] = {
-              value: prop.defaultValue,
-            };
+          console.log("ADD COMPONENT:", {
+            config: node.data.config,
+            type: node.data.type,
+            event,
           });
-          const parentId = uuidv4();
-          dispatch(
-            addComponent({
-              tabId,
-              component: {
-                id: parentId,
-                children: [],
-                source: defaultSource,
-                minSize: { width: minWidth, height: minHeight },
-                size: { width, height },
-                position: { x, y },
-                properties: props,
-                type,
-                name: node.data.dashboard.name,
-              },
-            })
-          );
 
-          if (children) {
-            children.forEach((child) => {
-              const component = components[child.type];
-              const props: Record<string, { value: unknown }> = {};
-              Object.entries(component.properties).forEach(([name, prop]) => {
-                props[name] = {
-                  value:
-                    child.properties && name in child.properties
-                      ? child.properties[name]
-                      : prop.defaultValue,
-                };
-              });
-              dispatch(
-                addComponent({
-                  tabId,
-                  component: {
-                    id: uuidv4(),
-                    parent: parentId,
-                    children: [],
-                    minSize: { width: 0, height: 0 },
-                    size: { width: 0, height: 0 },
-                    position: { x: 0, y: 0 },
-                    properties: props,
-                    type: child.type,
-                    name: child.name,
-                  },
-                })
-              );
-            });
-          }
+          addComponentToTab(node.data.config, node.data.type, event);
         },
       };
       componentGrid.addRowDropZone(dropZoneParms);
     }
   }, [gridElement, componentGrid]);
-  
+
+  useEffect(() => {
+    if (sourceGrid && gridElement) {
+      console.log("SOURCE GRID");
+      const dropZoneParms: RowDropZoneParams = {
+        getContainer() {
+          return gridElement;
+        },
+        onDragStop({ node, event }: RowDragEndEvent<SourceData>) {
+          if (!node.data) {
+            return;
+          }
+          const componentsWithDisplayType = getComponentsWithDisplayType(
+            node.data.metadata?.displayType ?? "",
+            componentsRef.current
+          );
+          if (componentsWithDisplayType.length > 0) {
+            const [{ type, config }] = componentsWithDisplayType;
+            console.log("ADD COMPONENT:", { config, type, event });
+            addComponentToTab(config, type, event);
+          }
+        },
+      };
+      sourceGrid.addRowDropZone(dropZoneParms);
+    }
+  }, [gridElement, sourceGrid]);
+
   return (
     <GridLayout
       style={{

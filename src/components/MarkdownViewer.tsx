@@ -11,6 +11,7 @@ export const markdownViewer = createComponent(
       minSize: { width: 50, height: 50 },
     },
     primaryProperty: 'markdown',
+    acceptedSourceTypes: ['String'],
     properties: {
       markdown: markdownProp({ defaultValue: "## Hello there" }),
     },

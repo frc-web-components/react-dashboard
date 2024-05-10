@@ -78,6 +78,7 @@ export const layoutJson: IJsonModel = {
       type: "border",
       selected: -1,
       location: "left",
+
       children: [],
     },
   ],

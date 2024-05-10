@@ -5,7 +5,10 @@ import { SourceInfo } from "../../context-providers/SourceProviderContext";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Source } from "../slices/sourceSlice";
 import { Component } from "../slices/layoutSlice";
-import { useComponentConfigs } from "../../context-providers/ComponentConfigContext";
+import {
+  ComponentConfig,
+  useComponentConfigs,
+} from "../../context-providers/ComponentConfigContext";
 
 export function useComponentPropertyValues(componentId: string) {
   const prevComponent = useRef<Component>();
@@ -61,7 +64,9 @@ export function useComponentPropertyValues(componentId: string) {
     const nextMatchingSources: Record<string, Source | undefined> = {};
     const nextMatchingSourceValues: Record<string, unknown> = {};
 
-    for (const [name, property] of Object.entries(component?.properties ?? {})) {
+    for (const [name, property] of Object.entries(
+      component?.properties ?? {}
+    )) {
       const propertySource = property.source
         ? sources[property.source.provider]?.[property.source.key]
         : undefined;
@@ -337,3 +342,4 @@ export function makeSelectComponentPropertyValues() {
     return propertyValues;
   });
 }
+

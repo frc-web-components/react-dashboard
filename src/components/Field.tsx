@@ -70,6 +70,7 @@ export const field = createComponent(
       provider: 'NT',
     },
     children: [{ type: "fieldRobot", propertyTabName: 'Robot' }, { type: "fieldPath", propertyTabName: 'Path' }],
+    acceptedSourceTypes: ['Field2d'],
     properties: {
       game: stringDropdownProp({
         defaultValue: "Crescendo",
