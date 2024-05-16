@@ -85,11 +85,13 @@ export const layoutSlice = createAppSlice({
         const { componentId } = action.payload;
         const component = state.components[componentId];
 
-        let tabId = Object.keys(state.tabs).find(id => {
+        let tabId = Object.keys(state.tabs).find((id) => {
           return state.tabs[id].componentIds.includes(componentId);
         });
 
-        const componentIds = new Set(tabId ? state.tabs[tabId].componentIds : []);
+        const componentIds = new Set(
+          tabId ? state.tabs[tabId].componentIds : []
+        );
 
         if (componentId === state.selectedComponentId) {
           state.selectedComponentId = undefined;
@@ -99,10 +101,10 @@ export const layoutSlice = createAppSlice({
             const children = state.components[component.parent].children;
             children.splice(children.indexOf(componentId), 1);
           }
-          component.children.forEach(child => {
+          component.children.forEach((child) => {
             delete state.components[child];
             componentIds.delete(child);
-            
+
             if (state.selectedComponentId === child) {
               state.selectedComponentId = undefined;
             }
@@ -115,6 +117,20 @@ export const layoutSlice = createAppSlice({
         }
       }
     ),
+    clearTab: create.reducer(
+      (state, action: PayloadAction<{ tabId: string }>) => {
+        const { tabId } = action.payload;
+        const tab = state.tabs[tabId];
+        if (!tab) {
+          return;
+        }
+        tab.componentIds.forEach(componentId => {
+          delete state.components[componentId];
+        });
+        tab.componentIds = [];
+        state.selectedComponentId = undefined;
+      }
+    ),
     setComponentName: create.reducer(
       (state, action: PayloadAction<{ componentId: string; name: string }>) => {
         const { componentId, name } = action.payload;
@@ -122,6 +138,33 @@ export const layoutSlice = createAppSlice({
       }
     ),
 
+    updateComponentType: create.reducer(
+      (
+        state,
+        action: PayloadAction<{
+          componentId: string;
+          type: string;
+          properties: {
+            [propertName: string]: {
+              value: unknown;
+              source?: {
+                provider: string;
+                key: string;
+              };
+            };
+          };
+          name: string;
+        }>
+      ) => {
+        const { componentId, type, properties, name } = action.payload;
+        if (!state.components[componentId]) {
+          return;
+        }
+        state.components[componentId].type = type;
+        state.components[componentId].properties = properties;
+        state.components[componentId].name = name;
+      }
+    ),
     updateComponentSize: create.reducer(
       (
         state,
@@ -190,10 +233,12 @@ export const {
   setSelectedComponent,
   addComponent,
   removeComponent,
+  clearTab,
   updateComponentPosition,
   updateComponentSize,
   updateComponentProperty,
   updateComponentPropertySource,
   updateComponentSource,
+  updateComponentType,
   setComponentName,
 } = layoutSlice.actions;

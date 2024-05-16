@@ -1,7 +1,15 @@
+import { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../app/createAppSlice";
+
+interface ContextMenuElement {
+  type: "ELEMENT" | "TAB";
+  position: { left: number; top: number };
+  elementId?: string;
+}
 
 export interface AppSliceState {
   editing: boolean;
+  contextMenuElement?: ContextMenuElement;
 }
 
 const initialState: AppSliceState = {
@@ -15,12 +23,17 @@ export const appSlice = createAppSlice({
     toggleEditing: create.reducer((state) => {
       state.editing = !state.editing;
     }),
+    setContextMenuElement: create.reducer(
+      (state, action: PayloadAction<ContextMenuElement | undefined>) => {
+        state.contextMenuElement = action.payload;
+      }
+    ),
   }),
   selectors: {
     selectEditing: (state) => state.editing,
+    selectConextMenuElement: (state) => state.contextMenuElement,
   },
 });
 
-export const { toggleEditing } = appSlice.actions;
-
-export const { selectEditing } = appSlice.selectors;
+export const { toggleEditing, setContextMenuElement } = appSlice.actions;
+export const { selectEditing, selectConextMenuElement } = appSlice.selectors;

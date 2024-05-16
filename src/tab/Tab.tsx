@@ -24,8 +24,12 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "../tools/ComponentPicker";
 import TabComponent from "./TabComponent";
-import { selectEditing } from "../store/slices/appSlice";
+import { selectEditing, setContextMenuElement } from "../store/slices/appSlice";
 import { SourceData } from "../tools/sources/Sources";
+import useContextMenu, {
+  getContextMenuPosition,
+} from "./context-menu/useContextMenu";
+import ContextMenu from "./context-menu/ContextMenu";
 
 export const getComponentsWithDisplayType = (
   type: string,
@@ -243,76 +247,105 @@ function Tab({ tabId }: Props) {
   }, [gridElement, sourceGrid]);
 
   return (
-    <GridLayout
+    <div
+      onContextMenu={(event) => {
+        const position = getContextMenuPosition(event);
+        console.log("POSITION:", position);
+        dispatch(
+          setContextMenuElement(
+            position && { position, type: "TAB", elementId: tabId }
+          )
+        );
+      }}
       style={{
+        cursor: "context-menu",
+        height: "100%",
         minHeight: "100%",
         minWidth,
-      }}
-      innerRef={(el) => {
-        if (el) {
-          setGridElement(el);
-        }
-      }}
-      onResizeStop={(updatedLayout, oldItem, newItem) => {
-        const { w, h, i, x, y } = newItem;
-        dispatch(
-          updateComponentSize({
-            id: i,
-            width: w,
-            height: h,
-          })
-        );
-        dispatch(
-          updateComponentPosition({
-            id: i,
-            x,
-            y,
-          })
-        );
-        // setLayout(updatedLayout as ComponentLayout[]);
-      }}
-      onDragStop={(updatedLayout, oldItem, newItem) => {
-        const { x, y, i } = newItem;
-        dispatch(
-          updateComponentPosition({
-            id: i,
-            x,
-            y,
-          })
-        );
-      }}
-      className={classNames(Styles.layout, {
-        [Styles.editable]: editing,
-      })}
-      layout={gridLayout}
-      cols={20000}
-      rowHeight={cellSize}
-      width={(cellSize + cellGap) * 20000}
-      margin={[5, 5]}
-      autoSize
-      compactType={null}
-      preventCollision
-      resizeHandles={["nw", "se"]}
-      onResizeStart={(layout, oldItem, newItem) => {
-        dispatch(setSelectedComponent(newItem.i));
-      }}
-      onDragStart={(layout, oldItem, newItem) => {
-        dispatch(setSelectedComponent(newItem.i));
+        width: "100%",
       }}
     >
-      {gridLayout.map(({ i: id, Component }) => {
-        return (
-          <div
-            key={id}
-            className={classNames(Styles.component, {
-              [Styles.selected]: selectedComponent?.id === id,
-            })}
-          >
-            <TabComponent componentId={id} Component={Component} />
-          </div>
-        );
-      })}
-    </GridLayout>
+      <ContextMenu />
+      <GridLayout
+        style={{
+          height: "100%",
+          width: "100%",
+        }}
+        innerRef={(el) => {
+          if (el) {
+            setGridElement(el);
+          }
+        }}
+        onResizeStop={(updatedLayout, oldItem, newItem) => {
+          const { w, h, i, x, y } = newItem;
+          dispatch(
+            updateComponentSize({
+              id: i,
+              width: w,
+              height: h,
+            })
+          );
+          dispatch(
+            updateComponentPosition({
+              id: i,
+              x,
+              y,
+            })
+          );
+          // setLayout(updatedLayout as ComponentLayout[]);
+        }}
+        onDragStop={(updatedLayout, oldItem, newItem) => {
+          const { x, y, i } = newItem;
+          dispatch(
+            updateComponentPosition({
+              id: i,
+              x,
+              y,
+            })
+          );
+        }}
+        className={classNames(Styles.layout, {
+          [Styles.editable]: editing,
+        })}
+        layout={gridLayout}
+        cols={20000}
+        rowHeight={cellSize}
+        width={(cellSize + cellGap) * 20000}
+        margin={[5, 5]}
+        autoSize
+        compactType={null}
+        preventCollision
+        resizeHandles={["nw", "se"]}
+        onResizeStart={(layout, oldItem, newItem) => {
+          dispatch(setSelectedComponent(newItem.i));
+        }}
+        onDragStart={(layout, oldItem, newItem) => {
+          dispatch(setSelectedComponent(newItem.i));
+        }}
+      >
+        {gridLayout.map(({ i: id, Component }) => {
+          return (
+            <div
+              key={id}
+              className={classNames(Styles.component, {
+                [Styles.selected]: selectedComponent?.id === id,
+              })}
+              onContextMenu={(event) => {
+                const position = getContextMenuPosition(event);
+                console.log("BLAH BLAH:", position);
+                dispatch(
+                  setContextMenuElement(
+                    position && { position, type: "ELEMENT", elementId: id }
+                  )
+                );
+              }}
+            >
+              <TabComponent componentId={id} Component={Component} />
+            </div>
+          );
+        })}
+      </GridLayout>
+    </div>
   );
 }
 

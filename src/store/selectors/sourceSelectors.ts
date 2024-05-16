@@ -11,6 +11,15 @@ export const selectProviderSources = (state: RootState, provider?: string) =>
 export const selectProviderMetadata = (state: RootState, provider?: string) =>
   typeof provider === "undefined" ? undefined : state.source.metadata[provider];
 
+export const selectSourcetMetadata = (
+  state: RootState,
+  provider?: string,
+  key?: string
+) =>
+  typeof provider === "undefined" || typeof key === "undefined"
+    ? undefined
+    : state.source.metadata[provider]?.[key];
+
 export const selectProviderSourceValues = (
   state: RootState,
   provider?: string

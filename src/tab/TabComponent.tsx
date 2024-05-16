@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from "react";
 import Styles from "./Tab.module.scss";
 import { useComponentPropertyValues } from "../store/selectors/componentSelectors";
-import { useAppSelector } from "../store/app/hooks";
+import { useAppDispatch, useAppSelector } from "../store/app/hooks";
 import {
   SourceInfo,
   useSourceProvider,
@@ -10,6 +10,8 @@ import { ComponentProvider } from "../context-providers/ComponentContext";
 import { useComponentConfigs } from "../context-providers/ComponentConfigContext";
 import { memoizeWithArgs } from "proxy-memoize";
 import { RootState } from "../store/app/store";
+import { getContextMenuPosition } from "./context-menu/useContextMenu";
+import { setContextMenuElement } from "../store/slices/appSlice";
 
 export function makeSelectChildren() {
   return memoizeWithArgs((state: RootState, componentId: string) => {
@@ -30,7 +32,7 @@ interface Props {
 }
 
 function TabComponent({ Component, componentId }: Props) {
-  
+  const dispatch = useAppDispatch();
   const selectChildren = useMemo(makeSelectChildren, []);
   const componentPropertyData = useComponentPropertyValues(componentId);
 
