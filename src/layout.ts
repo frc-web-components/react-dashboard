@@ -1,69 +1,8 @@
-import {
-  IJsonModel,
-  IJsonRowNode,
-  IJsonTabSetNode,
-  IJsonTabNode,
-} from "flexlayout-react";
+import { ICloseType, IJsonModel } from "flexlayout-react";
 import { v4 as uuidv4 } from "uuid";
-
-export const sourceTabJson: IJsonTabNode = {
-  type: "tab",
-  enableClose: false,
-  enableDrag: false,
-  enableFloat: false,
-  enableRename: false,
-  component: "sources",
-  name: "Sources",
-  id: "sources",
-};
-
-export const componentListTabJson: IJsonTabNode = {
-  type: "tab",
-  enableClose: false,
-  enableDrag: false,
-  enableFloat: false,
-  enableRename: false,
-  component: "componentList",
-  name: "Components",
-  id: "componentList",
-};
-
-export const propertiesTabJson: IJsonTabNode = {
-  type: "tab",
-  enableClose: false,
-  enableDrag: false,
-  enableFloat: false,
-  enableRename: false,
-  component: "properties",
-  id: "mainProperties",
-  name: "Properties",
-};
-
-export const toolsTabsetJson: IJsonTabSetNode = {
-  width: 300,
-  id: "tools",
-  enableMaximize: false,
-  type: "tabset",
-  weight: 50,
-  enableDrag: false,
-  children: [sourceTabJson, componentListTabJson],
-};
-
-export const propertiesTabsetJson: IJsonTabSetNode = {
-  enableMaximize: false,
-  type: "tabset",
-  weight: 50,
-  id: "properties",
-  enableDrag: false,
-  children: [propertiesTabJson],
-};
-
-export const editorLayoutJson: IJsonRowNode = {
-  width: 400,
-  type: "row",
-  id: "editor",
-  children: [toolsTabsetJson, propertiesTabsetJson],
-};
+import editIcon from "/edit.svg";
+import checkIcon from "/check.svg";
+import settingsIcon from '/settings.svg';
 
 export const layoutJson: IJsonModel = {
   global: {},
@@ -76,10 +15,32 @@ export const layoutJson: IJsonModel = {
     },
     {
       type: "border",
-      selected: -1,
+      selected: 1,
       location: "left",
-
-      children: [],
+      children: [
+        {
+          type: "tab",
+          name: "Settings",
+          component: "settings",
+          enableFloat: false,
+          enableClose: false,
+          enableDrag: false,
+          id: 'settingsTab',
+          icon: settingsIcon,
+        },
+        {
+          enableRenderOnDemand: true,
+          type: "tab",
+          name: "Editor",
+          component: "editor",
+          enableFloat: false,
+          enableClose: false,
+          enableDrag: false,
+          id: 'editorTab',
+          icon: editIcon,
+          // closeType: ICloseType.Visible,
+        },
+      ],
     },
   ],
   layout: {
@@ -87,7 +48,6 @@ export const layoutJson: IJsonModel = {
     weight: 100,
     id: "layout",
     children: [
-      editorLayoutJson,
       {
         type: "tabset",
         weight: 50,

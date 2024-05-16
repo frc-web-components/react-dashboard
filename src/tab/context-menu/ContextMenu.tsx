@@ -22,7 +22,6 @@ export default function ContextMenu() {
     dispatch(clearTab({ tabId: contextMenuElement?.elementId! }));
   };
 
-  console.log("context menu element:", contextMenuElement);
   return (
     <Menu
       open={!!contextMenuElement}
