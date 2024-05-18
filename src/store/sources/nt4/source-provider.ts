@@ -1,7 +1,13 @@
 // import { noop } from './util';
 
 import { AppStore } from "../../app/store";
-import { PropertyType, setSource, setSourceDisplayTypes, setSources } from "../../slices/sourceSlice";
+import {
+  PropertyType,
+  setConnectionStatus,
+  setSource,
+  setSourceDisplayTypes,
+  setSources,
+} from "../../slices/sourceSlice";
 
 type SourceUpdate = {
   updateType: string;
@@ -248,6 +254,16 @@ class SourceProvider {
 
   disconnect(): void {
     clearTimeout(this.#interval);
+  }
+
+  setConnectionStatus(connected: boolean, label: string) {
+    this.#store.dispatch(
+      setConnectionStatus({
+        provider: "NT",
+        connected,
+        label,
+      })
+    );
   }
 }
 

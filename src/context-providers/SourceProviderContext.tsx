@@ -8,7 +8,10 @@ import React, {
 } from "react";
 import { NT4Provider } from "../store/sources/nt4";
 import { store } from "../store/app/store";
-import { selectSource, selectSourceValue } from "../store/selectors/sourceSelectors";
+import {
+  selectSource,
+  selectSourceValue,
+} from "../store/selectors/sourceSelectors";
 import SourceProvider from "../store/sources/nt4/source-provider";
 
 export type SourceInfo =
@@ -47,23 +50,13 @@ interface ProviderProps {
   children: ReactNode;
 }
 
+const providers: Record<string, SourceProvider> = {
+  NT: new NT4Provider(store),
+};
+
 export const SourceProviderProvider: React.FC<ProviderProps> = ({
   children,
 }) => {
-  const [providers, setProviders] = useState<Record<string, SourceProvider>>(
-    {}
-  );
-
-  useEffect(() => {
-    if (!providers["NT"]) {
-      setProviders((current) => {
-        const next = { ...current };
-        next.NT = new NT4Provider(store);
-        return next;
-      });
-    }
-  }, []);
-
   const setSourceValue = useCallback(
     (value: unknown, sourceInfo: SourceInfo) => {
       if (sourceInfo.type === "source") {
@@ -122,7 +115,9 @@ export const SourceProviderProvider: React.FC<ProviderProps> = ({
 export const useSourceProvider = (): SourceProviderContextType => {
   const context = useContext(SourceProviderContext);
   if (context === undefined) {
-    throw new Error("useSourceProvider must be used within a SourceProviderProvider");
+    throw new Error(
+      "useSourceProvider must be used within a SourceProviderProvider"
+    );
   }
   return context;
 };

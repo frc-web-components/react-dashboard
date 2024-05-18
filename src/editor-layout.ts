@@ -34,7 +34,6 @@ export const propertiesTabJson: IJsonTabNode = {
 };
 
 export const toolsTabsetJson: IJsonTabSetNode = {
-  width: 500,
   id: "tools",
   enableMaximize: false,
   type: "tabset",
@@ -55,12 +54,10 @@ export const propertiesTabsetJson: IJsonTabSetNode = {
 export const editorLayoutJson: IJsonModel = {
   global: {},
   layout: {
-    width: 500,
     type: "row",
     children: [{
       type: "row",
       id: "editor",
-      width: 500,
       children: [
         toolsTabsetJson, propertiesTabsetJson
       ]

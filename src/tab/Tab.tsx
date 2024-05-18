@@ -207,12 +207,6 @@ function Tab({ tabId }: Props) {
           if (!node.data) {
             return;
           }
-          console.log("ADD COMPONENT:", {
-            config: node.data.config,
-            type: node.data.type,
-            event,
-          });
-
           addComponentToTab(node.data.config, node.data.type, event);
         },
       };
@@ -222,7 +216,6 @@ function Tab({ tabId }: Props) {
 
   useEffect(() => {
     if (sourceGrid && gridElement) {
-      console.log("SOURCE GRID");
       const dropZoneParms: RowDropZoneParams = {
         getContainer() {
           return gridElement;
@@ -237,7 +230,6 @@ function Tab({ tabId }: Props) {
           );
           if (componentsWithDisplayType.length > 0) {
             const [{ type, config }] = componentsWithDisplayType;
-            console.log("ADD COMPONENT:", { config, type, event });
             addComponentToTab(config, type, event);
           }
         },
@@ -250,7 +242,6 @@ function Tab({ tabId }: Props) {
     <div
       onContextMenu={(event) => {
         const position = getContextMenuPosition(event);
-        console.log("POSITION:", position);
         dispatch(
           setContextMenuElement(
             position && { position, type: "TAB", elementId: tabId }
@@ -332,7 +323,6 @@ function Tab({ tabId }: Props) {
               })}
               onContextMenu={(event) => {
                 const position = getContextMenuPosition(event);
-                console.log("BLAH BLAH:", position);
                 dispatch(
                   setContextMenuElement(
                     position && { position, type: "ELEMENT", elementId: id }

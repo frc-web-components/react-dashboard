@@ -14,37 +14,31 @@ import {
   Actions,
 } from "flexlayout-react";
 import { useEffect, useRef, useState } from "react";
-import { useNt4 } from "@frc-web-components/react";
 import { DashboardThemes, darkTheme } from "@frc-web-components/fwc/themes";
 import { layoutJson as defaultLayoutJson } from "./layout";
 import SimpleDialog from "./tools/properties/SimpleDialog";
 import Editor from "./tools/Editor";
 import Tab from "./tab/Tab";
-import { useAppDispatch } from "./store/app/hooks";
-import { setEditing, toggleEditing } from "./store/slices/appSlice";
+import { useAppDispatch, useAppSelector } from "./store/app/hooks";
+import { selectConnectionStatus } from "./store/selectors/sourceSelectors";
+import { setEditing } from "./store/slices/appSlice";
+import Settings from "./tools/Settings";
 
 const themes = new DashboardThemes();
 themes.addThemeRules("dark", darkTheme);
+themes.setTheme(document.body, 'dark');
 
 function App() {
   const layoutRef = useRef<Layout>();
-  const { nt4Provider } = useNt4();
-  const [isNt4Connected, setIsNt4Connected] = useState(false);
+  const connectionStatuses = useAppSelector(selectConnectionStatus);
   const [layoutJson] = useState(defaultLayoutJson);
   const modelRef = useRef<Model>();
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const dispatch = useAppDispatch();
 
-
   useEffect(() => {
     modelRef.current = Model.fromJson(layoutJson);
   }, [layoutJson]);
-
-  useEffect(() => {
-    nt4Provider.addConnectionListener((connected) => {
-      setIsNt4Connected(connected);
-    });
-  }, [nt4Provider]);
 
   const factory = (node: TabNode) => {
     var component = node.getComponent();
@@ -55,6 +49,10 @@ function App() {
 
     if (component === "editor") {
       return <Editor />;
+    }
+
+    if (component === "settings") {
+      return <Settings />;
     }
   };
 
@@ -118,10 +116,13 @@ function App() {
         factory={factory}
         onModelChange={(model, action: Action) => {
           const tabNode = action.data?.tabNode;
-          if (action.type === Actions.SELECT_TAB && tabNode === 'editorTab') {
-            const visible = !model.getNodeById('editorTab')?.isVisible();
+          if (action.type === Actions.SELECT_TAB && tabNode === "editorTab") {
+            const visible = !model.getNodeById("editorTab")?.isVisible();
             dispatch(setEditing(visible));
-          } else if (action.type === Actions.SELECT_TAB && tabNode === 'settingsTab') {
+          } else if (
+            action.type === Actions.SELECT_TAB &&
+            tabNode === "settingsTab"
+          ) {
             dispatch(setEditing(false));
           }
           return action;
@@ -134,22 +135,24 @@ function App() {
             const location = tabSetNode.getLocation();
 
             if (location.getName() === "bottom") {
-              // buttons on left side
-              renderValues.stickyButtons.push(
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    color: isNt4Connected ? "green" : "red",
-                    gap: "5px",
-                  }}
-                >
-                  <img
-                    src={isNt4Connected ? connectedIcon : disconnectedIcon}
-                  />
-                  NetworkTables
-                </div>
-              );
+              Object.values(connectionStatuses).forEach((status) => {
+                // buttons on left side
+                renderValues.stickyButtons.push(
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      color: status.connected ? "green" : "red",
+                      gap: "5px",
+                    }}
+                  >
+                    <img
+                      src={status.connected ? connectedIcon : disconnectedIcon}
+                    />
+                    {status.label}
+                  </div>
+                );
+              });
             }
           } else {
             renderValues.stickyButtons.push(

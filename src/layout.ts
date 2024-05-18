@@ -5,7 +5,9 @@ import checkIcon from "/check.svg";
 import settingsIcon from '/settings.svg';
 
 export const layoutJson: IJsonModel = {
-  global: {},
+  global: {
+    borderSize: 350,
+  },
   borders: [
     {
       type: "border",

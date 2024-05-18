@@ -23,11 +23,9 @@ export const appSlice = createAppSlice({
     toggleEditing: create.reducer((state) => {
       state.editing = !state.editing;
     }),
-    setEditing: create.reducer(
-      (state, action: PayloadAction<boolean>) => {
-        state.editing = action.payload;
-      }
-    ),
+    setEditing: create.reducer((state, action: PayloadAction<boolean>) => {
+      state.editing = action.payload;
+    }),
     setContextMenuElement: create.reducer(
       (state, action: PayloadAction<ContextMenuElement | undefined>) => {
         state.contextMenuElement = action.payload;
@@ -40,5 +38,6 @@ export const appSlice = createAppSlice({
   },
 });
 
-export const { toggleEditing, setContextMenuElement, setEditing } = appSlice.actions;
+export const { toggleEditing, setContextMenuElement, setEditing } =
+  appSlice.actions;
 export const { selectEditing, selectConextMenuElement } = appSlice.selectors;

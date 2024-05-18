@@ -41,12 +41,19 @@ export interface SourceSlice {
       [sourceKey: string]: SourceMetadata;
     };
   };
+  connectionStatus: {
+    [providerName: string]: {
+      connected: boolean;
+      label: string;
+    };
+  };
 }
 
 const initialState: SourceSlice = {
   sources: {},
   sourceValues: {},
   metadata: {},
+  connectionStatus: {},
 };
 
 export const sourceSlice = createAppSlice({
@@ -232,8 +239,21 @@ export const sourceSlice = createAppSlice({
         }
       }
     ),
+    setConnectionStatus: create.reducer(
+      (
+        state,
+        action: PayloadAction<{
+          provider: string;
+          connected: boolean;
+          label: string;
+        }>
+      ) => {
+        const { connected, label, provider } = action.payload;
+        state.connectionStatus[provider] = { connected, label };
+      }
+    ),
   }),
 });
 
-export const { removeSource, setSource, setSources, setSourceDisplayTypes } =
+export const { removeSource, setSource, setSources, setSourceDisplayTypes, setConnectionStatus } =
   sourceSlice.actions;

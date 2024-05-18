@@ -1,10 +1,6 @@
 import { Nt4Client } from "@frc-web-components/fwc/source-providers";
 import { AppStore } from "../../app/store";
-import {
-  setSource,
-  removeSource,
-  PropertyType,
-} from "../../slices/sourceSlice";
+import { PropertyType } from "../../slices/sourceSlice";
 import {
   NT4_Client,
   NT4_Topic,
@@ -53,17 +49,26 @@ function getPropType(type: string, value?: unknown): PropertyType {
 }
 
 export class NT4Provider extends SourceProvider {
-  #nt4: NT4_Client;
+  #nt4!: NT4_Client;
   #structDecoder = new StructDecoder();
   static STRUCT_PREFIX = "struct:";
   #topics: Record<string, NT4_Topic> = {};
+  #address!: string;
+  #isConnected = false;
 
   constructor(store: AppStore) {
     super(store, 1000 / 20);
-    // this.#store = store;
+    this.connect("localhost");
+  }
 
-    this.#nt4 = new Nt4Client(
-      "localhost",
+  connect(address: string) {
+    this.#nt4?.disconnect();
+    this.#isConnected = false;
+    this.#address = address;
+    this.#updateConnectionStatus();
+
+    const client = new Nt4Client(
+      address,
       "FRC Web Components",
       (topic: NT4_Topic) => {
         this.#topics[topic.name] = topic;
@@ -83,10 +88,10 @@ export class NT4Provider extends SourceProvider {
         } else if (basicTypes.includes(topic.type)) {
           const propType = getPropType(topic.type);
           this.update(topic.name, value, topic.type, propType);
-          
-          const parts = topic.name.split('/');
-          if (parts.pop() === '.type') {
-            this.updateDisplayType(parts.join('/'), value as string);
+
+          const parts = topic.name.split("/");
+          if (parts.pop() === ".type") {
+            this.updateDisplayType(parts.join("/"), value as string);
           }
         } else if (topic.type === "json") {
           if (typeof value === "string") {
@@ -108,15 +113,29 @@ export class NT4Provider extends SourceProvider {
         }
       },
       () => {
-        // thisonConnect();
+        if (client === this.#nt4) {
+          this.#isConnected = true;
+          this.#updateConnectionStatus();
+        }
       },
       () => {
-        // this.onDisconnect();
+        if (client === this.#nt4) {
+          this.#isConnected = false;
+          this.#updateConnectionStatus();
+        }
       }
     );
 
+    this.#nt4 = client;
     this.#nt4.connect();
     this.#nt4.subscribeAll(["/"], true);
+  }
+
+  #updateConnectionStatus() {
+    this.setConnectionStatus(
+      this.#isConnected,
+      `NetworkTables (${this.#address})`
+    );
   }
 
   #handleRawData(topic: NT4_Topic, value: unknown) {
