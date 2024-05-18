@@ -9,6 +9,9 @@ import { Box, Grid, Typography } from "@mui/material";
 import NumberInput from "./number-input/NumberInput";
 import { useSourceProvider } from "../context-providers/SourceProviderContext";
 import { NT4Provider } from "../store/sources/nt4";
+import { useAppDispatch, useAppSelector } from "../store/app/hooks";
+import { selectGridGap, selectGridSize } from "../store/selectors/layoutSelectors";
+import { setGridGap, setGridSize } from "../store/slices/layoutSlice";
 
 const addressOptions = ["localhost"];
 const themeOptions = [{ label: "dark" }, { label: "light" }];
@@ -21,7 +24,10 @@ const darkTheme = createTheme({
 
 export default function Settings() {
   const [address, setAddress] = useState("localhost");
+  const gridSize = useAppSelector(selectGridSize);
+  const gridGap = useAppSelector(selectGridGap);
   const { providers } = useSourceProvider();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     (providers["NT"] as NT4Provider).connect(address);
@@ -66,18 +72,24 @@ export default function Settings() {
           </Grid>
           <Grid item xs={12}>
             <NumberInput
-              initialValue={30}
+              initialValue={gridSize}
               size="small"
               label="Grid Size"
               style={{ width: "100%" }}
+              onChange={(value) => {
+                dispatch(setGridSize(value));
+              }}
             />
           </Grid>
           <Grid item xs={12}>
             <NumberInput
-              initialValue={5}
+              initialValue={gridGap}
               size="small"
               label="Grid Gap"
               style={{ width: "100%" }}
+              onChange={(value) => {
+                dispatch(setGridGap(value));
+              }}
             />
           </Grid>
         </Grid>

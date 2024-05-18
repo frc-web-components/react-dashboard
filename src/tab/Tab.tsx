@@ -14,6 +14,8 @@ import {
 import {
   makeSelectSelectedComponent,
   makeSelectTabComponents,
+  selectGridGap,
+  selectGridSize,
 } from "../store/selectors/layoutSelectors";
 import { useDropZone } from "../context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
@@ -74,8 +76,8 @@ function Tab({ tabId }: Props) {
   const editing = useAppSelector(selectEditing);
   const { componentGrid, sourceGrid } = useDropZone(); // Use the context
   const [gridElement, setGridElement] = useState<HTMLElement>();
-  const [cellSize, setCellSize] = useState(30);
-  const [cellGap, setCellGap] = useState(5);
+  const cellSize = useAppSelector(selectGridSize);
+  const cellGap = useAppSelector(selectGridGap);
 
   useEffect(() => {
     componentsRef.current = components;
@@ -126,15 +128,15 @@ function Tab({ tabId }: Props) {
       } = config;
 
       const { clientX, clientY } = event;
-      const minWidth = Math.ceil(minSize.width / (cellSize + cellGap));
-      const minHeight = Math.ceil(minSize.height / (cellSize + cellGap));
+      const minWidth = Math.ceil(minSize.width / cellSize);
+      const minHeight = Math.ceil(minSize.height / cellSize);
       const width = Math.max(
         minWidth,
-        Math.round(defaultSize.width / (cellSize + cellGap))
+        Math.round(defaultSize.width / cellSize)
       );
       const height = Math.max(
         minHeight,
-        Math.round(defaultSize.height / (cellSize + cellGap))
+        Math.round(defaultSize.height / cellSize)
       );
       const rect = gridElement.getBoundingClientRect();
       const x = Math.round((clientX - rect.left) / (cellSize + cellGap));
@@ -194,7 +196,7 @@ function Tab({ tabId }: Props) {
         });
       }
     },
-    [gridElement, componentGrid, sourceGrid]
+    [gridElement, componentGrid, sourceGrid, cellSize, cellGap]
   );
 
   useEffect(() => {
@@ -302,7 +304,7 @@ function Tab({ tabId }: Props) {
         cols={20000}
         rowHeight={cellSize}
         width={(cellSize + cellGap) * 20000}
-        margin={[5, 5]}
+        margin={[cellGap, cellGap]}
         autoSize
         compactType={null}
         preventCollision

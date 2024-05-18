@@ -35,6 +35,8 @@ export interface LayoutSliceState {
       componentIds: string[];
     };
   };
+  gridSize: number;
+  gridGap: number;
   // components: Record<string, Record<string, Component>>;
 }
 
@@ -42,6 +44,8 @@ const initialState: LayoutSliceState = {
   selectedComponentId: undefined,
   components: {},
   tabs: {},
+  gridSize: 128,
+  gridGap: 5,
 };
 
 // If you are not using async thunks you can use the standalone `createSlice`.
@@ -124,7 +128,7 @@ export const layoutSlice = createAppSlice({
         if (!tab) {
           return;
         }
-        tab.componentIds.forEach(componentId => {
+        tab.componentIds.forEach((componentId) => {
           delete state.components[componentId];
         });
         tab.componentIds = [];
@@ -225,6 +229,12 @@ export const layoutSlice = createAppSlice({
         state.components[componentId].source = source;
       }
     ),
+    setGridSize: create.reducer((state, action: PayloadAction<number>) => {
+      state.gridSize = action.payload;
+    }),
+    setGridGap: create.reducer((state, action: PayloadAction<number>) => {
+      state.gridGap = action.payload;
+    }),
   }),
 });
 
@@ -241,4 +251,6 @@ export const {
   updateComponentSource,
   updateComponentType,
   setComponentName,
+  setGridSize,
+  setGridGap,
 } = layoutSlice.actions;
