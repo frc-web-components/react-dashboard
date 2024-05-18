@@ -117,7 +117,15 @@ function Tab({ tabId }: Props) {
   }, [gridLayout]);
 
   const addComponentToTab = useCallback(
-    (config: ComponentConfig, type: string, event: MouseEvent) => {
+    (
+      config: ComponentConfig,
+      type: string,
+      event: MouseEvent,
+      source?: {
+        provider: string;
+        key: string;
+      }
+    ) => {
       if (!gridElement) {
         return;
       }
@@ -154,7 +162,7 @@ function Tab({ tabId }: Props) {
           component: {
             id: parentId,
             children: [],
-            source: defaultSource,
+            source: source ?? defaultSource,
             minSize: { width: minWidth, height: minHeight },
             size: { width, height },
             position: { x, y },
@@ -232,7 +240,7 @@ function Tab({ tabId }: Props) {
           );
           if (componentsWithDisplayType.length > 0) {
             const [{ type, config }] = componentsWithDisplayType;
-            addComponentToTab(config, type, event);
+            addComponentToTab(config, type, event, node.data.source);
           }
         },
       };
