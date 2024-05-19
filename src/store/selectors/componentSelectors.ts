@@ -5,10 +5,7 @@ import { SourceInfo } from "../../context-providers/SourceProviderContext";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Source } from "../slices/sourceSlice";
 import { Component } from "../slices/layoutSlice";
-import {
-  ComponentConfig,
-  useComponentConfigs,
-} from "../../context-providers/ComponentConfigContext";
+import { useComponentConfigs } from "../../context-providers/ComponentConfigContext";
 
 export function useComponentPropertyValues(componentId: string) {
   const prevComponent = useRef<Component>();
@@ -119,97 +116,56 @@ export function useComponentPropertyValues(componentId: string) {
     return hasChanged;
   }, [componentId]);
 
-  useEffect(() => {
-    const unsubscribe = store.subscribe(() => {
-      if (!checkIfChanged()) {
-        return;
+  const updateRefs = useCallback(() => {
+    const sourceState = store.getState().source;
+    const sources = sourceState.sources;
+    const sourceValues = sourceState.sourceValues;
+    const componentConfig = prevComponent.current
+      ? components[prevComponent.current.type]
+      : undefined;
+
+    const propertyValues: Record<
+      string,
+      {
+        value: unknown;
+        sourceInfo: SourceInfo;
       }
-
-      const sourceState = store.getState().source;
-      const sources = sourceState.sources;
-      const sourceValues = sourceState.sourceValues;
-      const componentConfig = prevComponent.current
-        ? components[prevComponent.current.type]
-        : undefined;
-
-      const propertyValues: Record<
-        string,
-        {
-          value: unknown;
-          sourceInfo: SourceInfo;
-        }
-      > = {};
-      const parentSource = prevParentSource.current;
-      Object.entries(prevComponent.current?.properties ?? {}).forEach(
-        ([name, property]) => {
-          const defaultValue = property.value;
-          const propertySource = prevSources.current[name];
-          const value = prevValues.current[name];
-          if (propertySource) {
-            propertyValues[name] = {
-              value,
-              sourceInfo: {
-                type: "source",
-                source: {
-                  key: property.source!.key,
-                  provider: property.source!.provider,
-                },
+    > = {};
+    const parentSource = prevParentSource.current;
+    Object.entries(prevComponent.current?.properties ?? {}).forEach(
+      ([name, property]) => {
+        const defaultValue = property.value;
+        const propertySource = prevSources.current[name];
+        const value = prevValues.current[name];
+        if (propertySource) {
+          propertyValues[name] = {
+            value,
+            sourceInfo: {
+              type: "source",
+              source: {
+                key: property.source!.key,
+                provider: property.source!.provider,
               },
-            };
-          } else if (parentSource) {
-            const isPrimaryProp = componentConfig?.primaryProperty === name;
-            if (parentSource.children.length > 0) {
-              const matchingSource = parentSource.children
-                .map((sourceId) => sources[parentSource.provider][sourceId])
-                .find((source) => {
-                  return name === camelCase(source.name);
-                });
-              if (matchingSource) {
-                const value =
-                  sourceValues[matchingSource.provider][matchingSource.key];
-                propertyValues[name] = {
-                  value,
-                  sourceInfo: {
-                    type: "source",
-                    source: {
-                      provider: matchingSource.provider,
-                      key: matchingSource.key,
-                    },
-                  },
-                };
-              } else {
-                propertyValues[name] = {
-                  value: defaultValue,
-                  sourceInfo: {
-                    type: "defaultValue",
-                  },
-                };
-              }
-            } else if (
-              parentSource.propertyType === "Object" &&
-              name in (prevParentValue.current as any)
-            ) {
-              propertyValues[name] = {
-                value: (prevParentValue.current as any)[name],
-                sourceInfo: {
-                  type: "sourceProperty",
-                  source: {
-                    provider: parentSource.provider,
-                    key: parentSource.key,
-                    property: name,
-                  },
-                },
-              };
-            } else if (isPrimaryProp) {
+            },
+          };
+        } else if (parentSource) {
+          const isPrimaryProp = componentConfig?.primaryProperty === name;
+          if (parentSource.children.length > 0) {
+            const matchingSource = parentSource.children
+              .map((sourceId) => sources[parentSource.provider][sourceId])
+              .find((source) => {
+                return name === camelCase(source.name);
+              });
+            if (matchingSource) {
               const value =
-                sourceValues[parentSource.provider][parentSource.key];
+                sourceValues[matchingSource.provider][matchingSource.key];
               propertyValues[name] = {
                 value,
                 sourceInfo: {
                   type: "source",
                   source: {
-                    provider: parentSource.provider,
-                    key: parentSource.key,
+                    provider: matchingSource.provider,
+                    key: matchingSource.key,
                   },
                 },
               };
@@ -221,6 +177,33 @@ export function useComponentPropertyValues(componentId: string) {
                 },
               };
             }
+          } else if (
+            parentSource.propertyType === "Object" &&
+            name in (prevParentValue.current as any)
+          ) {
+            propertyValues[name] = {
+              value: (prevParentValue.current as any)[name],
+              sourceInfo: {
+                type: "sourceProperty",
+                source: {
+                  provider: parentSource.provider,
+                  key: parentSource.key,
+                  property: name,
+                },
+              },
+            };
+          } else if (isPrimaryProp) {
+            const value = sourceValues[parentSource.provider][parentSource.key];
+            propertyValues[name] = {
+              value,
+              sourceInfo: {
+                type: "source",
+                source: {
+                  provider: parentSource.provider,
+                  key: parentSource.key,
+                },
+              },
+            };
           } else {
             propertyValues[name] = {
               value: defaultValue,
@@ -229,10 +212,28 @@ export function useComponentPropertyValues(componentId: string) {
               },
             };
           }
+        } else {
+          propertyValues[name] = {
+            value: defaultValue,
+            sourceInfo: {
+              type: "defaultValue",
+            },
+          };
         }
-      );
-      setPropValues(propertyValues);
+      }
+    );
+    setPropValues(propertyValues);
+  }, [componentId]);
+
+  useEffect(() => {
+    const unsubscribe = store.subscribe(() => {
+      if (!checkIfChanged()) {
+        return;
+      }
+      updateRefs();
     });
+    checkIfChanged();
+    updateRefs();
     return unsubscribe;
   }, [componentId]);
 
@@ -342,4 +343,3 @@ export function makeSelectComponentPropertyValues() {
     return propertyValues;
   });
 }
-

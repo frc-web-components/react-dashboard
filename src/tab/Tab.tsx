@@ -271,6 +271,10 @@ function Tab({ tabId }: Props) {
         style={{
           height: "100%",
           width: "100%",
+          backgroundSize: `${cellSize + cellGap}px ${cellSize + cellGap}px`,
+          backgroundImage: `linear-gradient(to right, rgba(15,15,15,.5) ${Math.max(cellGap, 1)}px, transparent ${Math.max(cellGap, 1)}px),
+          linear-gradient(to bottom, rgba(15,15,15,.5) ${Math.max(cellGap, 1)}px, transparent ${Math.max(cellGap, 1)}px)`,
+          backgroundPosition: `-${cellGap / 2}px -${cellGap / 2}px`
         }}
         innerRef={(el) => {
           if (el) {
@@ -314,6 +318,7 @@ function Tab({ tabId }: Props) {
         width={(cellSize + cellGap) * 20000}
         margin={[cellGap, cellGap]}
         autoSize
+        containerPadding={[cellGap / 2, cellGap / 2]}
         compactType={null}
         preventCollision
         resizeHandles={["nw", "se"]}
@@ -328,6 +333,9 @@ function Tab({ tabId }: Props) {
           return (
             <div
               key={id}
+              style={{
+                background: 'black'
+              }}
               className={classNames(Styles.component, {
                 [Styles.selected]: selectedComponent?.id === id,
               })}

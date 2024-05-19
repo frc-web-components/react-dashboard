@@ -52,7 +52,6 @@ export const preferences = createComponent(
   },
   ({ children, setProperty, ...props }) => {
     const tree = useParentSourceTree();
-
     const preferences = getPreferencesFromTree(tree);
 
     const {

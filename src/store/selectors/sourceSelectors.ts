@@ -11,7 +11,8 @@ export const selectProviderSources = (state: RootState, provider?: string) =>
 export const selectProviderMetadata = (state: RootState, provider?: string) =>
   typeof provider === "undefined" ? undefined : state.source.metadata[provider];
 
-export const selectConnectionStatus = (state: RootState) => state.source.connectionStatus;
+export const selectConnectionStatus = (state: RootState) =>
+  state.source.connectionStatus;
 
 export const selectSourcetMetadata = (
   state: RootState,
@@ -79,48 +80,51 @@ export function useSourceTree(provider?: string, key?: string) {
     };
   }, []);
 
+  const updateRefs = useCallback(() => {
+    const sourceState = store.getState().source;
+    const newValues = provider ? sourceState.sourceValues[provider] ?? {} : {};
+    const newSources = provider ? sourceState.sources[provider] ?? {} : {};
+    const newKeys = Object.keys(newSources).filter(
+      (k) => k === key || k.startsWith(key + "/")
+    );
+
+    const prevKeys = new Set(Object.keys(prevSources.current));
+
+    let hasChanged = false;
+    for (const newKey of newKeys) {
+      prevKeys.delete(newKey);
+      if (
+        newValues[newKey] !== prevValues.current[newKey] ||
+        newSources[newKey] !== prevSources.current[newKey]
+      ) {
+        hasChanged = true;
+        break;
+      }
+    }
+
+    if (prevKeys.size > 0) {
+      hasChanged = true;
+    }
+
+    if (hasChanged) {
+      const sources: Record<string, Source> = {};
+      const values: Record<string, unknown> = {};
+      newKeys.forEach((newKey) => {
+        sources[newKey] = newSources[newKey];
+        values[newKey] = newValues[newKey];
+      });
+      prevSources.current = sources;
+      prevValues.current = values;
+
+      setTree(key ? getTree(key) : undefined);
+    }
+  }, [provider, key]);
+
   useEffect(() => {
     const unsubscribe = store.subscribe(() => {
-      const sourceState = store.getState().source;
-      const newValues = provider
-        ? sourceState.sourceValues[provider] ?? {}
-        : {};
-      const newSources = provider ? sourceState.sources[provider] ?? {} : {};
-      const newKeys = Object.keys(newSources).filter(
-        (k) => k === key || k.startsWith(key + "/")
-      );
-
-      const prevKeys = new Set(Object.keys(prevSources.current));
-
-      let hasChanged = false;
-      for (const newKey of newKeys) {
-        prevKeys.delete(newKey);
-        if (
-          newValues[newKey] !== prevValues.current[newKey] ||
-          newSources[newKey] !== prevSources.current[newKey]
-        ) {
-          hasChanged = true;
-          break;
-        }
-      }
-
-      if (prevKeys.size > 0) {
-        hasChanged = true;
-      }
-
-      if (hasChanged) {
-        const sources: Record<string, Source> = {};
-        const values: Record<string, unknown> = {};
-        newKeys.forEach((newKey) => {
-          sources[newKey] = newSources[newKey];
-          values[newKey] = newValues[newKey];
-        });
-        prevSources.current = sources;
-        prevValues.current = values;
-
-        setTree(key ? getTree(key) : undefined);
-      }
+      updateRefs();
     });
+    updateRefs();
     return unsubscribe;
   }, [provider, key]);
 
