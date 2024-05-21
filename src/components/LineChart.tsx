@@ -8,15 +8,11 @@ import {
   booleanProp,
   colorProp,
   createComponent,
-  numberArrayProp,
   numberProp,
   stringDropdownProp,
   stringProp,
 } from "./fromProps";
-import {
-  ChartLegendPositions,
-  toBaseUnitConversions,
-} from "@frc-web-components/fwc";
+import { ChartLegendPositions } from "@frc-web-components/fwc";
 
 export const lineChart = createComponent(
   {
@@ -38,9 +34,9 @@ export const lineChart = createComponent(
           properties: { side: "right", hide: true },
         },
         {
-          type: 'lineChartLegend',
-          name: 'Legend',
-        }
+          type: "lineChartLegend",
+          name: "Legend",
+        },
       ],
     },
     children: [

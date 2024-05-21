@@ -1,10 +1,5 @@
 import { RobotCommand, RobotSubsystem } from "@frc-web-components/react";
-import {
-  booleanProp,
-  colorProp,
-  createComponent,
-  stringProp,
-} from "./fromProps";
+import { booleanProp, createComponent, stringProp } from "./fromProps";
 
 export const robotCommand = createComponent(
   {
@@ -14,7 +9,7 @@ export const robotCommand = createComponent(
       defaultSize: { width: 100, height: 50 },
       minSize: { width: 40, height: 40 },
     },
-    acceptedSourceTypes: ['Command'],
+    acceptedSourceTypes: ["Command"],
     properties: {
       name: stringProp({ defaultValue: "Command" }),
       running: booleanProp(),
@@ -42,7 +37,7 @@ export const robotSubsystem = createComponent(
       defaultSize: { width: 200, height: 100 },
       minSize: { width: 50, height: 50 },
     },
-    acceptedSourceTypes: ['Subsystem'],
+    acceptedSourceTypes: ["Subsystem"],
     properties: {
       default: stringProp(),
       command: stringProp(),

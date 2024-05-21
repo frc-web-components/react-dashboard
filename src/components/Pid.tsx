@@ -3,12 +3,7 @@ import {
   PidController,
   ProfiledPidController,
 } from "@frc-web-components/react";
-import {
-  booleanProp,
-  createComponent,
-  numberProp,
-  stringProp,
-} from "./fromProps";
+import { booleanProp, createComponent, numberProp } from "./fromProps";
 
 export const pidCommand = createComponent(
   {

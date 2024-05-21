@@ -1,12 +1,7 @@
-import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { useAppDispatch, useAppSelector } from "../../store/app/hooks";
-import {
-  selectConextMenuElement,
-  setContextMenuElement,
-} from "../../store/slices/appSlice";
-import { Divider, ListItemIcon, ListItemText, MenuList } from "@mui/material";
-import { NestedMenuItem, IconMenuItem } from "mui-nested-menu";
+import { Divider, ListItemIcon, ListItemText } from "@mui/material";
+import { NestedMenuItem } from "mui-nested-menu";
 import {
   ComponentConfig,
   useComponentConfigs,
@@ -29,7 +24,6 @@ interface Props {
 
 export default function ElementMenu({ onClose, open, componentId }: Props) {
   const dispatch = useAppDispatch();
-  const contextMenuElement = useAppSelector(selectConextMenuElement);
   const selectedComponent = useAppSelector((state) =>
     selectComponent(state, componentId)
   );

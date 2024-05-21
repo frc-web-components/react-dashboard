@@ -82,7 +82,7 @@ export class NT4Provider extends SourceProvider {
       (topic: NT4_Topic) => {
         delete this.#topics[topic.name];
       },
-      (topic: NT4_Topic, timestamp_us: number, value: unknown) => {
+      (topic: NT4_Topic, _: number, value: unknown) => {
         if (topic.type === "structschema") {
           this.#addStructSchema(topic, value as Uint8Array);
         } else if (basicTypes.includes(topic.type)) {

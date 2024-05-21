@@ -3,7 +3,6 @@ import { iconset } from "@frc-web-components/fwc";
 import {
   colorProp,
   createComponent,
-  numberProp,
   stringDropdownProp,
   stringProp,
 } from "./fromProps";
@@ -27,12 +26,12 @@ export const icon = createComponent(
         //   return icon !== "Custom";
         // },
       }),
-      viewBox: stringProp({ 
-        defaultValue: '0 0 24 24',
+      viewBox: stringProp({
+        defaultValue: "0 0 24 24",
         // isDisabled({ icon }: { icon: string }): boolean {
         //   return icon !== "Custom";
         // },
-      })
+      }),
     },
   },
   ({ children, setProperty, ...props }) => {

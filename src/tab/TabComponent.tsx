@@ -10,8 +10,7 @@ import { ComponentProvider } from "../context-providers/ComponentContext";
 import { useComponentConfigs } from "../context-providers/ComponentConfigContext";
 import { memoizeWithArgs } from "proxy-memoize";
 import { RootState } from "../store/app/store";
-import { getContextMenuPosition } from "./context-menu/useContextMenu";
-import { setContextMenuElement } from "../store/slices/appSlice";
+import { setComponentTemporaryValue } from "../store/slices/layoutSlice";
 
 export function makeSelectChildren() {
   return memoizeWithArgs((state: RootState, componentId: string) => {
@@ -63,7 +62,22 @@ function TabComponent({ Component, componentId }: Props) {
   const newSetProperty = useCallback(
     (prop: string, value: unknown) => {
       if (propertySourceInfos) {
-        setSourceValue(value, propertySourceInfos[prop]);
+        if (propertySourceInfos[prop].type === "defaultValue") {
+          console.log("Set prop:", {
+            prop,
+            value,
+            info: propertySourceInfos[prop],
+          });
+          dispatch(
+            setComponentTemporaryValue({
+              id: componentId,
+              property: prop,
+              value,
+            })
+          );
+        } else {
+          setSourceValue(value, propertySourceInfos[prop]);
+        }
       }
     },
     [propertySourceInfos]

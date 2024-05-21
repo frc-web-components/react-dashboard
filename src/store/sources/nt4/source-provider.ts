@@ -4,7 +4,6 @@ import { AppStore } from "../../app/store";
 import {
   PropertyType,
   setConnectionStatus,
-  setSource,
   setSourceDisplayTypes,
   setSources,
 } from "../../slices/sourceSlice";
@@ -160,6 +159,7 @@ class SourceProvider {
    * by '/'.
    * @param {*} value - The source's updated value.
    */
+  // @ts-ignore
   componentUpdate(key: string, value: unknown, type: string): void {}
 
   #sendUpdates(callback: () => unknown = () => {}): void {

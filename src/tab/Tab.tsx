@@ -28,9 +28,7 @@ import { ComponentListItem } from "../tools/ComponentPicker";
 import TabComponent from "./TabComponent";
 import { selectEditing, setContextMenuElement } from "../store/slices/appSlice";
 import { SourceData } from "../tools/sources/Sources";
-import useContextMenu, {
-  getContextMenuPosition,
-} from "./context-menu/useContextMenu";
+import { getContextMenuPosition } from "./context-menu/useContextMenu";
 import ContextMenu from "./context-menu/ContextMenu";
 
 export const getComponentsWithDisplayType = (
@@ -272,16 +270,22 @@ function Tab({ tabId }: Props) {
           height: "100%",
           width: "100%",
           backgroundSize: `${cellSize + cellGap}px ${cellSize + cellGap}px`,
-          backgroundImage: `linear-gradient(to right, rgba(15,15,15,.5) ${Math.max(cellGap, 1)}px, transparent ${Math.max(cellGap, 1)}px),
-          linear-gradient(to bottom, rgba(15,15,15,.5) ${Math.max(cellGap, 1)}px, transparent ${Math.max(cellGap, 1)}px)`,
-          backgroundPosition: `-${cellGap / 2}px -${cellGap / 2}px`
+          backgroundImage: `linear-gradient(to right, rgba(23,23,23,.5) ${Math.max(
+            cellGap,
+            1
+          )}px, transparent ${Math.max(cellGap, 1)}px),
+          linear-gradient(to bottom, rgba(23,23,23,.5) ${Math.max(
+            cellGap,
+            1
+          )}px, transparent ${Math.max(cellGap, 1)}px)`,
+          backgroundPosition: `-${cellGap / 2}px -${cellGap / 2}px`,
         }}
         innerRef={(el) => {
           if (el) {
             setGridElement(el);
           }
         }}
-        onResizeStop={(updatedLayout, oldItem, newItem) => {
+        onResizeStop={(_updatedLayout, _oldItem, newItem) => {
           const { w, h, i, x, y } = newItem;
           dispatch(
             updateComponentSize({
@@ -299,7 +303,7 @@ function Tab({ tabId }: Props) {
           );
           // setLayout(updatedLayout as ComponentLayout[]);
         }}
-        onDragStop={(updatedLayout, oldItem, newItem) => {
+        onDragStop={(_updatedLayout, _oldItem, newItem) => {
           const { x, y, i } = newItem;
           dispatch(
             updateComponentPosition({
@@ -322,10 +326,10 @@ function Tab({ tabId }: Props) {
         compactType={null}
         preventCollision
         resizeHandles={["nw", "se"]}
-        onResizeStart={(layout, oldItem, newItem) => {
+        onResizeStart={(_layout, _oldItem, newItem) => {
           dispatch(setSelectedComponent(newItem.i));
         }}
-        onDragStart={(layout, oldItem, newItem) => {
+        onDragStart={(_layout, _oldItem, newItem) => {
           dispatch(setSelectedComponent(newItem.i));
         }}
       >
@@ -334,7 +338,7 @@ function Tab({ tabId }: Props) {
             <div
               key={id}
               style={{
-                background: 'black'
+                background: "black",
               }}
               className={classNames(Styles.component, {
                 [Styles.selected]: selectedComponent?.id === id,

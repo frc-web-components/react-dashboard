@@ -1,4 +1,4 @@
-import React, { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import Draggable from "react-draggable";
 import "./SimpleDialog.css"; // Assuming you have a CSS file for styling
 

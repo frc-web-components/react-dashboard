@@ -1,7 +1,6 @@
-import { ICloseType, IJsonModel } from "flexlayout-react";
+import { IJsonModel } from "flexlayout-react";
 import { v4 as uuidv4 } from "uuid";
 import editIcon from "/edit.svg";
-import checkIcon from "/check.svg";
 import settingsIcon from '/settings.svg';
 
 export const layoutJson: IJsonModel = {

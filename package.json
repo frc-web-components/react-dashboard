@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@emotion/styled": "^11.11.5",
-    "@frc-web-components/fwc": "C:/Users/Owner/Documents/repos/robotics/fwc/frc-web-components/packages/fwc",
-    "@frc-web-components/react": "C:/Users/Owner/Documents/repos/robotics/fwc/frc-web-components/packages/react",
+    "@frc-web-components/fwc": "^2.4.4",
+    "@frc-web-components/react": "^0.8.3",
     "@mui/icons-material": "^5.15.17",
     "@mui/material": "^5.15.17",
     "@react-hook/resize-observer": "^1.2.6",

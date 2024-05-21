@@ -5,8 +5,6 @@ import {
   selectConextMenuElement,
   setContextMenuElement,
 } from "../../store/slices/appSlice";
-import { Divider, ListItemIcon, ListItemText, MenuList } from "@mui/material";
-import { NestedMenuItem, IconMenuItem } from "mui-nested-menu";
 import ElementMenu from "./ElementMenu";
 import { clearTab } from "../../store/slices/layoutSlice";
 

@@ -11,11 +11,7 @@ import {
   selectComponent,
 } from "../../store/selectors/layoutSelectors";
 import { useComponentConfigs } from "../../context-providers/ComponentConfigContext";
-import {
-  addComponent,
-  removeComponent,
-  setSelectedComponent,
-} from "../../store/slices/layoutSlice";
+import { addComponent, removeComponent } from "../../store/slices/layoutSlice";
 import { v4 as uuidv4 } from "uuid";
 
 export const ParentActionsCellRenderer = (

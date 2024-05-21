@@ -12,6 +12,7 @@ export interface Component {
   properties: {
     [propertName: string]: {
       value: unknown;
+      temporaryValue?: unknown;
       source?: {
         provider: string;
         key: string;
@@ -184,6 +185,15 @@ export const layoutSlice = createAppSlice({
         state.components[id].position = { x, y };
       }
     ),
+    setComponentTemporaryValue: create.reducer(
+      (
+        state,
+        action: PayloadAction<{ id: string; value: unknown, property: string }>
+      ) => {
+        const { id, value, property } = action.payload;
+        state.components[id].properties[property].temporaryValue = value;
+      }
+    ),
     updateComponentProperty: create.reducer(
       (
         state,
@@ -251,6 +261,7 @@ export const {
   updateComponentSource,
   updateComponentType,
   setComponentName,
+  setComponentTemporaryValue,
   setGridSize,
   setGridGap,
 } = layoutSlice.actions;

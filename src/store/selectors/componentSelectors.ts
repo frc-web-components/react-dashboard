@@ -206,7 +206,10 @@ export function useComponentPropertyValues(componentId: string) {
             };
           } else {
             propertyValues[name] = {
-              value: defaultValue,
+              value:
+              "temporaryValue" in property
+                ? property.temporaryValue
+                : defaultValue,
               sourceInfo: {
                 type: "defaultValue",
               },
@@ -214,7 +217,10 @@ export function useComponentPropertyValues(componentId: string) {
           }
         } else {
           propertyValues[name] = {
-            value: defaultValue,
+            value:
+              "temporaryValue" in property
+                ? property.temporaryValue
+                : defaultValue,
             sourceInfo: {
               type: "defaultValue",
             },
@@ -325,7 +331,10 @@ export function makeSelectComponentPropertyValues() {
           };
         } else {
           propertyValues[name] = {
-            value: defaultValue,
+            value:
+              "temporaryValue" in property
+                ? property.temporaryValue
+                : defaultValue,
             sourceInfo: {
               type: "defaultValue",
             },
@@ -333,7 +342,10 @@ export function makeSelectComponentPropertyValues() {
         }
       } else {
         propertyValues[name] = {
-          value: defaultValue,
+          value:
+            "temporaryValue" in property
+              ? property.temporaryValue
+              : defaultValue,
           sourceInfo: {
             type: "defaultValue",
           },
