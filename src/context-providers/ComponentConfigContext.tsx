@@ -1,4 +1,5 @@
-import React, { createContext, useContext, ReactNode, useState } from "react";
+import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
+import Dashboard from "../dashboard";
 
 export interface ComponentProperty {
   type:
@@ -68,15 +69,21 @@ const ComponentConfigContext = createContext<
 // Create a provider component
 interface ProviderProps {
   children: ReactNode;
-  components?: Record<string, ComponentConfig>;
+  dashboard: Dashboard;
 }
 
 export const ComponentConfigProvider: React.FC<ProviderProps> = ({
   children,
-  components: initialComponents = {},
+  dashboard,
 }) => {
   const [components, setComponents] =
-    useState<Record<string, ComponentConfig>>(initialComponents);
+    useState<Record<string, ComponentConfig>>(dashboard.getComponents());
+
+  useEffect(() => {
+    dashboard.on('addComponentsEvent', () => {
+      setComponents(dashboard.getComponents());
+    });
+  }, [dashboard]);
 
   const hasComponent = (id: string) => {
     return id in components;

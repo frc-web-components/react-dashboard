@@ -44,6 +44,9 @@ dependencies:
   classnames:
     specifier: ^2.5.1
     version: 2.5.1
+  events:
+    specifier: ^3.3.0
+    version: 3.3.0
   flexlayout-react:
     specifier: ^0.7.15
     version: 0.7.15(react-dom@18.2.0)(react@18.2.0)
@@ -80,11 +83,17 @@ dependencies:
   react-select:
     specifier: ^5.8.0
     version: 5.8.0(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
+  strict-event-emitter-types:
+    specifier: ^2.0.0
+    version: 2.0.0
   uuid:
     specifier: ^9.0.1
     version: 9.0.1
 
 devDependencies:
+  '@types/events':
+    specifier: ^3.0.3
+    version: 3.0.3
   '@types/lodash.camelcase':
     specifier: ^4.3.9
     version: 4.3.9
@@ -1448,6 +1457,10 @@ packages:
 
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
+
+  /@types/events@3.0.3:
+    resolution: {integrity: sha512-trOc4AAUThEz9hapPtSd7wf5tiQKvTtu5b371UxXdTuqzIh0ArcRspRP0i0Viu+LXstIQ1z96t1nsPxT9ol01g==}
+    dev: true
 
   /@types/hast@2.3.10:
     resolution: {integrity: sha512-McWspRw8xx8J9HurkVBfYj0xKoE25tOFlHGdx4MJ5xORQrMGZNqJhVQWaIbm6Oyla5kYOXtDiopzKRJzEOkwJw==}
@@ -3862,6 +3875,11 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
+  /events@3.3.0:
+    resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
+    engines: {node: '>=0.8.x'}
+    dev: false
+
   /extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
     dev: false
@@ -5834,6 +5852,10 @@ packages:
   /specificity@0.4.1:
     resolution: {integrity: sha512-1klA3Gi5PD1Wv9Q0wUoOQN1IWAuPu0D1U03ThXTr0cJ20+/iq2tHSDnK7Kk/0LXJ1ztUB2/1Os0wKmfyNgUQfg==}
     hasBin: true
+    dev: false
+
+  /strict-event-emitter-types@2.0.0:
+    resolution: {integrity: sha512-Nk/brWYpD85WlOgzw5h173aci0Teyv8YdIAEtV+N88nDB0dLlazZyJMIsN6eo1/AR61l+p6CJTG1JIyFaoNEEA==}
     dev: false
 
   /string-width@4.2.3:

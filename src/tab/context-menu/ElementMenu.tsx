@@ -74,12 +74,7 @@ export default function ElementMenu({ onClose, open, componentId }: Props) {
     <Divider />,
     <MenuItem onClick={remove}>Remove</MenuItem>,
     componentsWithDisplayType.length > 1 && (
-      <NestedMenuItem
-        // leftIcon={<AdbIcon />}
-        // rightIcon={<FlutterDashIcon />}
-        label="Show As..."
-        parentMenuOpen={open}
-      >
+      <NestedMenuItem label="Show As..." parentMenuOpen={open}>
         {componentsWithDisplayType.map((component) => (
           <MenuItem
             disabled={component.type === selectedComponent?.type}
