@@ -4,6 +4,8 @@ import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import collapseIcon from "/collapse.svg";
 import expandIcon from "/expand.svg";
+import ExpandIcon from "@mui/icons-material/KeyboardArrowRight";
+import CollapseIcon from "@mui/icons-material/KeyboardArrowDown";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useDropZone } from "../../context-providers/DropZoneContext";
@@ -61,7 +63,7 @@ const ExpandToggle = ({
       }}
       onClick={onToggle}
     >
-      <img src={expanded ? collapseIcon : expandIcon} />
+      {expanded ? <CollapseIcon fontSize="small" /> : <ExpandIcon fontSize="small" />}
       {children}
     </div>
   );

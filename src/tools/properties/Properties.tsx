@@ -70,6 +70,7 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
   // Using dot notation to access nested property
   {
     field: "defaultValue",
+    singleClickEdit: true,
     // editable: true,
     sortable: false,
     suppressKeyboardEvent: (params) => {
@@ -430,7 +431,6 @@ function Properties({ childComponentConfig, configType }: Props) {
           className={"ag-theme-balham-dark"}
         >
           <AgGridReact<PropertyData>
-            singleClickEdit
             alwaysShowVerticalScroll
             context={context}
             onGridReady={(params) => setGridApi(params.api)}

@@ -2,8 +2,9 @@ import { CustomCellRendererProps } from "ag-grid-react";
 import { PropertyContext, PropertyData } from "./Properties";
 import { useAppDispatch, useAppSelector } from "../../store/app/hooks";
 import styles from "./ParentActionCellRenderer.module.scss";
-import removeIcon from "/remove.svg";
-import addCircleIcon from "/add-circle.svg";
+import RemoveCircleIcon from '@mui/icons-material/HighlightOff';
+import AddCircleIcon from '@mui/icons-material/ControlPoint';
+
 import { useMemo } from "react";
 import {
   makeSelectSelectedComponent,
@@ -98,7 +99,7 @@ export const ParentActionsCellRenderer = (
             );
           }}
         >
-          <img src={addCircleIcon} />
+          <AddCircleIcon fontSize="small" color="success" />
         </button>
       )}
       <button
@@ -117,7 +118,7 @@ export const ParentActionsCellRenderer = (
           // }
         }}
       >
-        <img src={removeIcon} />
+        <RemoveCircleIcon fontSize="small" color="error" />
       </button>
     </div>
   );

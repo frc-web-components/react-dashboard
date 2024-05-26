@@ -1,7 +1,7 @@
 import { CustomCellRendererProps } from "ag-grid-react";
 import { PropertyContext, PropertyData } from "./Properties";
-import collapseIcon from "/collapse.svg";
-import expandIcon from "/expand.svg";
+import ExpandIcon from "@mui/icons-material/KeyboardArrowRight";
+import CollapseIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useCallback, useEffect, useState } from "react";
 import { RowDropZoneParams } from "ag-grid-community";
 import { useDropZone } from "../../context-providers/DropZoneContext";
@@ -9,14 +9,20 @@ import { useAppDispatch } from "../../store/app/hooks";
 import { updateComponentPropertySource } from "../../store/slices/layoutSlice";
 
 const NameCellRenderer = (
-  props: CustomCellRendererProps<PropertyData, string, Record<string, PropertyContext>>
+  props: CustomCellRendererProps<
+    PropertyData,
+    string,
+    Record<string, PropertyContext>
+  >
 ) => {
   const dispatch = useAppDispatch();
 
   const { data } = props;
 
   const isParent = !!props.data?.isParent;
-  const expanded = data ? props.context[data.componentId].expanded !== false : false;
+  const expanded = data
+    ? props.context[data.componentId].expanded !== false
+    : false;
 
   const { sourceGrid } = useDropZone(); // Use the context
   const [element, setElement] = useState<HTMLElement>();
@@ -85,7 +91,7 @@ const NameCellRenderer = (
     >
       <div
         style={{
-          display: 'flex'
+          display: "flex",
         }}
         onClick={() => {
           if (isParent) {
@@ -96,14 +102,14 @@ const NameCellRenderer = (
           }
         }}
       >
-        {isParent && <img src={expanded ? collapseIcon : expandIcon} />}
+        {isParent && (expanded ? <CollapseIcon fontSize="small" /> : <ExpandIcon fontSize="small" />)}
       </div>
       <span
         style={{
           overflow: "hidden",
           textOverflow: "ellipsis",
           paddingLeft: isParent ? 0 : 18,
-          fontWeight: isParent ? 'bold' : 'normal'
+          fontWeight: isParent ? "bold" : "normal",
         }}
       >
         {props.data?.name}

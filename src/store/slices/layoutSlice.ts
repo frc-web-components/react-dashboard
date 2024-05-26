@@ -1,5 +1,8 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../app/createAppSlice";
+import { layoutJson as defaultLayoutJson } from "../../layout";
+import { IJsonModel } from "flexlayout-react";
+
 
 export interface Component {
   id: string;
@@ -26,8 +29,9 @@ export interface Component {
   children: string[];
 }
 
-export interface LayoutSliceState {
+export interface Layout {
   selectedComponentId?: string;
+  flexLayout: IJsonModel;
   components: {
     [componentId: string]: Component;
   };
@@ -38,11 +42,11 @@ export interface LayoutSliceState {
   };
   gridSize: number;
   gridGap: number;
-  // components: Record<string, Record<string, Component>>;
 }
 
-const initialState: LayoutSliceState = {
+export const initialLayoutState: Layout = {
   selectedComponentId: undefined,
+  flexLayout: defaultLayoutJson,
   components: {},
   tabs: {},
   gridSize: 128,
@@ -53,10 +57,21 @@ const initialState: LayoutSliceState = {
 export const layoutSlice = createAppSlice({
   name: "layout",
   // `createSlice` will infer the state type from the `initialState` argument
-  initialState,
+  initialState: initialLayoutState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: (create) => ({
-    // Use the `PayloadAction` type to declare the contents of `action.payload`
+    setLayout: create.reducer((state, action: PayloadAction<Layout>) => {
+      state.flexLayout = action.payload.flexLayout;
+      state.components = action.payload.components;
+      state.tabs = action.payload.tabs;
+      state.gridSize = action.payload.gridSize;
+      state.gridGap = action.payload.gridGap;
+    }),
+    setFlexLayout: create.reducer(
+      (state, action: PayloadAction<IJsonModel>) => {
+        state.flexLayout = action.payload;
+      }
+    ),
     setSelectedComponent: create.reducer(
       (state, action: PayloadAction<string | undefined>) => {
         state.selectedComponentId = action.payload;
@@ -188,7 +203,7 @@ export const layoutSlice = createAppSlice({
     setComponentTemporaryValue: create.reducer(
       (
         state,
-        action: PayloadAction<{ id: string; value: unknown, property: string }>
+        action: PayloadAction<{ id: string; value: unknown; property: string }>
       ) => {
         const { id, value, property } = action.payload;
         state.components[id].properties[property].temporaryValue = value;
@@ -250,6 +265,8 @@ export const layoutSlice = createAppSlice({
 
 // Action creators are generated for each case reducer function.
 export const {
+  setLayout,
+  setFlexLayout,
   setSelectedComponent,
   addComponent,
   removeComponent,

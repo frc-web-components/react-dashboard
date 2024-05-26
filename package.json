@@ -3,6 +3,22 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/fwc-dashboard.es.js",
+  "module": "./dist/fwc-dashboard.es.js",
+  "types": "./dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/fwc-dashboard.es.js"
+    },
+    "./dist/style.css": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -54,6 +70,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "sass": "^1.71.1",
     "typescript": "^5.2.2",
-    "vite": "^5.1.6"
+    "vite": "^5.1.6",
+    "vite-plugin-dts": "^3.9.1"
   }
 }

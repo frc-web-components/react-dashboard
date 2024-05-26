@@ -1,6 +1,8 @@
 import { RootState } from "../app/store";
 import { createSelector } from "@reduxjs/toolkit";
 
+export const selectFlexLayout = (state: RootState) => state.layout.flexLayout;
+
 export const selectSelectedComponentId = (state: RootState) =>
   state.layout.selectedComponentId;
 export const selectComponents = (state: RootState) => state.layout.components;
