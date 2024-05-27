@@ -9,14 +9,14 @@ export default defineConfig({
       entry: {
         'fwc-dashboard': "src/main.tsx",
       },
-      name: "FwcDashboard",
+      name: "fwcDashboard",
       // TODO: multiple entry points are not supported with umd
       // How do we add umd support then?
       formats: ["es"],
       fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
-      external: ["react", "react-dom"],
+      external: ["react", "react-dom", '@frc-web-components/fwc'],
       output: {
         globals: {
           react: "React",

@@ -6,14 +6,9 @@ import settingsIcon from '/settings.svg';
 export const layoutJson: IJsonModel = {
   global: {
     borderSize: 350,
+    tabEnableFloat: false,
   },
   borders: [
-    {
-      type: "border",
-      selected: -1,
-      location: "bottom",
-      children: [],
-    },
     {
       type: "border",
       selected: 1,
@@ -23,7 +18,6 @@ export const layoutJson: IJsonModel = {
           type: "tab",
           name: "Settings",
           component: "settings",
-          enableFloat: false,
           enableClose: false,
           enableDrag: false,
           id: 'settingsTab',
@@ -34,12 +28,10 @@ export const layoutJson: IJsonModel = {
           type: "tab",
           name: "Editor",
           component: "editor",
-          enableFloat: false,
           enableClose: false,
           enableDrag: false,
           id: 'editorTab',
           icon: editIcon,
-          // closeType: ICloseType.Visible,
         },
       ],
     },
@@ -58,14 +50,12 @@ export const layoutJson: IJsonModel = {
             type: "tab",
             name: "TeleOperated",
             component: "components",
-            enableFloat: true,
             id: uuidv4(),
           },
           {
             type: "tab",
             name: "Autonomous",
             component: "components",
-            enableFloat: true,
             id: uuidv4(),
           },
         ],

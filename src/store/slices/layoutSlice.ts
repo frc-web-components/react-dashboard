@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../app/createAppSlice";
-import { layoutJson as defaultLayoutJson } from "../../layout";
+import { layoutJson as defaultLayoutJson } from "./layout";
 import { IJsonModel } from "flexlayout-react";
 
 
