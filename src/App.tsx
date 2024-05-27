@@ -16,6 +16,9 @@ function App() {
         width: "100vw",
         height: "100vh",
         alignItems: "stretch",
+        padding: '3px',
+        boxSizing: 'border-box',
+        background: 'black',
       }}
     >
       <Titlebar />

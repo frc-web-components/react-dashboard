@@ -13,6 +13,7 @@ function Titlebar() {
   return (
     <div
       className="fwc-titlebar"
+      data-tauri-drag-region
       style={{
         height: "33px",
         background: "black",

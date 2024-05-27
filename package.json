@@ -1,6 +1,6 @@
 {
   "name": "@frc-web-components/react-dashboard",
-  "version": "0.1.3",
+  "version": "0.1.6",
   "type": "module",
   "files": [
     "dist"
