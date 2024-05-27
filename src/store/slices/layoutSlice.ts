@@ -50,7 +50,7 @@ export const initialLayoutState: Layout = {
   components: {},
   tabs: {},
   gridSize: 128,
-  gridGap: 5,
+  gridGap: 2,
 };
 
 // If you are not using async thunks you can use the standalone `createSlice`.
