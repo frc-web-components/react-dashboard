@@ -14,6 +14,7 @@ import { SourceProviderProvider } from "./context-providers/SourceProviderContex
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Dashboard from "./dashboard.ts";
+import { DashboardProvider } from "./context-providers/DashboardContext.tsx";
 
 const darkTheme = createTheme({
   palette: {
@@ -33,7 +34,9 @@ export function mountDashboard(element: HTMLElement) {
           <SourceProviderProvider>
             <DropZoneProvider>
               <ComponentConfigProvider dashboard={dashboard}>
-                <App />
+                <DashboardProvider dashboard={dashboard}>
+                  <App />
+                </DashboardProvider>
               </ComponentConfigProvider>
             </DropZoneProvider>
           </SourceProviderProvider>
