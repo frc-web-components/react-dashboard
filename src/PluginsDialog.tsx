@@ -76,7 +76,7 @@ const columnDefs: ColDef[] = [
   {
     field: "location",
     tooltipValueGetter(params) {
-      return params.data.description;
+      return params.data.location;
     },
   },
 ];

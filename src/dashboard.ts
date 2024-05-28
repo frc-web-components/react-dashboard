@@ -25,6 +25,7 @@ interface DashboardEvents {
   setLoadedPluginsEvent: (plugins: Plugin[]) => void;
   pluginDialogRemoveEvent: (location: string) => void;
   pluginDialogLoadPluginEvent: () => void;
+  dashboardTitleChange: (title: string) => void;
 }
 
 export type DashboardEventEmitter = StrictEventEmitter<
@@ -41,6 +42,16 @@ export interface Plugin {
 export default class Dashboard extends (EventEmitter as unknown as new () => DashboardEventEmitter) {
   #components: Record<string, ComponentConfig> = {};
   #loadedPlugins: Plugin[] = [];
+  #title = 'Untitled Dashboard';
+
+  setTitle(title: string) {
+    this.#title = title;
+    this.emit('dashboardTitleChange', title);
+  }
+
+  getTitle() {
+    return this.#title;
+  }
 
   addComponents(components: Record<string, ComponentConfig>) {
     this.#components = {

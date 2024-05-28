@@ -14,7 +14,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import CropSquareIcon from "@mui/icons-material/CropSquare";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { MouseEvent, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import ArticleIcon from "@mui/icons-material/Article";
 import { useDashboard } from "./context-providers/DashboardContext";
 import PluginsDialog from "./PluginsDialog";
@@ -32,7 +32,15 @@ function Titlebar() {
     setAnchorEl(null);
   };
 
+  const [dashboardTitle, setDashboardTitle] = useState(dashboard.getTitle());
+
   const [pluginsDialogOpen, setPluginsDialogOpen] = useState(false);
+
+  useEffect(() => {
+    dashboard.on('dashboardTitleChange', title => {
+      setDashboardTitle(title);
+    });
+  }, [dashboard]);
 
   return (
     <>
@@ -160,6 +168,7 @@ function Titlebar() {
             </MenuList>
           </Menu>
         </div>
+        <div style={{ fontSize: 20, color: '#ccc', userSelect: 'none' }}>{dashboardTitle}</div>
         <div
           style={{
             display: "flex",
@@ -177,6 +186,7 @@ function Titlebar() {
                     color: status.connected ? "green" : "red",
                     gap: "5px",
                     fontSize: "15px",
+                    userSelect: 'none'
                   }}
                 >
                   {status.connected ? (
@@ -226,7 +236,10 @@ function Titlebar() {
           </ButtonGroup>
         </div>
       </div>
-      <PluginsDialog open={pluginsDialogOpen} onClose={() => setPluginsDialogOpen(false)} />
+      <PluginsDialog
+        open={pluginsDialogOpen}
+        onClose={() => setPluginsDialogOpen(false)}
+      />
     </>
   );
 }

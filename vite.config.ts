@@ -16,7 +16,7 @@ export default defineConfig({
       fileName: (format, entryName) => `${entryName}.${format}.js`,
     },
     rollupOptions: {
-      external: ["react", "react-dom", '@frc-web-components/fwc'],
+      external: ["react", "react-dom"],
       output: {
         globals: {
           react: "React",
