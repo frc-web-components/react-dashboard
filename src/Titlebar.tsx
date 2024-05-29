@@ -180,6 +180,7 @@ function Titlebar() {
             {Object.values(connectionStatuses).map((status) => {
               return (
                 <div
+                  key={`title-item-${status.label}`}
                   style={{
                     display: "flex",
                     alignItems: "center",
