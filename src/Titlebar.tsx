@@ -37,7 +37,7 @@ function Titlebar() {
   const [pluginsDialogOpen, setPluginsDialogOpen] = useState(false);
 
   useEffect(() => {
-    dashboard.on('dashboardTitleChange', title => {
+    dashboard.on("dashboardTitleChange", (title) => {
       setDashboardTitle(title);
     });
   }, [dashboard]);
@@ -168,7 +168,16 @@ function Titlebar() {
             </MenuList>
           </Menu>
         </div>
-        <div style={{ fontSize: 20, color: '#ccc', userSelect: 'none' }}>{dashboardTitle}</div>
+        <div
+          style={{
+            fontSize: 18,
+            color: "#ccc",
+            userSelect: "none",
+            pointerEvents: "none",
+          }}
+        >
+          {dashboardTitle}
+        </div>
         <div
           style={{
             display: "flex",
@@ -186,7 +195,8 @@ function Titlebar() {
                     color: status.connected ? "green" : "red",
                     gap: "5px",
                     fontSize: "15px",
-                    userSelect: 'none'
+                    userSelect: "none",
+                    pointerEvents: "none",
                   }}
                 >
                   {status.connected ? (
