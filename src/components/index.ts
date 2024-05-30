@@ -29,6 +29,7 @@ import { numberBar } from "./NumberBar";
 import { pidCommand, pidController, profiledPidController } from "./Pid";
 import { preferences } from './Preferences';
 import { toggleButton, toggleGroup } from "./ToggleButton";
+import { sendableChooser } from './Dropdowns';
 
 export const componentMap: Record<string, ComponentConfig> = {
   threeAxisAccelerometer,
@@ -120,6 +121,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   preferences,
   toggleButton,
   toggleGroup,
+  sendableChooser,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);

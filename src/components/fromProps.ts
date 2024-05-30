@@ -23,7 +23,6 @@ export type FromProps<T extends Record<string, ComponentProperty>> = {
       : never
     : never;
 } & {
-  className: string;
   setProperty: (property: string, value: unknown) => unknown;
   children: ReactNode;
 };

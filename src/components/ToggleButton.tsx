@@ -35,7 +35,7 @@ export const toggleButton = createComponent(
       }),
     },
   },
-  ({ className, toggled, label, color, setProperty }) => {
+  ({ toggled, label, color, setProperty }) => {
     const styles: CSSProperties = {
       width: "100%",
       height: "100%",
@@ -45,19 +45,17 @@ export const toggleButton = createComponent(
       styles.background = "#111";
     }
     return (
-      <div className={className}>
-        <ToggleButton
-          style={styles}
-          color={color as any}
-          selected={toggled}
-          onChange={() => {
-            setProperty("toggled", !toggled);
-          }}
-          value=""
-        >
-          {label}
-        </ToggleButton>
-      </div>
+      <ToggleButton
+        style={styles}
+        color={color as any}
+        selected={toggled}
+        onChange={() => {
+          setProperty("toggled", !toggled);
+        }}
+        value=""
+      >
+        {label}
+      </ToggleButton>
     );
   }
 );
@@ -95,17 +93,12 @@ export const toggleGroup = createComponent(
       }),
     },
   },
-  ({
-    className,
-    value,
-    direction,
-    exclusive,
-    options,
-    color,
-    setProperty,
-  }) => {
+  ({ value, direction, exclusive, options, color, setProperty }) => {
     return (
-      <div className={className}>
+      <div style={{
+        width: '100%',
+        height: '100%'
+      }}>
         <ToggleButtonGroup
           style={{
             width: "100%",
@@ -117,11 +110,16 @@ export const toggleGroup = createComponent(
           exclusive={exclusive}
           color={color as any}
           onChange={(_, values: string[] | string) => {
-            setProperty('value', typeof values === 'string' ? [values] : values);
+            setProperty(
+              "value",
+              typeof values === "string" ? [values] : values
+            );
           }}
         >
           {(options ?? []).map((option) => {
-            const style: CSSProperties = {};
+            const style: CSSProperties = {
+              flex: '1'
+            };
             if (!value.includes(option)) {
               style.background = "#111";
             }
