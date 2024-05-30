@@ -28,6 +28,7 @@ import { networkAlerts } from "./NetworkAlerts";
 import { numberBar } from "./NumberBar";
 import { pidCommand, pidController, profiledPidController } from "./Pid";
 import { preferences } from './Preferences';
+import { toggleButton, toggleGroup } from "./ToggleButton";
 
 export const componentMap: Record<string, ComponentConfig> = {
   threeAxisAccelerometer,
@@ -117,6 +118,8 @@ export const componentMap: Record<string, ComponentConfig> = {
   pidController,
   profiledPidController,
   preferences,
+  toggleButton,
+  toggleGroup,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);
