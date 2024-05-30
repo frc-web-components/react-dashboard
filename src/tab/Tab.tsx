@@ -10,6 +10,7 @@ import {
   addComponent,
   updateComponentPosition,
   updateComponentSize,
+  removeComponent,
 } from "../store/slices/layoutSlice";
 import {
   makeSelectSelectedComponent,
@@ -30,6 +31,7 @@ import { selectEditing, setContextMenuElement } from "../store/slices/appSlice";
 import { SourceData } from "../tools/sources/Sources";
 import { getContextMenuPosition } from "./context-menu/useContextMenu";
 import ContextMenu from "./context-menu/ContextMenu";
+import { DELETE_KEYS } from "./constants";
 
 export const getComponentsWithDisplayType = (
   type: string,
@@ -262,6 +264,13 @@ function Tab({ tabId }: Props) {
         minHeight: "100%",
         minWidth,
         width: "100%",
+      }}
+      // Needed to capture keyboard events.
+      tabIndex={0}
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (DELETE_KEYS.includes(e.key) && selectedComponent) {
+          dispatch(removeComponent({ componentId: selectedComponent.id }));
+        }
       }}
     >
       <ContextMenu />
