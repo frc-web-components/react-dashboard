@@ -104,8 +104,7 @@ export const layoutSlice = createAppSlice({
       (state, action: PayloadAction<{ componentId: string }>) => {
         const { componentId } = action.payload;
         const component = state.components[componentId];
-
-        let tabId = Object.keys(state.tabs).find((id) => {
+        const tabId = Object.keys(state.tabs).find((id) => {
           return state.tabs[id].componentIds.includes(componentId);
         });
 
