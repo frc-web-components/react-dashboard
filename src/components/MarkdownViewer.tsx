@@ -21,7 +21,7 @@ export const markdownViewer = createComponent(
       <div className={`${styles["markdown-viewer"]}`} data-color-mode="dark">
         <MDEditor.Markdown
           source={markdown}
-          style={{ whiteSpace: "pre-wrap", background: "none" }}
+          style={{ background: "none" }}
         />
       </div>
     );
