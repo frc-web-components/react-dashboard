@@ -67,7 +67,7 @@ export function numberProp(
     step?: number;
     precision?: number;
   }
-): Partial<BaseProp<number>> & {
+): BaseProp<number> & {
   type: "Number";
   input: {
     type: "Number";
@@ -80,7 +80,7 @@ export function numberProp(
   return {
     type: "Number",
     defaultValue: prop?.defaultValue ?? 0,
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
     input: {
       type: "Number",
       min: prop?.min,
@@ -91,15 +91,15 @@ export function numberProp(
   };
 }
 
-export function stringProp(prop?: Partial<BaseProp<string>>): Partial<
-  BaseProp<string>
-> & {
+export function stringProp(
+  prop?: Partial<BaseProp<string>>
+): BaseProp<string> & {
   type: "String";
 } {
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
   };
 }
 
@@ -108,7 +108,7 @@ export function stringDropdownProp(
     options?: string[] | ((propValues: Record<string, any>) => string[]);
     allowCustomValues?: boolean;
   }
-): Partial<BaseProp<string>> & {
+): BaseProp<string> & {
   type: "String";
   input: {
     type: "StringDropdown";
@@ -119,7 +119,7 @@ export function stringDropdownProp(
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
     input: {
       type: "StringDropdown",
       options: prop?.options ?? [],
@@ -128,9 +128,9 @@ export function stringDropdownProp(
   };
 }
 
-export function colorProp(prop?: Partial<BaseProp<string>>): Partial<
-  BaseProp<string>
-> & {
+export function colorProp(
+  prop?: Partial<BaseProp<string>>
+): BaseProp<string> & {
   type: "String";
   input: {
     type: "Color";
@@ -139,16 +139,16 @@ export function colorProp(prop?: Partial<BaseProp<string>>): Partial<
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
     input: {
       type: "Color",
     },
   };
 }
 
-export function markdownProp(prop?: Partial<BaseProp<string>>): Partial<
-  BaseProp<string>
-> & {
+export function markdownProp(
+  prop?: Partial<BaseProp<string>>
+): BaseProp<string> & {
   type: "String";
   input: {
     type: "Markdown";
@@ -157,45 +157,45 @@ export function markdownProp(prop?: Partial<BaseProp<string>>): Partial<
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
     input: {
       type: "Markdown",
     },
   };
 }
 
-export function booleanProp(prop?: Partial<BaseProp<boolean>>): Partial<
-  BaseProp<boolean>
-> & {
+export function booleanProp(
+  prop?: Partial<BaseProp<boolean>>
+): BaseProp<boolean> & {
   type: "Boolean";
 } {
   return {
     type: "Boolean",
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
     defaultValue: prop?.defaultValue ?? false,
   };
 }
 
-export function numberArrayProp(prop?: Partial<BaseProp<number[]>>): Partial<
-  BaseProp<number[]>
+export function numberArrayProp(prop?: Partial<BaseProp<number[]>>): BaseProp<
+  number[]
 > & {
   type: "Number[]";
 } {
   return {
     type: "Number[]",
     defaultValue: prop?.defaultValue ?? [],
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
   };
 }
 
-export function stringArrayProp(prop?: Partial<BaseProp<string[]>>): Partial<
-  BaseProp<string[]>
+export function stringArrayProp(prop?: Partial<BaseProp<string[]>>): BaseProp<
+  string[]
 > & {
   type: "String[]";
 } {
   return {
     type: "String[]",
     defaultValue: prop?.defaultValue ?? [],
-    tooltip: prop?.tooltip,
+    tooltip: prop?.tooltip ?? "",
   };
 }
