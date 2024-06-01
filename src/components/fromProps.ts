@@ -2,6 +2,10 @@ import { ReactNode } from "react";
 import { ComponentProperty } from "../context-providers/ComponentConfigContext";
 import { ComponentConfig } from "../context-providers/ComponentConfigContext";
 
+type BaseProp<T> = {
+  defaultValue: T;
+  tooltip: string;
+};
 // Define a mapping from your string literals to TypeScript types
 type TypeMappings = {
   Number: number;
@@ -56,15 +60,15 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
   };
 }
 
-export function numberProp(prop?: {
-  defaultValue?: number;
-  min?: number;
-  max?: number;
-  step?: number;
-  precision?: number;
-}): {
+export function numberProp(
+  prop?: Partial<BaseProp<number>> & {
+    min?: number;
+    max?: number;
+    step?: number;
+    precision?: number;
+  }
+): Partial<BaseProp<number>> & {
   type: "Number";
-  defaultValue: number;
   input: {
     type: "Number";
     min?: number;
@@ -76,6 +80,7 @@ export function numberProp(prop?: {
   return {
     type: "Number",
     defaultValue: prop?.defaultValue ?? 0,
+    tooltip: prop?.tooltip,
     input: {
       type: "Number",
       min: prop?.min,
@@ -86,23 +91,25 @@ export function numberProp(prop?: {
   };
 }
 
-export function stringProp(prop?: { defaultValue?: string }): {
+export function stringProp(prop?: Partial<BaseProp<string>>): Partial<
+  BaseProp<string>
+> & {
   type: "String";
-  defaultValue: string;
 } {
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
+    tooltip: prop?.tooltip,
   };
 }
 
-export function stringDropdownProp(prop?: {
-  defaultValue?: string;
-  options?: string[] | ((propValues: Record<string, any>) => string[]);
-  allowCustomValues?: boolean;
-}): {
+export function stringDropdownProp(
+  prop?: Partial<BaseProp<string>> & {
+    options?: string[] | ((propValues: Record<string, any>) => string[]);
+    allowCustomValues?: boolean;
+  }
+): Partial<BaseProp<string>> & {
   type: "String";
-  defaultValue: string;
   input: {
     type: "StringDropdown";
     options: string[] | ((propValues: Record<string, any>) => string[]);
@@ -112,6 +119,7 @@ export function stringDropdownProp(prop?: {
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
+    tooltip: prop?.tooltip,
     input: {
       type: "StringDropdown",
       options: prop?.options ?? [],
@@ -120,9 +128,10 @@ export function stringDropdownProp(prop?: {
   };
 }
 
-export function colorProp(prop?: { defaultValue?: string }): {
+export function colorProp(prop?: Partial<BaseProp<string>>): Partial<
+  BaseProp<string>
+> & {
   type: "String";
-  defaultValue: string;
   input: {
     type: "Color";
   };
@@ -130,15 +139,17 @@ export function colorProp(prop?: { defaultValue?: string }): {
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
+    tooltip: prop?.tooltip,
     input: {
       type: "Color",
     },
   };
 }
 
-export function markdownProp(prop?: { defaultValue?: string }): {
+export function markdownProp(prop?: Partial<BaseProp<string>>): Partial<
+  BaseProp<string>
+> & {
   type: "String";
-  defaultValue: string;
   input: {
     type: "Markdown";
   };
@@ -146,38 +157,45 @@ export function markdownProp(prop?: { defaultValue?: string }): {
   return {
     type: "String",
     defaultValue: prop?.defaultValue ?? "",
+    tooltip: prop?.tooltip,
     input: {
       type: "Markdown",
     },
   };
 }
 
-export function booleanProp(prop?: { defaultValue?: boolean }): {
+export function booleanProp(prop?: Partial<BaseProp<boolean>>): Partial<
+  BaseProp<boolean>
+> & {
   type: "Boolean";
-  defaultValue: boolean;
 } {
   return {
     type: "Boolean",
+    tooltip: prop?.tooltip,
     defaultValue: prop?.defaultValue ?? false,
   };
 }
 
-export function numberArrayProp(prop?: { defaultValue?: number[] }): {
+export function numberArrayProp(prop?: Partial<BaseProp<number[]>>): Partial<
+  BaseProp<number[]>
+> & {
   type: "Number[]";
-  defaultValue: number[];
 } {
   return {
     type: "Number[]",
     defaultValue: prop?.defaultValue ?? [],
+    tooltip: prop?.tooltip,
   };
 }
 
-export function stringArrayProp(prop?: { defaultValue?: string[] }): {
+export function stringArrayProp(prop?: Partial<BaseProp<string[]>>): Partial<
+  BaseProp<string[]>
+> & {
   type: "String[]";
-  defaultValue: string[];
 } {
   return {
     type: "String[]",
     defaultValue: prop?.defaultValue ?? [],
+    tooltip: prop?.tooltip,
   };
 }

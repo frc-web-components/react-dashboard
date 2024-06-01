@@ -16,6 +16,7 @@ export interface ComponentProperty {
     type: string;
     [props: string]: unknown;
   };
+  tooltip?: string;
 }
 
 export interface ChildComponentConfig {
