@@ -9,6 +9,7 @@ export const sendableChooser = createComponent(
       defaultSize: { width: 100, height: 100 },
       minSize: { width: 20, height: 20 },
     },
+    acceptedSourceTypes: ["String Chooser"],
     primaryProperty: "selected",
     properties: {
       options: stringArrayProp(),
@@ -27,24 +28,30 @@ export const sendableChooser = createComponent(
     setProperty,
   }) => {
     return (
-      <div>
-        <Autocomplete
-          style={{
-            // width: "100%",
-            height: "auto",
-          }}
-          onChange={(_, newValue) => {
-            if (newValue !== null) {
-              setProperty("selected", newValue);
-            }
-          }}
-          options={options}
-          value={selected}
-          renderInput={(params) => (
-            <TextField {...params} label={label} variant="standard" />
-          )}
-        />
-      </div>
+      <Autocomplete
+        style={{
+          height: "auto",
+          flex: 1,
+          alignItems: "flex-end",
+        }}
+        onChange={(_, newValue) => {
+          if (newValue !== null) {
+            setProperty("selected", newValue);
+          }
+        }}
+        options={options ?? []}
+        value={selected || active || ''}
+        defaultValue={defaultValue ?? ''}
+        disableClearable
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            error={selected !== active}
+            label={label}
+            variant="standard"
+          />
+        )}
+      />
     );
   }
 );

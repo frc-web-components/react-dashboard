@@ -14,6 +14,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Dashboard from "./dashboard.ts";
 import { DashboardProvider } from "./context-providers/DashboardContext.tsx";
+import './index.css';
 
 const darkTheme = createTheme({
   palette: {

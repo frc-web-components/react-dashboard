@@ -268,7 +268,7 @@ function Tab({ tabId }: Props) {
       // Needed to capture keyboard events.
       tabIndex={0}
       onKeyDown={(e: React.KeyboardEvent) => {
-        if (DELETE_KEYS.includes(e.key) && selectedComponent) {
+        if (DELETE_KEYS.includes(e.key) && selectedComponent && editing) {
           dispatch(removeComponent({ componentId: selectedComponent.id }));
         }
       }}
@@ -279,14 +279,14 @@ function Tab({ tabId }: Props) {
           height: "100%",
           width: "100%",
           backgroundSize: `${cellSize + cellGap}px ${cellSize + cellGap}px`,
-          backgroundImage: `linear-gradient(to right, rgba(23,23,23,.5) ${Math.max(
+          backgroundImage: editing ? `linear-gradient(to right, rgba(23,23,23,.5) ${Math.max(
             cellGap,
             1
           )}px, transparent ${Math.max(cellGap, 1)}px),
           linear-gradient(to bottom, rgba(23,23,23,.5) ${Math.max(
             cellGap,
             1
-          )}px, transparent ${Math.max(cellGap, 1)}px)`,
+          )}px, transparent ${Math.max(cellGap, 1)}px)` : 'none',
           backgroundPosition: `-${cellGap / 2}px -${cellGap / 2}px`,
         }}
         innerRef={(el) => {
