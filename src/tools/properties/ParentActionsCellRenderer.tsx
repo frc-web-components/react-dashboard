@@ -14,6 +14,7 @@ import {
 import { useComponentConfigs } from "../../context-providers/ComponentConfigContext";
 import { addComponent, removeComponent } from "../../store/slices/layoutSlice";
 import { v4 as uuidv4 } from "uuid";
+import Tooltip from "@mui/material/Tooltip";
 
 export const ParentActionsCellRenderer = (
   props: CustomCellRendererProps<
@@ -102,24 +103,26 @@ export const ParentActionsCellRenderer = (
           <AddCircleIcon fontSize="small" color="success" />
         </button>
       )}
-      <button
-        className={styles["action-buttons"]}
-        style={{
-          fontSize: "20px",
-          lineHeight: "20px",
-        }}
-        onClick={() => {
-          if (!component) {
-            return;
-          }
-          dispatch(removeComponent({ componentId: component.id }));
-          // if (typeof props.data?.index === "number") {
-          //   props.context.addElementAfter(props.data.index);
-          // }
-        }}
-      >
-        <RemoveCircleIcon fontSize="small" color="error" />
-      </button>
+      <Tooltip title={"Remove component"}>
+        <button
+          className={styles["action-buttons"]}
+          style={{
+            fontSize: "20px",
+            lineHeight: "20px",
+          }}
+          onClick={() => {
+            if (!component) {
+              return;
+            }
+            dispatch(removeComponent({ componentId: component.id }));
+            // if (typeof props.data?.index === "number") {
+            //   props.context.addElementAfter(props.data.index);
+            // }
+          }}
+        >
+          <RemoveCircleIcon fontSize="small" color="error" />
+        </button>
+      </Tooltip>
     </div>
   );
 };
