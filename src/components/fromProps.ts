@@ -3,8 +3,8 @@ import { ComponentProperty } from "../context-providers/ComponentConfigContext";
 import { ComponentConfig } from "../context-providers/ComponentConfigContext";
 
 type BaseProp<T> = {
-  defaultValue?: T;
-  tooltip?: string;
+  defaultValue: T;
+  tooltip: string;
 };
 // Define a mapping from your string literals to TypeScript types
 type TypeMappings = {
@@ -62,13 +62,13 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
 }
 
 export function numberProp(
-  prop?: BaseProp<number> & {
+  prop?: Partial<BaseProp<number>> & {
     min?: number;
     max?: number;
     step?: number;
     precision?: number;
   }
-): BaseProp<number> & {
+): Partial<BaseProp<number>> & {
   type: "Number";
   input: {
     type: "Number";
@@ -92,7 +92,9 @@ export function numberProp(
   };
 }
 
-export function stringProp(prop?: BaseProp<string>): BaseProp<string> & {
+export function stringProp(prop?: Partial<BaseProp<string>>): Partial<
+  BaseProp<string>
+> & {
   type: "String";
 } {
   return {
@@ -103,11 +105,11 @@ export function stringProp(prop?: BaseProp<string>): BaseProp<string> & {
 }
 
 export function stringDropdownProp(
-  prop?: BaseProp<string> & {
+  prop?: Partial<BaseProp<string>> & {
     options?: string[] | ((propValues: Record<string, any>) => string[]);
     allowCustomValues?: boolean;
   }
-): BaseProp<string> & {
+): Partial<BaseProp<string>> & {
   type: "String";
   input: {
     type: "StringDropdown";
@@ -127,7 +129,9 @@ export function stringDropdownProp(
   };
 }
 
-export function colorProp(prop?: BaseProp<string>): BaseProp<string> & {
+export function colorProp(prop?: Partial<BaseProp<string>>): Partial<
+  BaseProp<string>
+> & {
   type: "String";
   input: {
     type: "Color";
@@ -143,7 +147,9 @@ export function colorProp(prop?: BaseProp<string>): BaseProp<string> & {
   };
 }
 
-export function markdownProp(prop?: BaseProp<string>): BaseProp<string> & {
+export function markdownProp(prop?: Partial<BaseProp<string>>): Partial<
+  BaseProp<string>
+> & {
   type: "String";
   input: {
     type: "Markdown";
@@ -159,7 +165,9 @@ export function markdownProp(prop?: BaseProp<string>): BaseProp<string> & {
   };
 }
 
-export function booleanProp(prop?: BaseProp<boolean>): BaseProp<boolean> & {
+export function booleanProp(prop?: Partial<BaseProp<boolean>>): Partial<
+  BaseProp<boolean>
+> & {
   type: "Boolean";
 } {
   return {
@@ -169,8 +177,8 @@ export function booleanProp(prop?: BaseProp<boolean>): BaseProp<boolean> & {
   };
 }
 
-export function numberArrayProp(prop?: BaseProp<number[]>): BaseProp<
-  number[]
+export function numberArrayProp(prop?: Partial<BaseProp<number[]>>): Partial<
+  BaseProp<number[]>
 > & {
   type: "Number[]";
 } {
@@ -181,8 +189,8 @@ export function numberArrayProp(prop?: BaseProp<number[]>): BaseProp<
   };
 }
 
-export function stringArrayProp(prop?: BaseProp<string[]>): BaseProp<
-  string[]
+export function stringArrayProp(prop?: Partial<BaseProp<string[]>>): Partial<
+  BaseProp<string[]>
 > & {
   type: "String[]";
 } {
