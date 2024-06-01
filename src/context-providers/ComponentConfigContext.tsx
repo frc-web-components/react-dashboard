@@ -11,11 +11,12 @@ export interface ComponentProperty {
     | "String[]"
     | "Boolean[]"
     | "Object[]";
-  defaultValue: unknown;
+  defaultValue?: unknown;
   input?: {
     type: string;
     [props: string]: unknown;
   };
+  tooltip?: string;
 }
 
 export interface ChildComponentConfig {
