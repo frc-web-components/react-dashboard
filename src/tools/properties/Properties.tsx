@@ -44,6 +44,7 @@ export interface PropertyData {
   type: string;
   defaultValue: unknown;
   componentConfig: ComponentConfig;
+  tooltip?: string;
 }
 
 export interface PropertyContext {
@@ -58,6 +59,7 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
     editable: (params) => {
       return !!params.data?.isParent;
     },
+    tooltipValueGetter: (p) => p.data?.tooltip,
     sortable: false,
     cellRenderer: PropertyNameCellRenderer,
   },
@@ -313,6 +315,7 @@ function Properties({ childComponentConfig, configType }: Props) {
                   type: property.input?.type ?? property.type,
                   source: properties[name].source,
                   componentConfig,
+                  tooltip: property.tooltip,
                 };
               }
             ) ?? [];
@@ -442,6 +445,7 @@ function Properties({ childComponentConfig, configType }: Props) {
             rowDragManaged={true}
             suppressMoveWhenRowDragging={true}
             suppressRowDrag={true}
+            tooltipShowDelay={0.25}
             getRowId={(params) => {
               if (!params.data.isParent) {
                 return `${params.data.componentId}-${params.data.name}`;
