@@ -7,6 +7,7 @@ import {
   setLayout,
   initialLayoutState,
 } from "./store/slices/layoutSlice";
+import exampleLayout from "./example-layouts/example";
 
 interface DashboardEvents {
   addComponentsEvent: (components: Record<string, ComponentConfig>) => void;
@@ -26,6 +27,7 @@ interface DashboardEvents {
   pluginDialogRemoveEvent: (location: string) => void;
   pluginDialogLoadPluginEvent: () => void;
   dashboardTitleChange: (title: string) => void;
+  exampleAdd: () => void;
 }
 
 export type DashboardEventEmitter = StrictEventEmitter<
@@ -42,11 +44,18 @@ export interface Plugin {
 export default class Dashboard extends (EventEmitter as unknown as new () => DashboardEventEmitter) {
   #components: Record<string, ComponentConfig> = {};
   #loadedPlugins: Plugin[] = [];
-  #title = 'Untitled Dashboard';
+  #title = "Untitled Dashboard";
+  #exampleDashboards: {
+    name: string;
+    layout: Layout;
+  }[] = [
+    { name: "Example", layout: exampleLayout },
+    { name: "Example 2", layout: exampleLayout },
+  ];
 
   setTitle(title: string) {
     this.#title = title;
-    this.emit('dashboardTitleChange', title);
+    this.emit("dashboardTitleChange", title);
   }
 
   getTitle() {
@@ -86,5 +95,13 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
 
   getLoadedPlugins() {
     return this.#loadedPlugins;
+  }
+
+  addExample(name: string, layout: Layout) {
+    this.#exampleDashboards.push({ name, layout });
+  }
+
+  getExamples() {
+    return [...this.#exampleDashboards];
   }
 }

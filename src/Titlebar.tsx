@@ -18,6 +18,9 @@ import { MouseEvent, useEffect, useState } from "react";
 import ArticleIcon from "@mui/icons-material/Article";
 import { useDashboard } from "./context-providers/DashboardContext";
 import PluginsDialog from "./PluginsDialog";
+import { NestedMenuItem } from "mui-nested-menu";
+import { Layout } from "./store/slices/layoutSlice";
+import styles from "./Titlebar.module.scss";
 
 function Titlebar() {
   const { dashboard } = useDashboard();
@@ -33,13 +36,22 @@ function Titlebar() {
   };
 
   const [dashboardTitle, setDashboardTitle] = useState(dashboard.getTitle());
-
   const [pluginsDialogOpen, setPluginsDialogOpen] = useState(false);
+  const [exampleDashboards, setExampleDashboards] = useState<
+    {
+      name: string;
+      layout: Layout;
+    }[]
+  >([]);
 
   useEffect(() => {
     dashboard.on("dashboardTitleChange", (title) => {
       setDashboardTitle(title);
     });
+    dashboard.on("exampleAdd", () => {
+      setExampleDashboards(dashboard.getExamples());
+    });
+    setExampleDashboards(dashboard.getExamples());
   }, [dashboard]);
 
   return (
@@ -118,6 +130,43 @@ function Titlebar() {
               >
                 Open Dashboard...
               </MenuItem>
+              <NestedMenuItem
+                className={styles["open-example"]}
+                label="Open Example..."
+                parentMenuOpen={open}
+                disabled={exampleDashboards.length === 0}
+              >
+                <MenuList
+                  dense
+                  style={{
+                    padding: 0,
+                  }}
+                >
+                  {exampleDashboards.map((example) => {
+                    return (
+                      <MenuItem
+                        onClick={() => {
+                          dashboard.setLayout(example.layout);
+                          dashboard.setTitle(example.name);
+                          handleClose();
+
+                        }}
+                        key={example.name}
+                      >
+                        {example.name}
+                      </MenuItem>
+                    );
+                  })}
+                </MenuList>
+              </NestedMenuItem>
+
+              <Divider
+                style={{
+                  marginTop: "8px",
+                  marginBottom: "8px",
+                }}
+              />
+
               <MenuItem
                 onClick={() => {
                   dashboard.emit("saveDashboardMenuClickEvent");
