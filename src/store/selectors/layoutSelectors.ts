@@ -15,6 +15,7 @@ export const selectComponent = (state: RootState, componentId?: string) =>
 
 export const selectGridSize = (state: RootState) => state.layout.gridSize;
 export const selectGridGap = (state: RootState) => state.layout.gridGap;
+export const selectGridPadding = (state: RootState) => state.layout.gridPadding;
 
 export function makeSelectTabComponents() {
   return createSelector([selectTab, selectComponents], (tab, components) => {

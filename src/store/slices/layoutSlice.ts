@@ -42,6 +42,7 @@ export interface Layout {
   };
   gridSize: number;
   gridGap: number;
+  gridPadding: number;
 }
 
 export const initialLayoutState: Layout = {
@@ -50,7 +51,8 @@ export const initialLayoutState: Layout = {
   components: {},
   tabs: {},
   gridSize: 128,
-  gridGap: 2,
+  gridGap: 5,
+  gridPadding: 8,
 };
 
 // If you are not using async thunks you can use the standalone `createSlice`.
@@ -66,6 +68,7 @@ export const layoutSlice = createAppSlice({
       state.tabs = action.payload.tabs;
       state.gridSize = action.payload.gridSize;
       state.gridGap = action.payload.gridGap;
+      state.gridPadding = action.payload.gridPadding;
     }),
     setFlexLayout: create.reducer(
       (state, action: PayloadAction<IJsonModel>) => {
@@ -259,6 +262,9 @@ export const layoutSlice = createAppSlice({
     setGridGap: create.reducer((state, action: PayloadAction<number>) => {
       state.gridGap = action.payload;
     }),
+    setGridPadding: create.reducer((state, action: PayloadAction<number>) => {
+      state.gridPadding = action.payload;
+    }),
   }),
 });
 
@@ -280,4 +286,5 @@ export const {
   setComponentTemporaryValue,
   setGridSize,
   setGridGap,
+  setGridPadding,
 } = layoutSlice.actions;

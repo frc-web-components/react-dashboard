@@ -8,8 +8,8 @@ import NumberInput from "./number-input/NumberInput";
 import { useSourceProvider } from "../context-providers/SourceProviderContext";
 import { NT4Provider } from "../store/sources/nt4";
 import { useAppDispatch, useAppSelector } from "../store/app/hooks";
-import { selectGridGap, selectGridSize } from "../store/selectors/layoutSelectors";
-import { setGridGap, setGridSize } from "../store/slices/layoutSlice";
+import { selectGridGap, selectGridSize, selectGridPadding } from "../store/selectors/layoutSelectors";
+import { setGridGap, setGridSize, setGridPadding } from "../store/slices/layoutSlice";
 
 const addressOptions = ["localhost"];
 const themeOptions = [{ label: "dark" }, { label: "light" }];
@@ -24,6 +24,7 @@ export default function Settings() {
   const [address, setAddress] = useState("localhost");
   const gridSize = useAppSelector(selectGridSize);
   const gridGap = useAppSelector(selectGridGap);
+  const gridPadding = useAppSelector(selectGridPadding);
   const { providers } = useSourceProvider();
   const dispatch = useAppDispatch();
 
@@ -72,7 +73,7 @@ export default function Settings() {
             <NumberInput
               initialValue={gridSize}
               size="small"
-              label="Grid Size"
+              label="Grid Cell Size"
               style={{ width: "100%" }}
               onChange={(value) => {
                 dispatch(setGridSize(value));
@@ -83,10 +84,21 @@ export default function Settings() {
             <NumberInput
               initialValue={gridGap}
               size="small"
-              label="Grid Gap"
+              label="Grid Cell Gap"
               style={{ width: "100%" }}
               onChange={(value) => {
                 dispatch(setGridGap(value));
+              }}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <NumberInput
+              initialValue={gridPadding}
+              size="small"
+              label="Grid Padding"
+              style={{ width: "100%" }}
+              onChange={(value) => {
+                dispatch(setGridPadding(value));
               }}
             />
           </Grid>

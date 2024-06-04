@@ -22,7 +22,7 @@ export const booleanBox = createComponent(
       label: stringProp(),
     },
   },
-  ({ falseColor, label, trueColor, value, setProperty }) => {
+  ({ falseColor, label, trueColor, value }) => {
     return (
       <div
         style={{
@@ -30,11 +30,8 @@ export const booleanBox = createComponent(
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          width: '100%',
-          height: '100%'
-        }}
-        onClick={() => {
-          setProperty('value', !value);
+          width: "100%",
+          height: "100%",
         }}
       >
         {label}

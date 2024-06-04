@@ -157,7 +157,8 @@ const layout: Layout = {
     },
   },
   gridSize: 128,
-  gridGap: 2,
+  gridGap: 5,
+  gridPadding: 8,
 };
 
 export default layout;

@@ -16,6 +16,7 @@ import {
   makeSelectSelectedComponent,
   makeSelectTabComponents,
   selectGridGap,
+  selectGridPadding,
   selectGridSize,
 } from "../store/selectors/layoutSelectors";
 import { useDropZone } from "../context-providers/DropZoneContext";
@@ -78,6 +79,7 @@ function Tab({ tabId }: Props) {
   const [gridElement, setGridElement] = useState<HTMLElement>();
   const cellSize = useAppSelector(selectGridSize);
   const cellGap = useAppSelector(selectGridGap);
+  const gridPadding = useAppSelector(selectGridPadding);
 
   useEffect(() => {
     componentsRef.current = components;
@@ -279,15 +281,15 @@ function Tab({ tabId }: Props) {
           height: "100%",
           width: "100%",
           backgroundSize: `${cellSize + cellGap}px ${cellSize + cellGap}px`,
-          backgroundImage: editing ? `linear-gradient(to right, rgba(23,23,23,.5) ${Math.max(
+          backgroundImage: editing ? `linear-gradient(to right, rgba(23,23,23,1) ${Math.max(
             cellGap,
             1
           )}px, transparent ${Math.max(cellGap, 1)}px),
-          linear-gradient(to bottom, rgba(23,23,23,.5) ${Math.max(
+          linear-gradient(to bottom, rgba(23,23,23,1) ${Math.max(
             cellGap,
             1
           )}px, transparent ${Math.max(cellGap, 1)}px)` : 'none',
-          backgroundPosition: `-${cellGap / 2}px -${cellGap / 2}px`,
+          backgroundPosition: `${-cellGap + gridPadding}px ${-cellGap + gridPadding}px`,
         }}
         innerRef={(el) => {
           if (el) {
@@ -331,7 +333,7 @@ function Tab({ tabId }: Props) {
         width={(cellSize + cellGap) * 20000}
         margin={[cellGap, cellGap]}
         autoSize
-        containerPadding={[cellGap / 2, cellGap / 2]}
+        containerPadding={[gridPadding, gridPadding]}
         compactType={null}
         preventCollision
         resizeHandles={["nw", "se"]}
