@@ -281,11 +281,11 @@ function Tab({ tabId }: Props) {
           height: "100%",
           width: "100%",
           backgroundSize: `${cellSize + cellGap}px ${cellSize + cellGap}px`,
-          backgroundImage: editing ? `linear-gradient(to right, rgba(23,23,23,1) ${Math.max(
+          backgroundImage: editing ? `linear-gradient(to right, rgba(50,50,50,.75) ${Math.max(
             cellGap,
             1
           )}px, transparent ${Math.max(cellGap, 1)}px),
-          linear-gradient(to bottom, rgba(23,23,23,1) ${Math.max(
+          linear-gradient(to bottom, rgba(50,50,50,.75) ${Math.max(
             cellGap,
             1
           )}px, transparent ${Math.max(cellGap, 1)}px)` : 'none',

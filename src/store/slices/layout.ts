@@ -7,6 +7,8 @@ export const layoutJson: IJsonModel = {
   global: {
     borderSize: 350,
     tabEnableFloat: false,
+    splitterSize: 3,
+    splitterExtra: 6
   },
   borders: [
     {

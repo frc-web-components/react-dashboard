@@ -59,7 +59,8 @@ function Layout() {
           action.type === Actions.SELECT_TAB &&
           tabNode === "settingsTab"
         ) {
-          dispatch(setEditing(false));
+          const visible = !model.getNodeById("settingsTab")?.isVisible();
+          dispatch(setEditing(visible));
         }
         dispatch(setFlexLayout(model.toJson() as any));
         return action;
