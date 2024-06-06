@@ -15,7 +15,7 @@ export const camera = createComponent(
       defaultSize: { width: 300, height: 250 },
       minSize: { width: 50, height: 50 },
     },
-    acceptedSourceTypes: ['Camera'],
+    acceptedSourceTypes: ["Camera"],
     properties: {
       streams: stringArrayProp(),
       backgroundColor: colorProp({ defaultValue: "#000000" }),
@@ -24,15 +24,12 @@ export const camera = createComponent(
       crosshairColor: colorProp({ defaultValue: "#ffffff" }),
     },
   },
-  ({
-    className,
-    backgroundColor,
-    waitImage,
-    hideCrosshair,
-    crosshairColor,
-  }) => {
+  ({ backgroundColor, waitImage, hideCrosshair, crosshairColor }) => {
     return (
-      <Canvas className={className} backgroundColor={backgroundColor}>
+      <Canvas
+        style={{ width: "100%", height: "100%" }}
+        backgroundColor={backgroundColor}
+      >
         <CanvasMjpgStream
           waitImage={waitImage}
           crosshairColor={crosshairColor}

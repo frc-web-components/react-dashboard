@@ -14,7 +14,8 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Dashboard from "./dashboard.ts";
 import { DashboardProvider } from "./context-providers/DashboardContext.tsx";
-import './index.module.scss';
+import "./index.module.scss";
+import { Layout } from "./store/slices/layoutSlice.ts";
 
 const darkTheme = createTheme({
   palette: {
@@ -69,6 +70,10 @@ export function getAssetUrl(relativePath: string): string {
     /^\//,
     ""
   )}`;
+}
+
+export function addExample(name: string, layout: Layout) {
+  dashboard.addExample(name, layout);
 }
 
 export {

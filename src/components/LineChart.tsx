@@ -71,7 +71,7 @@ export const lineChartData = createComponent(
       displayName: stringProp(),
     },
   },
-  ({ children, setProperty, className, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return <LineChartData {...props} />;
   }
 );
@@ -99,7 +99,7 @@ export const lineChartAxis = createComponent(
       hide: booleanProp(),
     },
   },
-  ({ children, setProperty, className, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return <LineChartAxis {...(props as any)} />;
   }
 );
@@ -126,7 +126,7 @@ export const lineChartLegend = createComponent(
       inside: booleanProp(),
     },
   },
-  ({ children, setProperty, className, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return <LineChartLegend {...(props as any)} />;
   }
 );

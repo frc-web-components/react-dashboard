@@ -100,7 +100,6 @@ export const field = createComponent(
   ({
     children,
     setProperty,
-    className,
     cropLeft,
     cropRight,
     cropTop,
@@ -111,7 +110,9 @@ export const field = createComponent(
     const sourceChildren = getChildren(tree);
     return (
       <Field
-        className={className}
+        style={{
+
+        }}
         cropLeft={cropLeft / 100}
         cropRight={cropRight / 100}
         cropTop={cropTop / 100}
@@ -161,7 +162,7 @@ export const fieldRobot = createComponent(
       length: numberProp({ defaultValue: 0.9 }),
     },
   },
-  ({ children, setProperty, className, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return <FieldRobot {...props} />;
   }
 );
@@ -186,7 +187,7 @@ export const fieldPath = createComponent(
       opacity: numberProp({ defaultValue: 0.7, min: 0, max: 1, step: 0.1 }),
     },
   },
-  ({ children, setProperty, className, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return <FieldPath {...props} />;
   }
 );

@@ -15,10 +15,10 @@ export const swerveDrivebase = createComponent(
       minSize: { width: 50, height: 50 },
     },
     defaultSource: {
-      key: '/SmartDashboard/swerve',
-      provider: 'NT',
+      key: "/SmartDashboard/swerve",
+      provider: "NT",
     },
-    acceptedSourceTypes: ['Swerve'],
+    acceptedSourceTypes: ["Swerve"],
     properties: {
       moduleCount: numberProp({ defaultValue: 4 }),
       wheelLocations: numberArrayProp({
@@ -53,17 +53,21 @@ export const differentialDrivebase = createComponent(
       defaultSize: { width: 300, height: 200 },
       minSize: { width: 100, height: 100 },
     },
-    acceptedSourceTypes: ['DifferentialDrive'],
+    acceptedSourceTypes: ["DifferentialDrive"],
     properties: {
       leftMotorSpeed: numberProp(),
       rightMotorSpeed: numberProp(),
     },
   },
-  ({ children, className, setProperty, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return (
       <div
-        className={className}
-        style={{ paddingRight: "15px", boxSizing: "border-box" }}
+        style={{
+          paddingRight: "15px",
+          boxSizing: "border-box",
+          width: "100%",
+          height: "100%",
+        }}
       >
         <Differential {...props} style={{ width: "100%", height: "100%" }} />
       </div>
@@ -79,7 +83,7 @@ export const mecanumDrivebase = createComponent(
       defaultSize: { width: 330, height: 240 },
       minSize: { width: 100, height: 100 },
     },
-    acceptedSourceTypes: ['MecanumDrive'],
+    acceptedSourceTypes: ["MecanumDrive"],
     properties: {
       frontLeftMotorSpeed: numberProp(),
       frontRightMotorSpeed: numberProp(),
@@ -87,12 +91,9 @@ export const mecanumDrivebase = createComponent(
       rearRightMotorSpeed: numberProp(),
     },
   },
-  ({ children, className, setProperty, ...props }) => {
+  ({ children, setProperty, ...props }) => {
     return (
-      <div
-        className={className}
-        style={{ paddingRight: "15px", boxSizing: "border-box" }}
-      >
+      <div style={{ paddingRight: "15px", boxSizing: "border-box", width: '100%', height: '100%' }}>
         <Mecanum {...props} style={{ width: "100%", height: "100%" }} />
       </div>
     );

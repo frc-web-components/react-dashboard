@@ -2,6 +2,7 @@ import { CustomCellEditorProps } from "ag-grid-react";
 import { memo } from "react";
 import MDEditor, { ICommand, divider, getCommands } from "@uiw/react-md-editor";
 import { PropertyData } from "./Properties";
+import { getAssetUrl } from "../../main";
 
 export default memo((props: CustomCellEditorProps<PropertyData>) => {
   const { value, onValueChange, stopEditing } = props;
@@ -50,6 +51,16 @@ export default memo((props: CustomCellEditorProps<PropertyData>) => {
         }}
         commands={[title3, divider, ...getCommands()]}
         fullscreen
+        previewOptions={{
+          components: {
+            img: ({ src, ...props }) => {
+              const srcUpdated = !src?.startsWith('/') ? src : getAssetUrl(src);
+              return (
+                <img {...props} src={srcUpdated} />
+              );
+            },
+          },
+        }}
       />
     </div>
   );
