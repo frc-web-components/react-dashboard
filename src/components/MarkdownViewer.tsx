@@ -1,6 +1,8 @@
 import MDEditor from "@uiw/react-md-editor";
 import styles from "./MarkdownViewer.module.scss";
 import { createComponent, markdownProp } from "./fromProps";
+import { getAssetUrl } from "../main";
+import { ntMarkdownComponent } from "../tools/properties/MarkdownEditor";
 
 export const markdownViewer = createComponent(
   {
@@ -10,8 +12,8 @@ export const markdownViewer = createComponent(
       defaultSize: { width: 200, height: 50 },
       minSize: { width: 50, height: 50 },
     },
-    primaryProperty: 'markdown',
-    acceptedSourceTypes: ['String'],
+    primaryProperty: "markdown",
+    acceptedSourceTypes: ["String"],
     properties: {
       markdown: markdownProp({ defaultValue: "## Hello there" }),
     },
@@ -22,6 +24,13 @@ export const markdownViewer = createComponent(
         <MDEditor.Markdown
           source={markdown}
           style={{ background: "none" }}
+          components={{
+            img: ({ src, ...props }) => {
+              const srcUpdated = !src?.startsWith("/") ? src : getAssetUrl(src);
+              return <img {...props} src={srcUpdated} />;
+            },
+            ["nt" as any]: ntMarkdownComponent,
+          }}
         />
       </div>
     );
