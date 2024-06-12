@@ -99,6 +99,7 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
 
   addExample(name: string, layout: Layout) {
     this.#exampleDashboards.push({ name, layout });
+    this.emit('exampleAdd');
   }
 
   getExamples() {
