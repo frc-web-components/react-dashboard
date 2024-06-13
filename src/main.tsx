@@ -1,19 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+import App from "./components/App.tsx";
 import { Provider } from "react-redux";
 import { store } from "./store/app/store";
-import { DropZoneProvider } from "./context-providers/DropZoneContext.tsx";
+import { DropZoneProvider } from "./components/context-providers/DropZoneContext.tsx";
 import {
   ComponentConfig,
   ComponentConfigProvider,
-} from "./context-providers/ComponentConfigContext.tsx";
-import { componentMap } from "./components";
-import { SourceProviderProvider } from "./context-providers/SourceProviderContext.tsx";
+} from "./components/context-providers/ComponentConfigContext.tsx";
+import { componentMap } from "./components/dashboard-components/index.ts";
+import { SourceProviderProvider } from "./components/context-providers/SourceProviderContext.tsx";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Dashboard from "./dashboard.ts";
-import { DashboardProvider } from "./context-providers/DashboardContext.tsx";
+import { DashboardProvider } from "./components/context-providers/DashboardContext.tsx";
 import "./index.module.scss";
 import { Layout } from "./store/slices/layoutSlice.ts";
 
@@ -86,6 +86,6 @@ export {
   stringArrayProp,
   stringDropdownProp,
   stringProp,
-} from "./components/fromProps";
+} from "./components/dashboard-components/fromProps.ts";
 
 mountDashboard(document.getElementById("root")!);
