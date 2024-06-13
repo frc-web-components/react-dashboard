@@ -1,4 +1,4 @@
-import { ComponentConfig } from "../../context-providers/ComponentConfigContext";
+import { ComponentConfig } from "@components/context-providers/ComponentConfigContext";
 import { Accelerometer, BasicFmsInfo, Gyro } from "@frc-web-components/react";
 import { threeAxisAccelerometer } from "./ThreeAxisAccelerometer";
 import { camera } from "./Camera";

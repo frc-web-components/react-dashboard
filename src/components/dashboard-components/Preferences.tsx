@@ -8,7 +8,7 @@ import {
   useComponent,
   useParentSourceTree,
 } from "../context-providers/ComponentContext";
-import { SourceTree } from "../../store/selectors/sourceSelectors";
+import { SourceTree } from "@store/selectors/sourceSelectors";
 
 type IPreferences = {
   [property: string]: IPreferences | string | number | boolean;

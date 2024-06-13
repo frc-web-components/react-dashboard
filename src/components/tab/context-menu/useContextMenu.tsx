@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
-import { store } from "../../../store/app/store";
-import { selectConextMenuElement } from "../../../store/slices/appSlice";
+import { store } from "@store/app/store";
+import { selectConextMenuElement } from "@store/slices/appSlice";
 
 export function getContextMenuPosition(event: React.MouseEvent) {
   event.preventDefault();

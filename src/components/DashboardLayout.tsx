@@ -9,11 +9,11 @@ import {
 } from "flexlayout-react";
 import { useRef } from "react";
 import Tab from "./tab/Tab";
-import { useAppDispatch, useAppSelector } from "../store/app/hooks";
+import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import AddIcon from "@mui/icons-material/Add";
-import { setFlexLayout } from "../store/slices/layoutSlice";
-import { selectFlexLayout } from "../store/selectors/layoutSelectors";
-import { selectEditing } from "../store/slices/appSlice";
+import { setFlexLayout } from "@store/slices/layoutSlice";
+import { selectFlexLayout } from "@store/selectors/layoutSelectors";
+import { selectEditing } from "@store/slices/appSlice";
 
 function DashboardLayout() {
   const layoutRef = useRef<FlexLayout>();

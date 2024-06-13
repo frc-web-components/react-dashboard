@@ -2,9 +2,9 @@ import { CustomCellEditorProps } from "ag-grid-react";
 import { memo, useMemo } from "react";
 import MDEditor, { ICommand, divider, getCommands } from "@uiw/react-md-editor";
 import { PropertyData } from "./Properties";
-import { getAssetUrl } from "../../../../main";
-import { selectSourceValue } from "../../../../store/selectors/sourceSelectors";
-import { useAppSelector } from "../../../../store/app/hooks";
+import { getAssetUrl } from "@/main";
+import { selectSourceValue } from "@store/selectors/sourceSelectors";
+import { useAppSelector } from "@store/app/hooks";
 
 interface NTProps {
   source?: string;

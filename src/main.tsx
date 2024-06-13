@@ -7,13 +7,13 @@ import { DropZoneProvider } from "./components/context-providers/DropZoneContext
 import {
   ComponentConfig,
   ComponentConfigProvider,
-} from "./components/context-providers/ComponentConfigContext.tsx";
+} from "@context-providers/ComponentConfigContext.tsx";
 import { componentMap } from "./components/dashboard-components/index.ts";
 import { SourceProviderProvider } from "./components/context-providers/SourceProviderContext.tsx";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Dashboard from "./dashboard.ts";
-import { DashboardProvider } from "./components/context-providers/DashboardContext.tsx";
+import { DashboardProvider } from "@context-providers/DashboardContext.tsx";
 import "./index.module.scss";
 import { Layout } from "./store/slices/layoutSlice.ts";
 

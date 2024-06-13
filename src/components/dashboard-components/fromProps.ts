@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import { ComponentProperty } from "../../context-providers/ComponentConfigContext";
-import { ComponentConfig } from "../../context-providers/ComponentConfigContext";
+import { ComponentProperty } from "@components/context-providers/ComponentConfigContext";
+import { ComponentConfig } from "@components/context-providers/ComponentConfigContext";
 
 type BaseProp<T> = {
   defaultValue: T;

@@ -4,32 +4,32 @@ import "react-resizable/css/styles.css";
 import classNames from "classnames";
 import Styles from "./Tab.module.scss";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/app/hooks";
+import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import {
   setSelectedComponent,
   addComponent,
   updateComponentPosition,
   updateComponentSize,
   removeComponent,
-} from "../../store/slices/layoutSlice";
+} from "@store/slices/layoutSlice";
 import {
   makeSelectSelectedComponent,
   makeSelectTabComponents,
   selectGridGap,
   selectGridPadding,
   selectGridSize,
-} from "../../store/selectors/layoutSelectors";
-import { useDropZone } from "../context-providers/DropZoneContext";
+} from "@store/selectors/layoutSelectors";
+import { useDropZone } from "@context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
 import {
   ComponentConfig,
   useComponentConfigs,
-} from "../context-providers/ComponentConfigContext";
+} from "@context-providers/ComponentConfigContext";
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "../tools/ComponentPicker";
 import TabComponent from "./TabComponent";
-import { selectEditing, setContextMenuElement } from "../../store/slices/appSlice";
-import { SourceData } from "../tools/sources/Sources";
+import { selectEditing, setContextMenuElement } from "@store/slices/appSlice";
+import { SourceData } from "../tools/editor/sources/Sources";
 import { getContextMenuPosition } from "./context-menu/useContextMenu";
 import ContextMenu from "./context-menu/ContextMenu";
 import { DELETE_KEYS } from "./constants";

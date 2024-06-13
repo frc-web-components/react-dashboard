@@ -1,6 +1,6 @@
 import { CustomCellRendererProps } from "ag-grid-react";
 import { PropertyContext, PropertyData } from "./Properties";
-import { useAppDispatch, useAppSelector } from "../../../../store/app/hooks";
+import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import styles from "./ParentActionCellRenderer.module.scss";
 import RemoveCircleIcon from '@mui/icons-material/HighlightOff';
 import AddCircleIcon from '@mui/icons-material/ControlPoint';
@@ -10,9 +10,9 @@ import {
   makeSelectSelectedComponent,
   makeSelectSelectedComponentChildren,
   selectComponent,
-} from "../../../../store/selectors/layoutSelectors";
-import { useComponentConfigs } from "../../../context-providers/ComponentConfigContext";
-import { addComponent, removeComponent } from "../../../../store/slices/layoutSlice";
+} from "@store/selectors/layoutSelectors";
+import { useComponentConfigs } from "@context-providers/ComponentConfigContext";
+import { addComponent, removeComponent } from "@store/slices/layoutSlice";
 import { v4 as uuidv4 } from "uuid";
 import Tooltip from "@mui/material/Tooltip";
 

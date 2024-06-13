@@ -4,11 +4,11 @@ import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import { useMemo, useState } from "react";
-import { useDropZone } from "../context-providers/DropZoneContext";
+import { useDropZone } from "@context-providers/DropZoneContext";
 import {
   ComponentConfig,
   useComponentConfigs,
-} from "../context-providers/ComponentConfigContext";
+} from "@context-providers/ComponentConfigContext";
 
 export interface ComponentListItem {
   config: ComponentConfig;

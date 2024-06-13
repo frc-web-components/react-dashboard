@@ -1,20 +1,20 @@
 import MenuItem from "@mui/material/MenuItem";
-import { useAppDispatch, useAppSelector } from "../../../store/app/hooks";
+import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import { Divider, ListItemIcon, ListItemText } from "@mui/material";
 import { NestedMenuItem } from "mui-nested-menu";
 import {
   ComponentConfig,
   useComponentConfigs,
-} from "../../context-providers/ComponentConfigContext";
-import { selectComponent } from "../../../store/selectors/layoutSelectors";
-import { selectSourcetMetadata } from "../../../store/selectors/sourceSelectors";
+} from "@context-providers/ComponentConfigContext";
+import { selectComponent } from "@store/selectors/layoutSelectors";
+import { selectSourcetMetadata } from "@store/selectors/sourceSelectors";
 import { getComponentsWithDisplayType } from "../Tab";
 import { useMemo } from "react";
 import Check from "@mui/icons-material/Check";
 import {
   removeComponent,
   updateComponentType,
-} from "../../../store/slices/layoutSlice";
+} from "@store/slices/layoutSlice";
 
 interface Props {
   onClose: () => unknown;

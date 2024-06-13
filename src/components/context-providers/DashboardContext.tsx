@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from "react";
-import Dashboard from "../../dashboard";
+import Dashboard from "@/dashboard";
 
 interface DashboardContextType {
   dashboard: Dashboard;

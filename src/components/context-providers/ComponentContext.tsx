@@ -1,9 +1,9 @@
 import React, { createContext, useContext, ReactNode, useMemo } from "react";
 import { SourceInfo, useSourceProvider } from "./SourceProviderContext";
-import { useAppSelector } from "../../store/app/hooks";
-import { selectComponent } from "../../store/selectors/layoutSelectors";
-import { SourceTree, useSourceTree } from "../../store/selectors/sourceSelectors";
-import { Component } from "../../store/slices/layoutSlice";
+import { useAppSelector } from "@store/app/hooks";
+import { selectComponent } from "@store/selectors/layoutSelectors";
+import { SourceTree, useSourceTree } from "@store/selectors/sourceSelectors";
+import { Component } from "@store/slices/layoutSlice";
 
 // Interface for the context value
 interface ComponentContextType {

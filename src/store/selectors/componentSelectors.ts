@@ -1,11 +1,11 @@
 import camelCase from "lodash.camelcase";
 import { memoizeWithArgs } from "proxy-memoize";
 import { RootState, store } from "../app/store";
-import { SourceInfo } from "../../components/context-providers/SourceProviderContext";
+import { SourceInfo } from "@components/context-providers/SourceProviderContext";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Source } from "../slices/sourceSlice";
 import { Component } from "../slices/layoutSlice";
-import { useComponentConfigs } from "../../components/context-providers/ComponentConfigContext";
+import { useComponentConfigs } from "@components/context-providers/ComponentConfigContext";
 
 export function useComponentPropertyValues(componentId: string) {
   const prevComponent = useRef<Component>();

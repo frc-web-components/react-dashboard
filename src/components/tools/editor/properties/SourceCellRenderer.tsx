@@ -1,7 +1,7 @@
 import { RowDropZoneParams } from "ag-grid-community";
 import { CustomCellRendererProps } from "ag-grid-react";
 import { useEffect, useState } from "react";
-import { useDropZone } from "../../../context-providers/DropZoneContext";
+import { useDropZone } from "@context-providers/DropZoneContext";
 import { PropertyData, SourceData } from "./Properties";
 
 export const SourceCellRenderer = (

@@ -5,11 +5,11 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Box, Grid, Typography } from "@mui/material";
 import NumberInput from "../shared/number-input/NumberInput";
-import { useSourceProvider } from "../context-providers/SourceProviderContext";
-import { NT4Provider } from "../../store/sources/nt4";
-import { useAppDispatch, useAppSelector } from "../../store/app/hooks";
-import { selectGridGap, selectGridSize, selectGridPadding } from "../../store/selectors/layoutSelectors";
-import { setGridGap, setGridSize, setGridPadding } from "../../store/slices/layoutSlice";
+import { useSourceProvider } from "@context-providers/SourceProviderContext";
+import { NT4Provider } from "@store/sources/nt4";
+import { useAppDispatch, useAppSelector } from "@store/app/hooks";
+import { selectGridGap, selectGridSize, selectGridPadding } from "@store/selectors/layoutSelectors";
+import { setGridGap, setGridSize, setGridPadding } from "@store/slices/layoutSlice";
 
 const addressOptions = ["localhost"];
 const themeOptions = [{ label: "dark" }, { label: "light" }];

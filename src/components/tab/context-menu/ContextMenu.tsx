@@ -1,12 +1,12 @@
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useAppDispatch, useAppSelector } from "../../../store/app/hooks";
+import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import {
   selectConextMenuElement,
   setContextMenuElement,
-} from "../../../store/slices/appSlice";
+} from "@store/slices/appSlice";
 import ElementMenu from "./ElementMenu";
-import { clearTab } from "../../../store/slices/layoutSlice";
+import { clearTab } from "@store/slices/layoutSlice";
 
 export default function ContextMenu() {
   const contextMenuElement = useAppSelector(selectConextMenuElement);

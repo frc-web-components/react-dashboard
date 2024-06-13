@@ -2,7 +2,7 @@ import { Mechanism2d } from "@frc-web-components/react";
 import { Mechanism2dLine, Mechanism2dRoot } from "@frc-web-components/fwc";
 import { colorProp, createComponent, numberArrayProp } from "./fromProps";
 import { useParentSourceTree } from "../context-providers/ComponentContext";
-import { SourceTree } from "../../store/selectors/sourceSelectors";
+import { SourceTree } from "@store/selectors/sourceSelectors";
 
 export function getMechanism2dLines(tree: SourceTree): Mechanism2dLine[] {
   const lineSources = Object.values(tree.childrenSources).filter(

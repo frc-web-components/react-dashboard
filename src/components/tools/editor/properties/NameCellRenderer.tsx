@@ -4,9 +4,9 @@ import ExpandIcon from "@mui/icons-material/KeyboardArrowRight";
 import CollapseIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useCallback, useEffect, useState } from "react";
 import { RowDropZoneParams } from "ag-grid-community";
-import { useDropZone } from "../../../context-providers/DropZoneContext";
-import { useAppDispatch } from "../../../../store/app/hooks";
-import { updateComponentPropertySource } from "../../../../store/slices/layoutSlice";
+import { useDropZone } from "@context-providers/DropZoneContext";
+import { useAppDispatch } from "@store/app/hooks";
+import { updateComponentPropertySource } from "@store/slices/layoutSlice";
 
 const NameCellRenderer = (
   props: CustomCellRendererProps<

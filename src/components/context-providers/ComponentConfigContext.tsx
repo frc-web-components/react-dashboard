@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import Dashboard from "../dashboard";
+import Dashboard from "@/dashboard";
 
 export interface ComponentProperty {
   type:

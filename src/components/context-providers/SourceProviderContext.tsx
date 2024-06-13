@@ -4,13 +4,13 @@ import React, {
   ReactNode,
   useCallback,
 } from "react";
-import { NT4Provider } from "../../store/sources/nt4";
-import { store } from "../../store/app/store";
+import { NT4Provider } from "@store/sources/nt4";
+import { store } from "@store/app/store";
 import {
   selectSource,
   selectSourceValue,
-} from "../../store/selectors/sourceSelectors";
-import SourceProvider from "../../store/sources/nt4/source-provider";
+} from "@store/selectors/sourceSelectors";
+import SourceProvider from "@store/sources/nt4/source-provider";
 
 export type SourceInfo =
   | {

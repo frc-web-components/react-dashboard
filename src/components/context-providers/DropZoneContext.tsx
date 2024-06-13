@@ -1,6 +1,6 @@
 import { GridApi } from "ag-grid-community";
 import React, { createContext, useContext, ReactNode, useState } from "react";
-import { SourceData } from "../tools/sources/Sources";
+import { SourceData } from "../tools/editor/sources/Sources";
 import { ComponentConfig } from "./ComponentConfigContext";
 
 // Interface for the context value

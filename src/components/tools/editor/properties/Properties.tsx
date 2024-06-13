@@ -4,24 +4,24 @@ import "ag-grid-community/styles/ag-theme-balham.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useAppSelector, useAppDispatch } from "../../../../store/app/hooks";
+import { useAppSelector, useAppDispatch } from "@store/app/hooks";
 import {
   addComponent,
   setComponentName,
   updateComponentProperty,
   updateComponentPropertySource,
   updateComponentSource,
-} from "../../../../store/slices/layoutSlice";
+} from "@store/slices/layoutSlice";
 import {
   ComponentConfig,
   useComponentConfigs,
-} from "../../../context-providers/ComponentConfigContext";
+} from "@context-providers/ComponentConfigContext";
 import useResizeObserver from "@react-hook/resize-observer";
 import MarkdownEditor from "./MarkdownEditor";
 import {
   makeSelectSelectedComponent,
   makeSelectSelectedComponentChildren,
-} from "../../../../store/selectors/layoutSelectors";
+} from "@store/selectors/layoutSelectors";
 import { SourceCellRenderer } from "./SourceCellRenderer";
 import { ColorCellEditor, ColorCellRenderer } from "./ColorCellRenderer";
 import PropertyNameCellRenderer from "./NameCellRenderer";

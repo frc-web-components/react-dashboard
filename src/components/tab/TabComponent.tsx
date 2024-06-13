@@ -1,16 +1,16 @@
 import { useCallback, useMemo } from "react";
 import Styles from "./Tab.module.scss";
-import { useComponentPropertyValues } from "../../store/selectors/componentSelectors";
-import { useAppDispatch, useAppSelector } from "../../store/app/hooks";
+import { useComponentPropertyValues } from "@store/selectors/componentSelectors";
+import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import {
   SourceInfo,
   useSourceProvider,
-} from "../context-providers/SourceProviderContext";
-import { ComponentProvider } from "../context-providers/ComponentContext";
-import { useComponentConfigs } from "../context-providers/ComponentConfigContext";
+} from "@context-providers/SourceProviderContext";
+import { ComponentProvider } from "@context-providers/ComponentContext";
+import { useComponentConfigs } from "@context-providers/ComponentConfigContext";
 import { memoizeWithArgs } from "proxy-memoize";
-import { RootState } from "../../store/app/store";
-import { setComponentTemporaryValue } from "../../store/slices/layoutSlice";
+import { RootState } from "@store/app/store";
+import { setComponentTemporaryValue } from "@store/slices/layoutSlice";
 
 export function makeSelectChildren() {
   return memoizeWithArgs((state: RootState, componentId: string) => {

@@ -13,7 +13,7 @@ import {
   toBaseUnitConversions,
 } from "@frc-web-components/fwc";
 import { useParentSourceTree } from "../context-providers/ComponentContext";
-import { SourceTree } from "../../store/selectors/sourceSelectors";
+import { SourceTree } from "@store/selectors/sourceSelectors";
 import getPoses from "./get-poses";
 
 export interface FieldObject {

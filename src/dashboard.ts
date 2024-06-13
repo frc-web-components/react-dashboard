@@ -1,12 +1,12 @@
 import StrictEventEmitter from "strict-event-emitter-types";
 import { EventEmitter } from "events";
-import { ComponentConfig } from "./components/context-providers/ComponentConfigContext";
+import { ComponentConfig } from "@context-providers/ComponentConfigContext";
 import { store } from "./store/app/store";
 import {
   Layout,
   setLayout,
   initialLayoutState,
-} from "./store/slices/layoutSlice";
+} from "@store/slices/layoutSlice";
 import exampleLayout from "./example-layouts/example";
 
 interface DashboardEvents {

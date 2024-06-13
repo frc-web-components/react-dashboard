@@ -12,10 +12,10 @@ import Sources from "./sources/Sources";
 import Properties from "./properties/Properties";
 import ComponentPicker from "../ComponentPicker";
 import { editorLayoutJson as defaultLayoutJson } from "./editor-layout";
-import { useAppSelector } from "../../../store/app/hooks";
-import { makeSelectSelectedComponent } from "../../../store/selectors/layoutSelectors";
-import { useComponentConfigs } from "../../context-providers/ComponentConfigContext";
-import { selectEditing } from "../../../store/slices/appSlice";
+import { useAppSelector } from "@store/app/hooks";
+import { makeSelectSelectedComponent } from "@store/selectors/layoutSelectors";
+import { useComponentConfigs } from "@context-providers/ComponentConfigContext";
+import { selectEditing } from "@store/slices/appSlice";
 
 function Editor() {
   const layoutRef = useRef<Layout>();

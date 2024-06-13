@@ -8,16 +8,16 @@ import ExpandIcon from "@mui/icons-material/KeyboardArrowRight";
 import CollapseIcon from "@mui/icons-material/KeyboardArrowDown";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
 import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
-import { useDropZone } from "../../../context-providers/DropZoneContext";
-import { useAppSelector } from "../../../../store/app/hooks";
+import { useDropZone } from "@context-providers/DropZoneContext";
+import { useAppSelector } from "@store/app/hooks";
 import {
   makeSelectSourceTreePreview,
   SourceTreePreview,
   selectSourceValue,
-} from "../../../../store/selectors/sourceSelectors";
+} from "@store/selectors/sourceSelectors";
 import useResizeObserver from "@react-hook/resize-observer";
 import styles from "./Sources.module.scss";
-import { SourceMetadata } from "../../../../store/slices/sourceSlice";
+import { SourceMetadata } from "@store/slices/sourceSlice";
 
 interface SourceContext {
   expand: (id: string) => unknown;
