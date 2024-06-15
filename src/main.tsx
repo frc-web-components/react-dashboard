@@ -26,6 +26,10 @@ const darkTheme = createTheme({
 const dashboard = new Dashboard();
 dashboard.addComponents(componentMap);
 
+setTimeout(() => {
+  dashboard.addTab('Hello');
+}, 2000);
+
 export function mountDashboard(element: HTMLElement) {
   ReactDOM.createRoot(element).render(
     <React.StrictMode>

@@ -8,7 +8,6 @@ export const layoutJson: IJsonModel = {
     splitterSize: 3,
     splitterExtra: 6,
   },
-  // borders: [],
   layout: {
     type: "row",
     weight: 100,
