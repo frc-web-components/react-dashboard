@@ -33,6 +33,7 @@ import { SourceData } from "../tools/editor/sources/Sources";
 import { getContextMenuPosition } from "./context-menu/useContextMenu";
 import ContextMenu from "./context-menu/ContextMenu";
 import { DELETE_KEYS } from "./constants";
+import { Paper } from "@mui/material";
 
 export const getComponentsWithDisplayType = (
   type: string,
@@ -281,15 +282,19 @@ function Tab({ tabId }: Props) {
           height: "100%",
           width: "100%",
           backgroundSize: `${cellSize + cellGap}px ${cellSize + cellGap}px`,
-          backgroundImage: editing ? `linear-gradient(to right, rgba(50,50,50,.75) ${Math.max(
+          backgroundImage: editing
+            ? `linear-gradient(to right, rgba(10, 10, 10,.75) ${Math.max(
+                cellGap,
+                1
+              )}px, transparent ${Math.max(cellGap, 1)}px),
+          linear-gradient(to bottom, rgba(10, 10, 10,.75) ${Math.max(
             cellGap,
             1
-          )}px, transparent ${Math.max(cellGap, 1)}px),
-          linear-gradient(to bottom, rgba(50,50,50,.75) ${Math.max(
-            cellGap,
-            1
-          )}px, transparent ${Math.max(cellGap, 1)}px)` : 'none',
-          backgroundPosition: `${-cellGap + gridPadding}px ${-cellGap + gridPadding}px`,
+          )}px, transparent ${Math.max(cellGap, 1)}px)`
+            : "none",
+          backgroundPosition: `${-cellGap + gridPadding}px ${
+            -cellGap + gridPadding
+          }px`,
         }}
         innerRef={(el) => {
           if (el) {
@@ -346,25 +351,27 @@ function Tab({ tabId }: Props) {
       >
         {gridLayout.map(({ i: id, Component }) => {
           return (
-            <div
+            <Paper
               key={id}
-              style={{
-                background: "black",
-              }}
-              className={classNames(Styles.component, {
-                [Styles.selected]: selectedComponent?.id === id,
-              })}
-              onContextMenu={(event) => {
-                const position = getContextMenuPosition(event);
-                dispatch(
-                  setContextMenuElement(
-                    position && { position, type: "ELEMENT", elementId: id }
-                  )
-                );
-              }}
+              elevation={2}
+              sx={{ padding: (theme) => theme.spacing(0.5) }}
             >
-              <TabComponent componentId={id} Component={Component} />
-            </div>
+              <div
+                className={classNames(Styles.component, {
+                  [Styles.selected]: selectedComponent?.id === id,
+                })}
+                onContextMenu={(event) => {
+                  const position = getContextMenuPosition(event);
+                  dispatch(
+                    setContextMenuElement(
+                      position && { position, type: "ELEMENT", elementId: id }
+                    )
+                  );
+                }}
+              >
+                <TabComponent componentId={id} Component={Component} />
+              </div>
+            </Paper>
           );
         })}
       </GridLayout>
