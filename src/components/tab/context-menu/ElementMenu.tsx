@@ -43,8 +43,6 @@ export default function ElementMenu({ onClose, open, componentId }: Props) {
     );
   }, [components, metadata]);
 
-  // selectedComponent.type;
-
   const showAs = (type: string, config: ComponentConfig) => {
     onClose();
     const { properties } = config;

@@ -34,6 +34,7 @@ import { getContextMenuPosition } from "./context-menu/useContextMenu";
 import ContextMenu from "./context-menu/ContextMenu";
 import { DELETE_KEYS } from "./constants";
 import { Paper } from "@mui/material";
+import { getComponentGridGeometry } from "./helpers";
 
 export const getComponentsWithDisplayType = (
   type: string,
@@ -132,26 +133,22 @@ function Tab({ tabId }: Props) {
       if (!gridElement) {
         return;
       }
+
       const {
-        dashboard: { defaultSize, minSize, children },
+        dashboard: { children },
         defaultSource,
         properties,
       } = config;
 
-      const { clientX, clientY } = event;
-      const minWidth = Math.ceil(minSize.width / cellSize);
-      const minHeight = Math.ceil(minSize.height / cellSize);
-      const width = Math.max(
-        minWidth,
-        Math.round(defaultSize.width / cellSize)
+      const componentGeometry = getComponentGridGeometry(
+        gridElement,
+        config,
+        event.clientX,
+        event.clientY,
+        cellSize,
+        cellGap
       );
-      const height = Math.max(
-        minHeight,
-        Math.round(defaultSize.height / cellSize)
-      );
-      const rect = gridElement.getBoundingClientRect();
-      const x = Math.round((clientX - rect.left) / (cellSize + cellGap));
-      const y = Math.round((clientY - rect.top) / (cellSize + cellGap));
+
       const props: Record<string, { value: unknown }> = {};
       Object.entries(properties).forEach(([name, prop]) => {
         props[name] = {
@@ -166,12 +163,10 @@ function Tab({ tabId }: Props) {
             id: parentId,
             children: [],
             source: source ?? defaultSource,
-            minSize: { width: minWidth, height: minHeight },
-            size: { width, height },
-            position: { x, y },
             properties: props,
             type,
             name: config.dashboard.name,
+            ...componentGeometry,
           },
         })
       );
