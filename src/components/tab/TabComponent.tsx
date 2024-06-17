@@ -63,11 +63,6 @@ function TabComponent({ Component, componentId }: Props) {
     (prop: string, value: unknown) => {
       if (propertySourceInfos) {
         if (propertySourceInfos[prop].type === "defaultValue") {
-          console.log("Set prop:", {
-            prop,
-            value,
-            info: propertySourceInfos[prop],
-          });
           dispatch(
             setComponentTemporaryValue({
               id: componentId,

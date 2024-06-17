@@ -14,7 +14,7 @@ export const selectProviderMetadata = (state: RootState, provider?: string) =>
 export const selectConnectionStatus = (state: RootState) =>
   state.source.connectionStatus;
 
-export const selectSourcetMetadata = (
+export const selectSourceMetadata = (
   state: RootState,
   provider?: string,
   key?: string

@@ -1,13 +1,12 @@
 import { ComponentConfig } from "@components/context-providers/ComponentConfigContext";
-import { Accelerometer, BasicFmsInfo, Gyro } from "@frc-web-components/react";
-import { threeAxisAccelerometer } from "./ThreeAxisAccelerometer";
+import { BasicFmsInfo, Gyro } from "@frc-web-components/react";
 import { camera } from "./Camera";
 import { markdownViewer } from "./MarkdownViewer";
 import { numberSlider } from "./NumberSlider";
 import { booleanBox } from "./BooleanBox";
 import { checkboxGroup } from "./CheckboxGroup";
 import { robotCommand, robotSubsystem } from "./CommandBased";
-import { booleanProp, numberProp, stringProp } from "./fromProps";
+import { booleanProp, numberProp } from "./fromProps";
 import { field, fieldPath, fieldRobot } from "./Field";
 import {
   lineChart,
@@ -25,34 +24,13 @@ import { icon } from "./Icon";
 import { label, numberLabel } from "./Labels";
 import { mechanism2d } from "./Mechanism2d";
 import { networkAlerts } from "./NetworkAlerts";
-import { numberBar } from "./NumberBar";
+import { numberBar, accelerometer, voltageView, threeAxisAccelerometer } from "./NumberBar";
 import { pidCommand, pidController, profiledPidController } from "./Pid";
 import { preferences } from './Preferences';
 import { toggleButton, toggleGroup } from "./ToggleButton";
 import { sendableChooser } from './Dropdowns';
 
 export const componentMap: Record<string, ComponentConfig> = {
-  threeAxisAccelerometer,
-  accelerometer: {
-    dashboard: {
-      name: "Accelerometer",
-      description: "",
-      defaultSize: { width: 200, height: 60 },
-      minSize: { width: 80, height: 60 },
-    },
-    primaryProperty: 'value',
-    properties: {
-      value: numberProp(),
-      max: numberProp({ defaultValue: 1 }),
-      min: numberProp({ defaultValue: -1 }),
-      center: numberProp(),
-      precision: numberProp({ defaultValue: 2 }),
-      hideText: booleanProp(),
-      numTickMarks: numberProp({ defaultValue: 3 }),
-      unit: stringProp({ defaultValue: "g" }),
-    },
-    component: Accelerometer,
-  },
   basicFmsInfo: {
     dashboard: {
       name: "Basic FMS Info",
@@ -122,6 +100,9 @@ export const componentMap: Record<string, ComponentConfig> = {
   toggleButton,
   toggleGroup,
   sendableChooser,
+  threeAxisAccelerometer,
+  accelerometer,
+  voltageView,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);

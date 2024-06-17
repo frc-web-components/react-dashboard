@@ -16,7 +16,7 @@ import Dashboard from "./dashboard.ts";
 import { DashboardProvider } from "@context-providers/DashboardContext.tsx";
 import "./index.module.scss";
 import { Layout } from "./store/slices/layoutSlice.ts";
-import RobotLayout from "./plugins/robot-layout.ts";
+import ShuffleboardLayout from "./plugins/robot-layout.ts";
 
 const darkTheme = createTheme({
   palette: {
@@ -27,7 +27,7 @@ const darkTheme = createTheme({
 const dashboard = new Dashboard();
 dashboard.addComponents(componentMap);
 
-const robotLayout = new RobotLayout(dashboard);
+const robotLayout = new ShuffleboardLayout(dashboard);
 
 setTimeout(() => {
   dashboard.addElementToTab('hi', {

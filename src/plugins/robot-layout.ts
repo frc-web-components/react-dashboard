@@ -1,8 +1,10 @@
+import { getComponentsWithDisplayType } from "@/components/tab/Tab";
 import Dashboard from "@/dashboard";
 import { store } from "@/store/app/store";
 import {
   SourceTree,
   makeSelectSourceTree,
+  selectSourceMetadata,
 } from "@/store/selectors/sourceSelectors";
 
 const selectSourceTree = makeSelectSourceTree();
@@ -30,7 +32,7 @@ interface Shuffleboard {
   tabs: ShuffleboardTab[];
 }
 
-class RobotLayout {
+class ShuffleboardLayout {
   #dashboard: Dashboard;
 
   constructor(dashboard: Dashboard) {
@@ -117,17 +119,14 @@ class RobotLayout {
       });
     }
 
-    
     shuffleboardTab.widgets = Object.values(widgetMap);
 
     shuffleboardTab.widgets.forEach((widget) => {
-      console.log("metadata?:", widget.metadata);
       if (widget.metadata) {
         return;
       }
       const metadata = this.#addDefaultMetadata(shuffleboardTab.widgets);
-      widget.metadata = metadata
-      console.log("METADATA:", metadata);
+      widget.metadata = metadata;
     });
 
     return shuffleboardTab;
@@ -152,31 +151,71 @@ class RobotLayout {
       if (!overlap) {
         break;
       }
-    } 
+    }
     return {
       position: [x, 0],
-      size: [1, 1]
+      size: [1, 1],
+    };
+  }
+
+  #getComponentType(
+    source: { provider: string; key: string },
+    preferredComponent?: string
+  ): string | undefined {
+    const state = store.getState();
+    const sourceMetadata = selectSourceMetadata(
+      state,
+      source.provider,
+      source.key
+    );
+    if (!sourceMetadata?.displayType) {
+      return undefined;
     }
+    const preferredComponents = preferredComponent
+      ? getComponentsWithDisplayType(
+          preferredComponent,
+          this.#dashboard.getComponents()
+        )
+      : [];
+    const components = getComponentsWithDisplayType(
+      sourceMetadata.displayType,
+      this.#dashboard.getComponents()
+    );
+    const allComponents = preferredComponents.concat(components);
+    if (allComponents.length > 0) {
+      const [{ type }] = allComponents;
+      return type;
+    }
+    return undefined;
   }
 
   #createLayout(shuffleboard: Shuffleboard) {
-    console.log("shuffleboard:", shuffleboard);
     shuffleboard.tabs.forEach((tab) => {
       const dashboardTab = this.#dashboard.getTab(tab.name);
       if (!dashboardTab) {
         this.#dashboard.addTab(tab.name);
-        tab.widgets.forEach(widget => {
+        tab.widgets.forEach((widget) => {
           if (widget.metadata && widget.source) {
-            const { position: [x, y], size: [width, height] } = widget.metadata!;
-            const keyParts = widget.source.key.split('/');
+            const componentType = this.#getComponentType(
+              widget.source,
+              widget.metadata.preferredComponent
+            );
+            if (!componentType) {
+              return;
+            }
+            const {
+              position: [x, y],
+              size: [width, height],
+            } = widget.metadata!;
+            const keyParts = widget.source.key.split("/");
             const name = keyParts[keyParts.length - 1];
             this.#dashboard.addElementToTab(tab.name, {
               position: { x, y },
               size: { width, height },
-              type: 'booleanBox',
+              type: componentType,
               source: widget.source,
               name,
-            }); 
+            });
           }
         });
       }
@@ -184,4 +223,4 @@ class RobotLayout {
   }
 }
 
-export default RobotLayout;
+export default ShuffleboardLayout;
