@@ -36,6 +36,11 @@ export interface SourceSlice {
       [sourceKey: string]: unknown;
     };
   };
+  sourceUpdates: {
+    [providerName: string]: {
+      [sourceKey: string]: number;
+    };
+  };
   metadata: {
     [providerName: string]: {
       [sourceKey: string]: SourceMetadata;
@@ -52,6 +57,7 @@ export interface SourceSlice {
 const initialState: SourceSlice = {
   sources: {},
   sourceValues: {},
+  sourceUpdates: {},
   metadata: {},
   connectionStatus: {},
 };
@@ -97,6 +103,9 @@ export const sourceSlice = createAppSlice({
         if (typeof value !== "undefined") {
           state.sourceValues[provider][key] = value;
         }
+        if (!state.sourceUpdates[provider]) {
+          state.sourceUpdates[provider] = {};
+        }
 
         // update ancestors
         for (let i = 1; i < keyParts.length; i++) {
@@ -118,6 +127,9 @@ export const sourceSlice = createAppSlice({
           if (!hasChild) {
             state.sources[provider][parent].children.push(child);
           }
+
+          state.sourceUpdates[provider][child] =
+            (state.sourceUpdates[provider][child] ?? 0) + 1;
         }
       }
     ),
@@ -134,6 +146,10 @@ export const sourceSlice = createAppSlice({
           }[]
         >
       ) => {
+        const updates: {
+          [provider: string]: Set<string>;
+        } = {};
+
         // add source
         action.payload.forEach((actionPayload) => {
           const { provider, type, propertyType, key, value } = actionPayload;
@@ -163,6 +179,8 @@ export const sourceSlice = createAppSlice({
           if (typeof value !== "undefined") {
             state.sourceValues[provider][key] = value;
           }
+          updates[provider] = updates[provider] ?? new Set();
+          state.sourceUpdates[provider] = state.sourceUpdates[provider] ?? {};
 
           // update ancestors
           for (let i = 1; i < keyParts.length; i++) {
@@ -184,7 +202,15 @@ export const sourceSlice = createAppSlice({
             if (!hasChild) {
               state.sources[provider][parent].children.push(child);
             }
+
+            updates[provider].add(child);
           }
+        });
+
+        Object.entries(updates).forEach(([providerName, providerUpdates]) => {
+          providerUpdates.forEach(key => {
+            state.sourceUpdates[providerName][key] = (state.sourceUpdates[providerName][key] ?? 0) + 1;
+          });
         });
       }
     ),
@@ -255,5 +281,10 @@ export const sourceSlice = createAppSlice({
   }),
 });
 
-export const { removeSource, setSource, setSources, setSourceDisplayTypes, setConnectionStatus } =
-  sourceSlice.actions;
+export const {
+  removeSource,
+  setSource,
+  setSources,
+  setSourceDisplayTypes,
+  setConnectionStatus,
+} = sourceSlice.actions;

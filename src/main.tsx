@@ -16,6 +16,7 @@ import Dashboard from "./dashboard.ts";
 import { DashboardProvider } from "@context-providers/DashboardContext.tsx";
 import "./index.module.scss";
 import { Layout } from "./store/slices/layoutSlice.ts";
+import RobotLayout from "./plugins/robot-layout.ts";
 
 const darkTheme = createTheme({
   palette: {
@@ -26,8 +27,14 @@ const darkTheme = createTheme({
 const dashboard = new Dashboard();
 dashboard.addComponents(componentMap);
 
+const robotLayout = new RobotLayout(dashboard);
+
 setTimeout(() => {
-  dashboard.addTab('Hello');
+  dashboard.addElementToTab('hi', {
+    type: 'basicFmsInfo',
+    position: { x: 1, y: 1 },
+    size: { width: 3, height: 1 }
+  });
 }, 2000);
 
 export function mountDashboard(element: HTMLElement) {
