@@ -7,7 +7,7 @@ import {
   useComponentConfigs,
 } from "@context-providers/ComponentConfigContext";
 import { selectComponent } from "@store/selectors/layoutSelectors";
-import { selectSourcetMetadata } from "@store/selectors/sourceSelectors";
+import { selectSourceMetadata } from "@store/selectors/sourceSelectors";
 import { getComponentsWithDisplayType } from "../Tab";
 import { useMemo } from "react";
 import Check from "@mui/icons-material/Check";
@@ -29,7 +29,7 @@ export default function ElementMenu({ onClose, open, componentId }: Props) {
   );
   const { components } = useComponentConfigs();
   const metadata = useAppSelector((state) =>
-    selectSourcetMetadata(
+    selectSourceMetadata(
       state,
       selectedComponent?.source?.provider,
       selectedComponent?.source?.key

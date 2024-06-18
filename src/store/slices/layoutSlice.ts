@@ -1,8 +1,21 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createAppSlice } from "../app/createAppSlice";
 import { layoutJson as defaultLayoutJson } from "./layout";
-import { IJsonModel } from "flexlayout-react";
+import { IJsonModel, IJsonRowNode, IJsonTabSetNode } from "flexlayout-react";
+import { v4 as uuidv4 } from "uuid";
 
+function findTabset(node: IJsonRowNode | IJsonTabSetNode): IJsonTabSetNode | undefined {
+  if (node.type === 'tabset') {
+    return node;
+  }
+  for (const child of node.children) {
+    const tabset = findTabset(child);
+    if (tabset) {
+      return tabset;
+    }
+  }
+  return undefined;
+}
 
 export interface Component {
   id: string;
@@ -265,7 +278,17 @@ export const layoutSlice = createAppSlice({
     setGridPadding: create.reducer((state, action: PayloadAction<number>) => {
       state.gridPadding = action.payload;
     }),
-  }),
+    addTab: create.reducer((state, action: PayloadAction<string>) => {
+      const tabName = action.payload;
+      const tabset = findTabset(state.flexLayout.layout);
+      if (tabset) {
+        tabset.children.push({
+          id: uuidv4(),
+          name: tabName,
+        });
+      }
+    }),
+  })
 });
 
 // Action creators are generated for each case reducer function.
@@ -287,4 +310,5 @@ export const {
   setGridSize,
   setGridGap,
   setGridPadding,
+  addTab,
 } = layoutSlice.actions;

@@ -16,6 +16,7 @@ import Dashboard from "./dashboard.ts";
 import { DashboardProvider } from "@context-providers/DashboardContext.tsx";
 import "./index.module.scss";
 import { Layout } from "./store/slices/layoutSlice.ts";
+import ShuffleboardLayout from "./plugins/shuffleboard-layout.ts";
 
 const darkTheme = createTheme({
   palette: {
@@ -25,6 +26,8 @@ const darkTheme = createTheme({
 
 const dashboard = new Dashboard();
 dashboard.addComponents(componentMap);
+
+new ShuffleboardLayout(dashboard);
 
 export function mountDashboard(element: HTMLElement) {
   ReactDOM.createRoot(element).render(

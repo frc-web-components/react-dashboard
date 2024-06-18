@@ -1,13 +1,17 @@
 import StrictEventEmitter from "strict-event-emitter-types";
 import { EventEmitter } from "events";
 import { ComponentConfig } from "@context-providers/ComponentConfigContext";
-import { store } from "./store/app/store";
+import { store } from "@store/app/store";
 import {
   Layout,
   setLayout,
   initialLayoutState,
+  addTab,
+  addComponent,
 } from "@store/slices/layoutSlice";
 import exampleLayout from "./example-layouts/example";
+import { v4 as uuidv4 } from "uuid";
+import { IJsonRowNode, IJsonTabNode, IJsonTabSetNode } from "flexlayout-react";
 
 interface DashboardEvents {
   addComponentsEvent: (components: Record<string, ComponentConfig>) => void;
@@ -99,10 +103,94 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
 
   addExample(name: string, layout: Layout) {
     this.#exampleDashboards.push({ name, layout });
-    this.emit('exampleAdd');
+    this.emit("exampleAdd");
   }
 
   getExamples() {
     return [...this.#exampleDashboards];
+  }
+
+  addTab(name: string) {
+    store.dispatch(addTab(name));
+  }
+
+  #findTabByName(name: string, node: IJsonRowNode | IJsonTabSetNode): IJsonTabNode | undefined {
+    if (node.type === 'tabset') {
+      return node.children.find(childTab => childTab.name === name);
+    }
+    for (const child of node.children) {
+      const tab = this.#findTabByName(name, child);
+      if (tab) {
+        return tab;
+      }
+    }
+    return undefined;
+  }
+
+  getTab(name: string): IJsonTabNode | undefined {
+    const { flexLayout } = store.getState().layout;
+    return this.#findTabByName(name, flexLayout.layout);
+  }
+
+  addElementToTab(
+    tabName: string,
+    element: {
+      type: string;
+      name?: string;
+      size: { width: number; height: number };
+      position: { x: number; y: number };
+      source?: {
+        provider: string;
+        key: string;
+      };
+      properties?: {
+        [propertName: string]: {
+          value: unknown;
+          source?: {
+            provider: string;
+            key: string;
+          };
+        };
+      };
+    }
+  ) {
+    const { type, name, properties, size, position } = element;
+    const componentConfig = this.#components[type];
+    const tab = this.getTab(tabName);
+    if (!componentConfig || !tab) {
+      return;
+    }
+    const elementId = uuidv4();
+    const props = properties ?? {};
+    Object.entries(componentConfig.properties).forEach(([name, prop]) => {
+      props[name] = {
+        value: prop.defaultValue,
+      };
+    });
+
+    const { gridSize } = store.getState().layout;
+    const minWidth = Math.ceil(
+      componentConfig.dashboard.minSize.width / gridSize
+    );
+    const minHeight = Math.ceil(
+      componentConfig.dashboard.minSize.height / gridSize
+    );
+
+    store.dispatch(
+      addComponent({
+        tabId: tab.id!,
+        component: {
+          id: elementId,
+          children: [],
+          source: element.source ?? componentConfig.defaultSource,
+          minSize: { width: minWidth, height: minHeight },
+          size,
+          position,
+          properties: props,
+          type,
+          name: name ?? componentConfig.dashboard.name,
+        },
+      })
+    );
   }
 }
