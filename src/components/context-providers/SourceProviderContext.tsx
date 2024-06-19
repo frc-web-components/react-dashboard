@@ -10,7 +10,8 @@ import {
   selectSource,
   selectSourceValue,
 } from "@store/selectors/sourceSelectors";
-import SourceProvider from "@store/sources/nt4/source-provider";
+import SourceProvider from "@store/sources/source-provider";
+import { SimProvider } from "@/store/sources/sim";
 
 export type SourceInfo =
   | {
@@ -49,7 +50,8 @@ interface ProviderProps {
 }
 
 const providers: Record<string, SourceProvider> = {
-  NT: new NT4Provider(store),
+  NT: new NT4Provider(),
+  sim: new SimProvider(),
 };
 
 export const SourceProviderProvider: React.FC<ProviderProps> = ({

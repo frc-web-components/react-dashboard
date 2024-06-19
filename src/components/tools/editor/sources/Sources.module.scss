@@ -2,6 +2,10 @@
   :global {
     .ag-drag-handle {
       margin-right: 0;
+      
+      &.ag-invisible {
+        display: none !important;
+      }
     }
 
     .ag-cell.ag-column-first {

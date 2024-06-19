@@ -11,6 +11,9 @@ dependencies:
   '@frc-web-components/fwc':
     specifier: ^2.4.4
     version: 2.4.4
+  '@frc-web-components/node-wpilib-ws':
+    specifier: ^0.1.1
+    version: 0.1.1
   '@frc-web-components/react':
     specifier: ^0.8.3
     version: 0.8.3(@frc-web-components/fwc@2.4.4)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
@@ -796,6 +799,15 @@ packages:
       three: 0.152.2
       urdf-loader: 0.12.1(three@0.152.2)
       yargs: 17.7.2
+    dev: false
+
+  /@frc-web-components/node-wpilib-ws@0.1.1:
+    resolution: {integrity: sha512-up3KvLrFvXZaznUyqK85mK6MuFdWKxBLqkwk7NGVVlCwcxiG7sQtDHl+3Kxm3hqjLHLTcP3PqxO2bRLndYwWnQ==}
+    dependencies:
+      events: 3.3.0
+      ip-address: 7.1.0
+      reconnecting-websocket: 4.4.0
+      strict-event-emitter-types: 2.0.0
     dev: false
 
   /@frc-web-components/react@0.8.3(@frc-web-components/fwc@2.4.4)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0):
@@ -4574,6 +4586,14 @@ packages:
     engines: {node: '>=12'}
     dev: false
 
+  /ip-address@7.1.0:
+    resolution: {integrity: sha512-V9pWC/VJf2lsXqP7IWJ+pe3P1/HCYGBMZrrnT62niLGjAfCbeiwXMUxaeHvnVlz19O27pvXP4azs+Pj/A0x+SQ==}
+    engines: {node: '>= 10'}
+    dependencies:
+      jsbn: 1.1.0
+      sprintf-js: 1.1.2
+    dev: false
+
   /is-alphabetical@2.0.1:
     resolution: {integrity: sha512-FWyyY60MeTNyeSRpkM2Iry0G9hpr7/9kD40mD/cGQEuilcZYS4okz8SN2Q6rLCJ8gbCt6fN+rC+6tMGS99LaxQ==}
     dev: false
@@ -4683,6 +4703,10 @@ packages:
     dependencies:
       argparse: 2.0.1
     dev: true
+
+  /jsbn@1.1.0:
+    resolution: {integrity: sha512-4bYVV3aAMtDTTu4+xsDYa6sy9GyJ69/amsu9sYF2zqjiEoZA5xJi3BrfX3uY+/IekIu7MwdObdbDWpoZdBv3/A==}
+    dev: false
 
   /jsesc@2.5.2:
     resolution: {integrity: sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==}
@@ -5811,6 +5835,10 @@ packages:
       picomatch: 2.3.1
     dev: true
 
+  /reconnecting-websocket@4.4.0:
+    resolution: {integrity: sha512-D2E33ceRPga0NvTDhJmphEgJ7FUYF0v4lr1ki0csq06OdlxKfugGzN0dSkxM/NfqCxYELK4KcaTOUOjTV6Dcng==}
+    dev: false
+
   /redux-thunk@3.1.0(redux@5.0.1):
     resolution: {integrity: sha512-NW2r5T6ksUKXCabzhL9z+h206HQw/NJkcLm1GPImRQ8IzfXwRGqjVhKJGauHirT0DAuyy6hjdnMZaRoAcy0Klw==}
     peerDependencies:
@@ -6149,6 +6177,10 @@ packages:
   /sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
     dev: true
+
+  /sprintf-js@1.1.2:
+    resolution: {integrity: sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==}
+    dev: false
 
   /strict-event-emitter-types@2.0.0:
     resolution: {integrity: sha512-Nk/brWYpD85WlOgzw5h173aci0Teyv8YdIAEtV+N88nDB0dLlazZyJMIsN6eo1/AR61l+p6CJTG1JIyFaoNEEA==}

@@ -1,12 +1,10 @@
-// import { noop } from './util';
-
-import { AppStore } from "../../app/store";
+import { store } from "@store/app/store";
 import {
   PropertyType,
   setConnectionStatus,
   setSourceDisplayTypes,
   setSources,
-} from "../../slices/sourceSlice";
+} from "../slices/sourceSlice";
 
 type SourceUpdate = {
   updateType: string;
@@ -30,11 +28,10 @@ class SourceProvider {
   } = {};
   #clearSourcesTimeoutId?: number; //NodeJS.Timeout;
   #clearSourcesHandlers: Map<symbol, () => void> = new Map();
-  #store: AppStore;
+  #provider: string;
 
-  constructor(store: AppStore, interval = 0) {
-    this.#store = store;
-
+  constructor(provider: string, interval = 0) {
+    this.#provider = provider;
     if (interval) {
       this.#interval = setInterval(this.#sendUpdates.bind(this), interval);
     }
@@ -146,7 +143,7 @@ class SourceProvider {
     clearTimeout(this.#clearSourcesTimeoutId as unknown as number);
     this.#clearSourcesTimeoutId = setTimeout(() => {
       this.clearSources(callback);
-    }, timeout);
+    }, timeout) as any;
   }
 
   /**
@@ -210,13 +207,13 @@ class SourceProvider {
           return {
             key,
             value,
-            provider: "NT",
+            provider: this.#provider,
             type: type!,
             propertyType: propertyType!,
           };
         }
       );
-      this.#store.dispatch(setSources(sources));
+      store.dispatch(setSources(sources));
     }
     if (Object.keys(this.#displayTypeUpdates).length > 9) {
       const updates = Object.entries(this.#displayTypeUpdates).map(
@@ -224,11 +221,11 @@ class SourceProvider {
           return {
             key,
             type,
-            provider: "NT",
+            provider: this.#provider,
           };
         }
       );
-      this.#store.dispatch(setSourceDisplayTypes(updates));
+      store.dispatch(setSourceDisplayTypes(updates));
     }
   }
 
@@ -257,9 +254,9 @@ class SourceProvider {
   }
 
   setConnectionStatus(connected: boolean, label: string) {
-    this.#store.dispatch(
+    store.dispatch(
       setConnectionStatus({
-        provider: "NT",
+        provider: this.#provider,
         connected,
         label,
       })

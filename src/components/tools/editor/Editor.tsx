@@ -8,7 +8,6 @@ import {
   TabSetNode,
 } from "flexlayout-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import Sources from "./sources/Sources";
 import Properties from "./properties/Properties";
 import ComponentPicker from "../ComponentPicker";
 import { editorLayoutJson as defaultLayoutJson } from "./editor-layout";
@@ -16,6 +15,8 @@ import { useAppSelector } from "@store/app/hooks";
 import { makeSelectSelectedComponent } from "@store/selectors/layoutSelectors";
 import { useComponentConfigs } from "@context-providers/ComponentConfigContext";
 import { selectEditing } from "@store/slices/appSlice";
+import SourcesAccordion from "./sources/SourcesAccordion";
+import Sources from "./sources/Sources";
 
 function Editor() {
   const layoutRef = useRef<Layout>();
@@ -61,7 +62,6 @@ function Editor() {
     });
 
     if (selectedComponent && components) {
-
       tabData.forEach((data) => {
         const tabJson: IJsonTabNode = {
           type: "tab",

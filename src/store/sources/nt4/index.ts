@@ -1,12 +1,11 @@
 import { Nt4Client } from "@frc-web-components/fwc/source-providers";
-import { AppStore } from "../../app/store";
 import { PropertyType } from "../../slices/sourceSlice";
 import {
   NT4_Client,
   NT4_Topic,
 } from "@frc-web-components/fwc/source-providers/nt4/NT4";
 import StructDecoder from "./StructDecoder";
-import SourceProvider from "./source-provider";
+import SourceProvider from "../source-provider";
 
 const basicTypes = [
   "boolean",
@@ -56,8 +55,8 @@ export class NT4Provider extends SourceProvider {
   #address!: string;
   #isConnected = false;
 
-  constructor(store: AppStore) {
-    super(store, 1000 / 20);
+  constructor() {
+    super("NT", 1000 / 20);
     this.connect("localhost");
   }
 
