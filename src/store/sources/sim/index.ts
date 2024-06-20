@@ -29,6 +29,8 @@ export class SimProvider extends SourceProvider {
 
     this.#client.start();
 
+    this.updateDisplayType('/DriverStation', 'DriverStation');
+
     Object.entries(dsTypes).forEach(([prop, { type, defaultValue }]) => {
       this.update(`/DriverStation/${prop}`, defaultValue, type, type);
       this.updateDisplayType(`/DriverStation/${prop}`, type);
