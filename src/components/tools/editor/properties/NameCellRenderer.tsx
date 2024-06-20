@@ -29,7 +29,7 @@ const NameCellRenderer = (
   const [dropZone, setDropZone] = useState<RowDropZoneParams>();
 
   const setComponentSource = useCallback(
-    (key: string) => {
+    (source: { key: string; provider: string }) => {
       if (!data) {
         return;
       }
@@ -39,10 +39,7 @@ const NameCellRenderer = (
           updateComponentPropertySource({
             componentId: componentId,
             propertyName: name,
-            source: {
-              provider: "NT",
-              key,
-            },
+            source,
           })
         );
       }
@@ -60,7 +57,7 @@ const NameCellRenderer = (
           return element;
         },
         onDragStop(params) {
-          setComponentSource(params.node.data.id);
+          setComponentSource(params.node.data.source);
         },
       };
       sourceGrid.addRowDropZone(dropZoneParams);
@@ -102,7 +99,12 @@ const NameCellRenderer = (
           }
         }}
       >
-        {isParent && (expanded ? <CollapseIcon fontSize="small" /> : <ExpandIcon fontSize="small" />)}
+        {isParent &&
+          (expanded ? (
+            <CollapseIcon fontSize="small" />
+          ) : (
+            <ExpandIcon fontSize="small" />
+          ))}
       </div>
       <span
         style={{

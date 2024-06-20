@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode, useMemo } from "react";
-import { SourceInfo, useSourceProvider } from "./SourceProviderContext";
+import { SourceInfo, useSourceProvider } from "@/dashboard";
 import { useAppSelector } from "@store/app/hooks";
 import { selectComponent } from "@store/selectors/layoutSelectors";
 import { SourceTree, useSourceTree } from "@store/selectors/sourceSelectors";

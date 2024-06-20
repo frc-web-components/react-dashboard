@@ -1,4 +1,4 @@
-import { ComponentConfig } from "@components/context-providers/ComponentConfigContext";
+import { ComponentConfig } from "@/dashboard";
 import { BasicFmsInfo, Gyro } from "@frc-web-components/react";
 import { camera } from "./Camera";
 import { markdownViewer } from "./MarkdownViewer";

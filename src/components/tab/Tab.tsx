@@ -21,10 +21,7 @@ import {
 } from "@store/selectors/layoutSelectors";
 import { useDropZone } from "@context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
-import {
-  ComponentConfig,
-  useComponentConfigs,
-} from "@context-providers/ComponentConfigContext";
+import { ComponentConfig, useComponentConfigs } from "@/dashboard";
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "../tools/ComponentPicker";
 import TabComponent from "./TabComponent";
@@ -73,7 +70,7 @@ function Tab({ tabId }: Props) {
   const layoutComponents = useAppSelector((state) =>
     selectTabComponents(state, tabId)
   );
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const componentsRef = useRef(components);
   const editing = useAppSelector(selectEditing);
   const { componentGrid, sourceGrid } = useDropZone(); // Use the context
@@ -241,6 +238,7 @@ function Tab({ tabId }: Props) {
             node.data.metadata?.displayType ?? "",
             componentsRef.current
           );
+
           if (componentsWithDisplayType.length > 0) {
             const [{ type, config }] = componentsWithDisplayType;
             addComponentToTab(config, type, event, node.data.source);

@@ -4,19 +4,15 @@ import App from "./components/App.tsx";
 import { Provider } from "react-redux";
 import { store } from "./store/app/store";
 import { DropZoneProvider } from "./components/context-providers/DropZoneContext.tsx";
-import {
-  ComponentConfig,
-  ComponentConfigProvider,
-} from "@context-providers/ComponentConfigContext.tsx";
 import { componentMap } from "./components/dashboard-components/index.ts";
-import { SourceProviderProvider } from "./components/context-providers/SourceProviderContext.tsx";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import Dashboard from "./dashboard.ts";
-import { DashboardProvider } from "@context-providers/DashboardContext.tsx";
+import Dashboard, { ComponentConfig } from "./dashboard.ts";
 import "./index.module.scss";
 import { Layout } from "./store/slices/layoutSlice.ts";
 import ShuffleboardLayout from "./plugins/shuffleboard-layout.ts";
+import { NT4Provider } from "@store/sources/nt4";
+import { SimProvider } from "@store/sources/sim";
 
 const darkTheme = createTheme({
   palette: {
@@ -26,6 +22,8 @@ const darkTheme = createTheme({
 
 const dashboard = new Dashboard();
 dashboard.addComponents(componentMap);
+dashboard.addSourceProvider("NT", new NT4Provider());
+dashboard.addSourceProvider("Sim", new SimProvider());
 
 new ShuffleboardLayout(dashboard);
 
@@ -35,15 +33,9 @@ export function mountDashboard(element: HTMLElement) {
       <ThemeProvider theme={darkTheme}>
         <CssBaseline />
         <Provider store={store}>
-          <SourceProviderProvider>
-            <DropZoneProvider>
-              <ComponentConfigProvider dashboard={dashboard}>
-                <DashboardProvider dashboard={dashboard}>
-                  <App />
-                </DashboardProvider>
-              </ComponentConfigProvider>
-            </DropZoneProvider>
-          </SourceProviderProvider>
+          <DropZoneProvider>
+            <App />
+          </DropZoneProvider>
         </Provider>
       </ThemeProvider>
     </React.StrictMode>

@@ -13,16 +13,15 @@ import ComponentPicker from "../ComponentPicker";
 import { editorLayoutJson as defaultLayoutJson } from "./editor-layout";
 import { useAppSelector } from "@store/app/hooks";
 import { makeSelectSelectedComponent } from "@store/selectors/layoutSelectors";
-import { useComponentConfigs } from "@context-providers/ComponentConfigContext";
+import { useComponentConfigs } from "@/dashboard";
 import { selectEditing } from "@store/slices/appSlice";
-import SourcesAccordion from "./sources/SourcesAccordion";
 import Sources from "./sources/Sources";
 
 function Editor() {
   const layoutRef = useRef<Layout>();
   const selectSelectedComponent = useMemo(makeSelectSelectedComponent, []);
   const selectedComponent = useAppSelector(selectSelectedComponent);
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const [layoutJson] = useState(defaultLayoutJson);
   const modelRef = useRef<Model>();
   const editing = useAppSelector(selectEditing);

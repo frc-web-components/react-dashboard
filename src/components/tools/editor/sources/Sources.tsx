@@ -18,6 +18,7 @@ import {
 import useResizeObserver from "@react-hook/resize-observer";
 import styles from "./Sources.module.scss";
 import { SourceMetadata } from "@store/slices/sourceSlice";
+import { useSourceProvider } from "@/dashboard";
 
 interface SourceContext {
   expand: (id: string) => unknown;
@@ -206,7 +207,8 @@ const colDefs: ColDef[] = [
 ];
 
 function Sources() {
-  const providers = ["NT", "sim"];
+  const { providers } = useSourceProvider();
+  const providerNames = Object.keys(providers);
   const [selectedProvider, setSelectedProvider] = useState("NT");
   const selectSourceTreePreview = useMemo(makeSelectSourceTreePreview, []);
   const sourceTree = useAppSelector((state) =>
@@ -270,7 +272,7 @@ function Sources() {
       }
     };
 
-    providers.forEach((provider) => {
+    providerNames.forEach((provider) => {
       data.push({
         expanded: provider === selectedProvider,
         id: provider,
@@ -320,7 +322,7 @@ function Sources() {
             columnDefs={columnDefs}
             context={{
               expand: (id: string) => {
-                if (providers.includes(id)) {
+                if (providerNames.includes(id)) {
                   setSelectedProvider(id);
                 } else {
                   setExpandedSources((prev) => {
@@ -331,7 +333,7 @@ function Sources() {
                 }
               },
               collapse: (id: string) => {
-                if (providers.includes(id)) {
+                if (providerNames.includes(id)) {
                   setSelectedProvider("");
                 } else {
                   setExpandedSources((prev) => {

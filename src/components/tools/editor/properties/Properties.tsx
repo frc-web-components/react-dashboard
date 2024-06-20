@@ -12,10 +12,7 @@ import {
   updateComponentPropertySource,
   updateComponentSource,
 } from "@store/slices/layoutSlice";
-import {
-  ComponentConfig,
-  useComponentConfigs,
-} from "@context-providers/ComponentConfigContext";
+import { ComponentConfig, useComponentConfigs } from "@/dashboard";
 import useResizeObserver from "@react-hook/resize-observer";
 import MarkdownEditor from "./MarkdownEditor";
 import {
@@ -229,7 +226,7 @@ function Properties({ childComponentConfig, configType }: Props) {
   const selectedComponentChildren = useAppSelector(
     selectSelectedComponentChildren
   );
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const { displayChildren, componentConfig } = useMemo(() => {
     if (!childComponentConfig) {
       return {

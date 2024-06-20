@@ -53,6 +53,9 @@ dependencies:
   flexlayout-react:
     specifier: ^0.7.15
     version: 0.7.15(react-dom@18.2.0)(react@18.2.0)
+  jotai:
+    specifier: ^2.8.3
+    version: 2.8.3(@types/react@18.2.64)(react@18.2.0)
   lodash.camelcase:
     specifier: ^4.3.0
     version: 4.3.0
@@ -4676,6 +4679,22 @@ packages:
   /jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
     dev: true
+
+  /jotai@2.8.3(@types/react@18.2.64)(react@18.2.0):
+    resolution: {integrity: sha512-pR4plVvdbzB6zyt7VLLHPMAkcRSKhRIvZKd+qkifQLa3CEziEo1uwZjePj4acTmQrboiISBlYSdCz3gWcr1Nkg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=17.0.0'
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
+    dependencies:
+      '@types/react': 18.2.64
+      react: 18.2.0
+    dev: false
 
   /js-beautify@1.15.1:
     resolution: {integrity: sha512-ESjNzSlt/sWE8sciZH8kBF8BPlwXPwhR6pWKAw8bw4Bwj+iZcnKW6ONWUutJ7eObuBZQpiIb8S7OYspWrKt7rA==}

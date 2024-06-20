@@ -2,12 +2,9 @@ import { useCallback, useMemo } from "react";
 import Styles from "./Tab.module.scss";
 import { useComponentPropertyValues } from "@store/selectors/componentSelectors";
 import { useAppDispatch, useAppSelector } from "@store/app/hooks";
-import {
-  SourceInfo,
-  useSourceProvider,
-} from "@context-providers/SourceProviderContext";
+import { SourceInfo, useSourceProvider } from "@/dashboard";
 import { ComponentProvider } from "@context-providers/ComponentContext";
-import { useComponentConfigs } from "@context-providers/ComponentConfigContext";
+import { useComponentConfigs } from "@/dashboard";
 import { memoizeWithArgs } from "proxy-memoize";
 import { RootState } from "@store/app/store";
 import { setComponentTemporaryValue } from "@store/slices/layoutSlice";
@@ -36,7 +33,7 @@ function TabComponent({ Component, componentId }: Props) {
   const componentPropertyData = useComponentPropertyValues(componentId);
 
   const { setSourceValue } = useSourceProvider();
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const childComponents = useAppSelector((state) =>
     selectChildren(state, componentId)
   );

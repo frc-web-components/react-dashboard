@@ -21,10 +21,7 @@ export const SourceCellRenderer = (
           return element;
         },
         onDragStop(params) {
-          props.setValue?.({
-            provider: "NT",
-            key: params.node.data.id,
-          });
+          props.setValue?.(params.node.data.source);
         },
       };
       sourceGrid.addRowDropZone(dropZoneParams);

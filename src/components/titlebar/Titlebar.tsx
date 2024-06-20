@@ -16,14 +16,14 @@ import CropSquareIcon from "@mui/icons-material/CropSquare";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { MouseEvent, useEffect, useState } from "react";
 import ArticleIcon from "@mui/icons-material/Article";
-import { useDashboard } from "@context-providers/DashboardContext";
+import { useDashboard } from "@/dashboard";
 import PluginsDialog from "./PluginsDialog";
 import { NestedMenuItem } from "mui-nested-menu";
 import { Layout } from "@store/slices/layoutSlice";
 import styles from "./Titlebar.module.scss";
 
 function Titlebar() {
-  const { dashboard } = useDashboard();
+  const dashboard = useDashboard();
   const connectionStatuses = useAppSelector(selectConnectionStatus);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

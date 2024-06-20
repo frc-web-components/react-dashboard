@@ -2,10 +2,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import { Divider, ListItemIcon, ListItemText } from "@mui/material";
 import { NestedMenuItem } from "mui-nested-menu";
-import {
-  ComponentConfig,
-  useComponentConfigs,
-} from "@context-providers/ComponentConfigContext";
+import { ComponentConfig, useComponentConfigs } from "@/dashboard";
 import { selectComponent } from "@store/selectors/layoutSelectors";
 import { selectSourceMetadata } from "@store/selectors/sourceSelectors";
 import { getComponentsWithDisplayType } from "../Tab";
@@ -27,7 +24,7 @@ export default function ElementMenu({ onClose, open, componentId }: Props) {
   const selectedComponent = useAppSelector((state) =>
     selectComponent(state, componentId)
   );
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const metadata = useAppSelector((state) =>
     selectSourceMetadata(
       state,

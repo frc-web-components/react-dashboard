@@ -25,10 +25,11 @@ export class SimProvider extends SourceProvider {
   #client = new WPILibWebSocketClient();
 
   constructor() {
-    super("sim", 1000 / 20);
+    super("Sim", 1000 / 20);
 
     Object.entries(dsTypes).forEach(([prop, { type, defaultValue }]) => {
       this.update(`/ds/${prop}`, defaultValue, type, type);
+      this.updateDisplayType(`/ds/${prop}`, type);
     });
 
     this.#client.addListener("driverStationEvent", (payload) => {
