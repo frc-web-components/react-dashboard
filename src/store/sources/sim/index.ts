@@ -27,15 +27,17 @@ export class SimProvider extends SourceProvider {
   constructor() {
     super("Sim", 1000 / 20);
 
+    this.#client.start();
+
     Object.entries(dsTypes).forEach(([prop, { type, defaultValue }]) => {
-      this.update(`/ds/${prop}`, defaultValue, type, type);
-      this.updateDisplayType(`/ds/${prop}`, type);
+      this.update(`/DriverStation/${prop}`, defaultValue, type, type);
+      this.updateDisplayType(`/DriverStation/${prop}`, type);
     });
 
     this.#client.addListener("driverStationEvent", (payload) => {
       Object.entries(payload).forEach(([payloadProp, value]) => {
         const { type } = dsTypes[payloadProp as keyof DriverStationPayload];
-        this.update(`/ds/${payloadProp}`, value, type, type);
+        this.update(`/DriverStation/${payloadProp}`, value, type, type);
       });
     });
   }
