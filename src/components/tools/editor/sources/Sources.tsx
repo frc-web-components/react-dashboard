@@ -233,7 +233,7 @@ function Sources() {
 
   const [columnDefs] = useState<ColDef[]>(colDefs);
 
-  const nt4Data = useMemo(() => {
+  const sourcesData = useMemo(() => {
     const data: SourceData[] = [];
 
     const addData = (
@@ -242,7 +242,7 @@ function Sources() {
       parentId: string,
       level: number
     ) => {
-      const id = [parentId, name].join("/");
+      const id = selectedProvider + ':' + [parentId, name].join("/");
       const parent = Object.keys(tree.children).length > 0;
       const expanded = expandedSources.includes(id);
       const sourceData: SourceData = {
@@ -294,7 +294,7 @@ function Sources() {
       }
     });
     return data;
-  }, [sourceTree, expandedSources]);
+  }, [sourceTree, expandedSources, selectedProvider]);
 
   return (
     <div
@@ -318,7 +318,7 @@ function Sources() {
             getRowId={(props) => {
               return props.data.id;
             }}
-            rowData={nt4Data}
+            rowData={sourcesData}
             columnDefs={columnDefs}
             context={{
               expand: (id: string) => {

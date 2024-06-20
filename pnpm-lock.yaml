@@ -12,8 +12,8 @@ dependencies:
     specifier: ^2.4.4
     version: 2.4.4
   '@frc-web-components/node-wpilib-ws':
-    specifier: ^0.1.1
-    version: 0.1.1
+    specifier: ^0.2.3
+    version: 0.2.3
   '@frc-web-components/react':
     specifier: ^0.8.3
     version: 0.8.3(@frc-web-components/fwc@2.4.4)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)
@@ -804,8 +804,8 @@ packages:
       yargs: 17.7.2
     dev: false
 
-  /@frc-web-components/node-wpilib-ws@0.1.1:
-    resolution: {integrity: sha512-up3KvLrFvXZaznUyqK85mK6MuFdWKxBLqkwk7NGVVlCwcxiG7sQtDHl+3Kxm3hqjLHLTcP3PqxO2bRLndYwWnQ==}
+  /@frc-web-components/node-wpilib-ws@0.2.3:
+    resolution: {integrity: sha512-myofKE52m1idc94Cs3O4pxYXXFGvOMpwkkJVJm4uOiS15Rky0XwYeL45UvXThHOwq7Mary/QNEyi4tycxQPUMA==}
     dependencies:
       events: 3.3.0
       ip-address: 7.1.0
