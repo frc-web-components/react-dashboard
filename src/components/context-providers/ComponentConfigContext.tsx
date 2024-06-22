@@ -1,4 +1,10 @@
-import React, { createContext, useContext, ReactNode, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import Dashboard from "@/dashboard";
 
 export interface ComponentProperty {
@@ -24,18 +30,21 @@ export interface ChildComponentConfig {
   propertyTabName?: string;
 }
 
+export interface GridGeometry {
+  defaultSize: {
+    width: number;
+    height: number;
+  };
+  minSize: {
+    width: number;
+    height: number;
+  };
+}
+
 export interface ComponentConfig {
-  dashboard: {
+  dashboard: GridGeometry & {
     name: string;
     description: string;
-    defaultSize: {
-      width: number;
-      height: number;
-    };
-    minSize: {
-      width: number;
-      height: number;
-    };
     topLevel?: boolean;
     children?: {
       type: string;

@@ -33,7 +33,7 @@ export interface Layout {
   selectedComponentId?: string;
   flexLayout: IJsonModel;
   components: {
-    [componentId: string]: Component;
+    [componentId: string]: Component | LayoutComponent;
   };
   tabs: {
     [tabId: string]: {
@@ -83,7 +83,10 @@ export const layoutSlice = createAppSlice({
     addComponent: create.reducer(
       (
         state,
-        action: PayloadAction<{ component: Component; tabId: string }>
+        action: PayloadAction<{
+          component: Component;
+          tabId: string;
+        }>
       ) => {
         const { component, tabId } = action.payload;
         const parentComponent = component.parent

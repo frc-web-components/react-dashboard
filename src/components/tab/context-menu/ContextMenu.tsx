@@ -20,6 +20,11 @@ export default function ContextMenu() {
     dispatch(clearTab({ tabId: contextMenuElement?.elementId! }));
   };
 
+  const onAddLayout = (event: React.MouseEvent) => {
+    onClose();
+    addLayout(event);
+  };
+
   return (
     <Menu
       open={!!contextMenuElement}
@@ -35,7 +40,12 @@ export default function ContextMenu() {
         />
       )}
       {contextMenuElement?.type === "TAB" && [
-        <MenuItem onClick={onClear}>Clear Layout</MenuItem>,
+        <MenuItem key="clear" onClick={onClear}>
+          Clear Layout
+        </MenuItem>,
+        <MenuItem key="add-layout" onClick={onAddLayout}>
+          Add Layout
+        </MenuItem>,
       ]}
     </Menu>
   );

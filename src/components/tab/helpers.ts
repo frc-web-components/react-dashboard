@@ -1,16 +1,14 @@
-import { ComponentConfig } from "../context-providers/ComponentConfigContext";
+import { GridGeometry } from "../context-providers/ComponentConfigContext";
 
 export function getComponentGridGeometry(
   gridElement: HTMLElement,
-  config: ComponentConfig,
+  geometry: GridGeometry,
   clientX: number,
   clientY: number,
   cellSize: number,
   cellGap: number
 ) {
-  const {
-    dashboard: { defaultSize, minSize },
-  } = config;
+  const { defaultSize, minSize } = geometry;
 
   const minWidth = Math.ceil(minSize.width / cellSize);
   const minHeight = Math.ceil(minSize.height / cellSize);

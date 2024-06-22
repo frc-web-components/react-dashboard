@@ -76,6 +76,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   booleanBox,
   camera,
   checkboxGroup,
+  container,
   robotCommand,
   robotSubsystem,
   field,

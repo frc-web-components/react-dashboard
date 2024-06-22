@@ -118,7 +118,7 @@ function Tab({ tabId }: Props) {
       maxX = Math.max(x, maxX);
     });
     return maxX;
-  }, [gridLayout]);
+  }, [cellGap, cellSize, gridLayout]);
 
   const addComponentToTab = useCallback(
     (
@@ -202,7 +202,47 @@ function Tab({ tabId }: Props) {
         });
       }
     },
-    [gridElement, componentGrid, sourceGrid, cellSize, cellGap]
+    [gridElement, cellSize, cellGap, dispatch, tabId, components]
+  );
+
+  const addContainerComponentToTab = useCallback(
+    (e: React.MouseEvent) => {
+      if (!gridElement) return;
+      const parentId = uuidv4();
+      const config: GridGeometry = {
+        defaultSize: {
+          width: 3,
+          height: 2,
+        },
+        minSize: {
+          width: 1,
+          height: 1,
+        },
+      };
+      const layoutGridGeometry = getComponentGridGeometry(
+        gridElement,
+        config,
+        e.clientX,
+        e.clientY,
+        cellSize,
+        cellGap
+      );
+
+      dispatch(
+        addComponent({
+          tabId,
+          component: {
+            id: parentId,
+            children: [],
+            properties: {},
+            type: "container",
+            name: "layout name",
+            ...layoutGridGeometry,
+          },
+        })
+      );
+    },
+    [cellGap, cellSize, dispatch, gridElement, tabId]
   );
 
   useEffect(() => {
@@ -271,7 +311,7 @@ function Tab({ tabId }: Props) {
         }
       }}
     >
-      <ContextMenu />
+      <ContextMenu addLayout={addContainerComponentToTab} />
       <GridLayout
         style={{
           height: "100%",
