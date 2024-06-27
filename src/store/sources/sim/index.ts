@@ -2,9 +2,21 @@ import { PropertyType } from "@store/slices/sourceSlice";
 import SourceProvider from "../source-provider";
 import {
   WPILibWebSocketClient,
+  AccelPayload,
   DriverStationPayload,
   AddressableLEDPayload,
 } from "@frc-web-components/node-wpilib-ws";
+
+const accelTypes: Record<
+  keyof AccelPayload,
+  { defaultValue: unknown; type: PropertyType }
+> = {
+  "<init": { defaultValue: false, type: "Boolean" },
+  "<range": { defaultValue: 0, type: "Number" },
+  ">x": { defaultValue: 0, type: "Number" },
+  ">y": { defaultValue: 0, type: "Number" },
+  ">z": { defaultValue: 0, type: "Number" },
+};
 
 const dsTypes: Record<
   keyof DriverStationPayload,
@@ -41,20 +53,24 @@ export class SimProvider extends SourceProvider {
 
     this.#client.start();
 
-    this.updateDisplayType("/DriverStation", "DriverStation");
+    // Accel
+    this.#client.addListener(
+      "accelEvent",
+      (deviceName, deviceChannel, payload) => {
+        let key = `/Accel/${deviceName}`;
+        if (typeof deviceChannel === "number") {
+          key += `[${deviceChannel}]`;
+        }
+        this.updateDisplayType(key, "Accelerometer");
 
-    Object.entries(dsTypes).forEach(([prop, { type, defaultValue }]) => {
-      this.update(`/DriverStation/${prop}`, defaultValue, type, type);
-      this.updateDisplayType(`/DriverStation/${prop}`, type);
-    });
+        Object.entries(payload).forEach(([payloadProp, value]) => {
+          const { type } = accelTypes[payloadProp as keyof AccelPayload];
+          this.update(`${key}/${payloadProp}`, value, type, type);
+        });
+      }
+    );
 
-    this.#client.addListener("driverStationEvent", (payload) => {
-      Object.entries(payload).forEach(([payloadProp, value]) => {
-        const { type } = dsTypes[payloadProp as keyof DriverStationPayload];
-        this.update(`/DriverStation/${payloadProp}`, value, type, type);
-      });
-    });
-
+    // LEDs
     this.updateDisplayType("/AddressableLED", "AddressableLED");
 
     Object.entries(ledTypes).forEach(([prop, { type, defaultValue }]) => {
@@ -66,6 +82,21 @@ export class SimProvider extends SourceProvider {
       Object.entries(payload).forEach(([payloadProp, value]) => {
         const { type } = ledTypes[payloadProp as keyof AddressableLEDPayload];
         this.update(`/AddressableLED/${payloadProp}`, value, type, type);
+      });
+    });
+
+    // Driverstation
+    this.updateDisplayType("/DriverStation", "DriverStation");
+
+    Object.entries(dsTypes).forEach(([prop, { type, defaultValue }]) => {
+      this.update(`/DriverStation/${prop}`, defaultValue, type, type);
+      this.updateDisplayType(`/DriverStation/${prop}`, type);
+    });
+
+    this.#client.addListener("driverStationEvent", (payload) => {
+      Object.entries(payload).forEach(([payloadProp, value]) => {
+        const { type } = dsTypes[payloadProp as keyof DriverStationPayload];
+        this.update(`/DriverStation/${payloadProp}`, value, type, type);
       });
     });
   }
