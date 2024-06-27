@@ -1,11 +1,10 @@
 import camelCase from "lodash.camelcase";
 import { memoizeWithArgs } from "proxy-memoize";
 import { RootState, store } from "../app/store";
-import { SourceInfo } from "@components/context-providers/SourceProviderContext";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Source } from "../slices/sourceSlice";
 import { Component } from "../slices/layoutSlice";
-import { useComponentConfigs } from "@components/context-providers/ComponentConfigContext";
+import { useComponentConfigs, SourceInfo } from "@/dashboard";
 
 export function useComponentPropertyValues(componentId: string) {
   const prevComponent = useRef<Component>();
@@ -15,7 +14,7 @@ export function useComponentPropertyValues(componentId: string) {
   const prevParentValue = useRef<unknown>();
   const prevMatchingSources = useRef<Record<string, Source | undefined>>({});
   const prevMatchingSourceValues = useRef<Record<string, unknown>>({});
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
 
   const [propValues, setPropValues] = useState<
     Record<
@@ -207,9 +206,9 @@ export function useComponentPropertyValues(componentId: string) {
           } else {
             propertyValues[name] = {
               value:
-              "temporaryValue" in property
-                ? property.temporaryValue
-                : defaultValue,
+                "temporaryValue" in property
+                  ? property.temporaryValue
+                  : defaultValue,
               sourceInfo: {
                 type: "defaultValue",
               },

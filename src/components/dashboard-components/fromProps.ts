@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
-import { ComponentProperty } from "@components/context-providers/ComponentConfigContext";
-import { ComponentConfig } from "@components/context-providers/ComponentConfigContext";
+import { ComponentProperty, ComponentConfig } from "@/dashboard";
 
 type BaseProp<T> = {
   defaultValue: T;

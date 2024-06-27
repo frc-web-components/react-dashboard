@@ -1,6 +1,5 @@
 import StrictEventEmitter from "strict-event-emitter-types";
 import { EventEmitter } from "events";
-import { ComponentConfig } from "@context-providers/ComponentConfigContext";
 import { store } from "@store/app/store";
 import {
   Layout,
@@ -12,6 +11,85 @@ import {
 import exampleLayout from "./example-layouts/example";
 import { v4 as uuidv4 } from "uuid";
 import { IJsonRowNode, IJsonTabNode, IJsonTabSetNode } from "flexlayout-react";
+import { atom, getDefaultStore, useAtom } from "jotai";
+import SourceProvider from "@store/sources/source-provider";
+import {
+  selectSource,
+  selectSourceValue,
+} from "@store/selectors/sourceSelectors";
+
+export type SourceInfo =
+  | {
+      type: "source";
+      source: {
+        provider: string;
+        key: string;
+      };
+    }
+  | {
+      type: "sourceProperty";
+      source: {
+        provider: string;
+        key: string;
+        property: string;
+      };
+    }
+  | {
+      type: "defaultValue";
+    };
+
+export interface ComponentProperty {
+  type:
+    | "Number"
+    | "String"
+    | "Boolean"
+    | "Object"
+    | "Number[]"
+    | "String[]"
+    | "Boolean[]"
+    | "Object[]";
+  defaultValue: unknown;
+  input?: {
+    type: string;
+    [props: string]: unknown;
+  };
+  tooltip?: string;
+}
+
+export interface ChildComponentConfig {
+  type: string;
+  propertyTabName?: string;
+}
+
+export interface ComponentConfig {
+  dashboard: {
+    name: string;
+    description: string;
+    defaultSize: {
+      width: number;
+      height: number;
+    };
+    minSize: {
+      width: number;
+      height: number;
+    };
+    topLevel?: boolean;
+    children?: {
+      type: string;
+      name: string;
+      properties?: Record<string, unknown>;
+    }[];
+  };
+  defaultSource?: {
+    key: string;
+    provider: string;
+  };
+  acceptedSourceTypes?: string[];
+  primaryProperty?: string;
+  properties: Record<string, ComponentProperty>;
+  component: React.ComponentType<any>;
+  children?: ChildComponentConfig[];
+}
 
 interface DashboardEvents {
   addComponentsEvent: (components: Record<string, ComponentConfig>) => void;
@@ -45,8 +123,12 @@ export interface Plugin {
   version: string;
   location: string;
 }
+
+const dashboardAtom = atom<Dashboard | undefined>(undefined);
+const componentsAtom = atom<Record<string, ComponentConfig>>({});
+const sourceProviderAtom = atom<Record<string, SourceProvider>>({});
+
 export default class Dashboard extends (EventEmitter as unknown as new () => DashboardEventEmitter) {
-  #components: Record<string, ComponentConfig> = {};
   #loadedPlugins: Plugin[] = [];
   #title = "Untitled Dashboard";
   #exampleDashboards: {
@@ -56,6 +138,12 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
     { name: "Example", layout: exampleLayout },
     { name: "Example 2", layout: exampleLayout },
   ];
+  #store = getDefaultStore();
+
+  constructor() {
+    super();
+    this.#store.set(dashboardAtom, this);
+  }
 
   setTitle(title: string) {
     this.#title = title;
@@ -67,15 +155,17 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
   }
 
   addComponents(components: Record<string, ComponentConfig>) {
-    this.#components = {
-      ...this.#components,
-      ...components,
-    };
-    this.emit("addComponentsEvent", components);
+    this.#store.set(componentsAtom, (value) => {
+      return {
+        ...value,
+        ...components,
+      };
+    });
+    this.emit("addComponentsEvent", this.#store.get(componentsAtom));
   }
 
   getComponents() {
-    return this.#components;
+    return this.#store.get(componentsAtom);
   }
 
   getLayout(): Layout {
@@ -114,9 +204,12 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
     store.dispatch(addTab(name));
   }
 
-  #findTabByName(name: string, node: IJsonRowNode | IJsonTabSetNode): IJsonTabNode | undefined {
-    if (node.type === 'tabset') {
-      return node.children.find(childTab => childTab.name === name);
+  #findTabByName(
+    name: string,
+    node: IJsonRowNode | IJsonTabSetNode
+  ): IJsonTabNode | undefined {
+    if (node.type === "tabset") {
+      return node.children.find((childTab) => childTab.name === name);
     }
     for (const child of node.children) {
       const tab = this.#findTabByName(name, child);
@@ -155,7 +248,7 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
     }
   ) {
     const { type, name, properties, size, position } = element;
-    const componentConfig = this.#components[type];
+    const componentConfig = this.getComponents()[type];
     const tab = this.getTab(tabName);
     if (!componentConfig || !tab) {
       return;
@@ -193,4 +286,64 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
       })
     );
   }
+
+  addSourceProvider(name: string, provider: SourceProvider) {
+    this.#store.set(sourceProviderAtom, (value) => ({
+      ...value,
+      [name]: provider,
+    }));
+  }
 }
+
+const setSourceValue = (value: unknown, sourceInfo: SourceInfo) => {
+  const providers = getDefaultStore().get(sourceProviderAtom);
+  if (sourceInfo.type === "source") {
+    const source = selectSource(
+      store.getState(),
+      sourceInfo.source.provider,
+      sourceInfo.source.key
+    )!;
+    const provider = providers[sourceInfo.source.provider];
+    if (provider) {
+      provider.componentUpdate(sourceInfo.source.key, value, source.type!);
+    }
+  } else if (sourceInfo.type === "sourceProperty") {
+    const source = selectSource(
+      store.getState(),
+      sourceInfo.source.provider,
+      sourceInfo.source.key
+    )!;
+    const sourceValue = selectSourceValue(
+      store.getState(),
+      sourceInfo.source.provider,
+      sourceInfo.source.key
+    );
+    const provider = providers[sourceInfo.source.provider];
+    if (provider) {
+      const property = sourceInfo.source.property;
+      const newValue = {
+        ...(sourceValue as any),
+        [property]: value,
+      };
+      provider.componentUpdate(sourceInfo.source.key, newValue, source.type!);
+    }
+  }
+};
+
+export const useDashboard = () => {
+  const [dashboard] = useAtom(dashboardAtom);
+  if (!dashboard) {
+    throw new Error("Dashboard not set");
+  }
+  return dashboard;
+};
+
+export const useComponentConfigs = () => useAtom(componentsAtom);
+
+export const useSourceProvider = () => {
+  const [providers] = useAtom(sourceProviderAtom);
+  return {
+    providers,
+    setSourceValue,
+  };
+};

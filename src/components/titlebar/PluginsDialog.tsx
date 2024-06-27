@@ -5,8 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { ColDef } from "ag-grid-community";
 import { AgGridReact, CustomCellRendererProps } from "ag-grid-react";
-import { Plugin } from "@/dashboard";
-import { useDashboard } from "@context-providers/DashboardContext";
+import { Plugin, useDashboard } from "@/dashboard";
 import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -82,7 +81,7 @@ const columnDefs: ColDef[] = [
 ];
 
 export default function PluginsDialog({ open, onClose }: Props) {
-  const { dashboard } = useDashboard();
+  const dashboard = useDashboard();
   const [loadedPlugins, setLoadedPlugins] = useState<Plugin[]>(
     dashboard.getLoadedPlugins()
   );

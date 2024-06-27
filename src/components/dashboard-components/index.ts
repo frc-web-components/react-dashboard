@@ -1,4 +1,4 @@
-import { ComponentConfig } from "@components/context-providers/ComponentConfigContext";
+import { ComponentConfig } from "@/dashboard";
 import { BasicFmsInfo, Gyro } from "@frc-web-components/react";
 import { camera } from "./Camera";
 import { markdownViewer } from "./MarkdownViewer";
@@ -29,6 +29,7 @@ import { pidCommand, pidController, profiledPidController } from "./Pid";
 import { preferences } from './Preferences';
 import { toggleButton, toggleGroup } from "./ToggleButton";
 import { sendableChooser } from './Dropdowns';
+import { simComponents } from "./sim";
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -103,6 +104,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   threeAxisAccelerometer,
   accelerometer,
   voltageView,
+  ...simComponents,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);

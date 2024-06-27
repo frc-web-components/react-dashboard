@@ -63,7 +63,7 @@ class ShuffleboardLayout {
       const metadata = sourceTree.childrenSources[".metadata"];
       if (metadata) {
         const tabsNames =
-          (metadata?.childrenSources?.["Tabs"].value as string[]) ?? [];
+          (metadata?.childrenSources?.["Tabs"]?.value as string[]) ?? [];
         tabsNames.forEach((tabName) => {
           shuffleboard.tabs.push(this.#getTab(tabName, sourceTree, metadata));
         });

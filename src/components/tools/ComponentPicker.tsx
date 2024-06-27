@@ -5,10 +5,7 @@ import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridReact } from "ag-grid-react";
 import { useMemo, useState } from "react";
 import { useDropZone } from "@context-providers/DropZoneContext";
-import {
-  ComponentConfig,
-  useComponentConfigs,
-} from "@context-providers/ComponentConfigContext";
+import { ComponentConfig, useComponentConfigs } from "@/dashboard";
 
 export interface ComponentListItem {
   config: ComponentConfig;
@@ -32,7 +29,7 @@ const defaultColumnDefs: ColDef[] = [
 
 function ComponentPicker() {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const { setComponentGrid } = useDropZone();
 
   const rowData = useMemo(() => {

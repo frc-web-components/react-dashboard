@@ -21,10 +21,7 @@ import {
 } from "@store/selectors/layoutSelectors";
 import { useDropZone } from "@context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
-import {
-  ComponentConfig,
-  useComponentConfigs,
-} from "@context-providers/ComponentConfigContext";
+import { ComponentConfig, useComponentConfigs } from "@/dashboard";
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "../tools/ComponentPicker";
 import TabComponent from "./TabComponent";
@@ -34,6 +31,16 @@ import { getContextMenuPosition } from "./context-menu/useContextMenu";
 import ContextMenu from "./context-menu/ContextMenu";
 import { DELETE_KEYS } from "./constants";
 import { Paper } from "@mui/material";
+
+type AddComponentToTabFunction = (
+  config: ComponentConfig,
+  type: string,
+  event: MouseEvent,
+  source?: {
+    provider: string;
+    key: string;
+  }
+) => void;
 
 export const getComponentsWithDisplayType = (
   type: string,
@@ -73,7 +80,7 @@ function Tab({ tabId }: Props) {
   const layoutComponents = useAppSelector((state) =>
     selectTabComponents(state, tabId)
   );
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const componentsRef = useRef(components);
   const editing = useAppSelector(selectEditing);
   const { componentGrid, sourceGrid } = useDropZone(); // Use the context
@@ -81,6 +88,7 @@ function Tab({ tabId }: Props) {
   const cellSize = useAppSelector(selectGridSize);
   const cellGap = useAppSelector(selectGridGap);
   const gridPadding = useAppSelector(selectGridPadding);
+  const addComponentToTabRef = useRef<AddComponentToTabFunction>();
 
   useEffect(() => {
     componentsRef.current = components;
@@ -211,6 +219,10 @@ function Tab({ tabId }: Props) {
   );
 
   useEffect(() => {
+    addComponentToTabRef.current = addComponentToTab;
+  }, [addComponentToTab]);
+
+  useEffect(() => {
     if (componentGrid && gridElement) {
       const dropZoneParms: RowDropZoneParams = {
         getContainer() {
@@ -220,7 +232,7 @@ function Tab({ tabId }: Props) {
           if (!node.data) {
             return;
           }
-          addComponentToTab(node.data.config, node.data.type, event);
+          addComponentToTabRef.current?.(node.data.config, node.data.type, event);
         },
       };
       componentGrid.addRowDropZone(dropZoneParms);
@@ -241,9 +253,10 @@ function Tab({ tabId }: Props) {
             node.data.metadata?.displayType ?? "",
             componentsRef.current
           );
+
           if (componentsWithDisplayType.length > 0) {
             const [{ type, config }] = componentsWithDisplayType;
-            addComponentToTab(config, type, event, node.data.source);
+            addComponentToTabRef.current?.(config, type, event, node.data.source);
           }
         },
       };

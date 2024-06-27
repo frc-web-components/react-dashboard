@@ -27,6 +27,7 @@
   "dependencies": {
     "@emotion/styled": "^11.11.5",
     "@frc-web-components/fwc": "^2.4.4",
+    "@frc-web-components/node-wpilib-ws": "^0.2.3",
     "@frc-web-components/react": "^0.8.3",
     "@mui/icons-material": "^5.15.17",
     "@mui/material": "^5.15.17",
@@ -40,6 +41,7 @@
     "classnames": "^2.5.1",
     "events": "^3.3.0",
     "flexlayout-react": "^0.7.15",
+    "jotai": "^2.8.3",
     "lodash.camelcase": "^4.3.0",
     "mui-nested-menu": "^3.4.0",
     "protobufjs": "^7.2.6",

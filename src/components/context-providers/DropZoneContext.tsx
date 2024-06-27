@@ -1,7 +1,7 @@
 import { GridApi } from "ag-grid-community";
 import React, { createContext, useContext, ReactNode, useState } from "react";
 import { SourceData } from "../tools/editor/sources/Sources";
-import { ComponentConfig } from "./ComponentConfigContext";
+import { ComponentConfig } from "@/dashboard";
 
 // Interface for the context value
 interface DropZoneContextType {

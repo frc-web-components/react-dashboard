@@ -11,7 +11,7 @@ import {
   makeSelectSelectedComponentChildren,
   selectComponent,
 } from "@store/selectors/layoutSelectors";
-import { useComponentConfigs } from "@context-providers/ComponentConfigContext";
+import { useComponentConfigs } from "@/dashboard";
 import { addComponent, removeComponent } from "@store/slices/layoutSlice";
 import { v4 as uuidv4 } from "uuid";
 import Tooltip from "@mui/material/Tooltip";
@@ -38,7 +38,7 @@ export const ParentActionsCellRenderer = (
     selectComponent(state, data?.componentId)
   );
   const isSelectedComponent = selectedComponent?.id === data?.componentId;
-  const { components } = useComponentConfigs();
+  const [components] = useComponentConfigs();
   const childCount = useMemo(() => {
     if (!component || !selectedComponentChildren) {
       return 0;
