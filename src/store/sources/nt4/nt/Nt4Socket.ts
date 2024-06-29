@@ -1,6 +1,7 @@
 import EventEmitter from "events";
 import StrictEventEmitter from "strict-event-emitter-types";
 import { getRobotAddresses } from "./utils";
+import ReconnectingNt4Socket from "./ReconnectingNt4Socket";
 
 type ConnectionStatus =
   | "CONNECTING"
@@ -26,13 +27,12 @@ export type Nt4SocketEventEmitter = StrictEventEmitter<
 >;
 
 export class Nt4Socket extends (EventEmitter as unknown as new () => Nt4SocketEventEmitter) {
-  #sockets: { [address: string]: WebSocket } = {};
+  #sockets: { [address: string]: ReconnectingNt4Socket } = {};
   #connectedSocketAddress?: string;
   #address = "localhost";
   #connectionStatus: ConnectionStatus = "DISCONNECTED";
   #reconnect = false;
   #appName: string;
-  #clientIdx = 0;
 
   constructor(appName: string) {
     super();
@@ -64,7 +64,7 @@ export class Nt4Socket extends (EventEmitter as unknown as new () => Nt4SocketEv
       if (this.#connectedSocketAddress === address) {
         this.#connectedSocketAddress = undefined;
         this.#cleanupSockets();
-        this.#connectionStatus = 'DISCONNECTED';
+        this.#connectionStatus = "DISCONNECTED";
         this.emit("disconnected", ev);
         if (this.#reconnect) {
           this.connect();
@@ -75,24 +75,36 @@ export class Nt4Socket extends (EventEmitter as unknown as new () => Nt4SocketEv
     this.on("socketInstanceError", (address) => {
       if (this.#connectedSocketAddress === address) {
         this.emit("error");
+        this.#connectedSocketAddress = undefined;
+        this.#cleanupSockets();
+        this.#connectionStatus = "DISCONNECTED";
+        if (this.#reconnect) {
+          this.connect();
+        }
       }
     });
   }
 
+  get #connectedSocket() {
+    if (!this.#connectedSocketAddress) {
+      return;
+    }
+    return this.#sockets[this.#connectedSocketAddress];
+  }
+
   isConnected() {
-    return this.#connectionStatus === 'CONNECTED';
+    return this.#connectionStatus === "CONNECTED";
   }
 
   getClientIdx() {
-    return this.#clientIdx;
+    return this.#connectedSocket?.getClientIdx() ?? 0;
   }
 
   send(data: string | ArrayBufferLike | Blob | ArrayBufferView) {
     if (!this.isConnected()) {
       return;
     }
-    const socket = this.#sockets[this.#connectedSocketAddress!];
-    socket.send(data);
+    this.#connectedSocket?.send(data);
   }
 
   setAddress(address: string) {
@@ -113,7 +125,7 @@ export class Nt4Socket extends (EventEmitter as unknown as new () => Nt4SocketEv
         this.#connectionStatus !== "CONNECTING")
     ) {
       this.#updateSockets();
-      this.#connectionStatus === "CONNECTING";
+      this.#connectionStatus = "CONNECTING";
     }
   }
 
@@ -122,23 +134,18 @@ export class Nt4Socket extends (EventEmitter as unknown as new () => Nt4SocketEv
     Object.values(this.#sockets).forEach((socket) => {
       socket.close();
     });
-    this.#connectionStatus === 'DISCONNECTING';
+    this.#connectionStatus === "DISCONNECTING";
   }
 
   #cleanupSockets() {
     // disconnect and clean up current sockets
     Object.values(this.#sockets).forEach((socket) => {
-      socket.onclose = null;
-      socket.onopen = null;
-      socket.onmessage = null;
-      socket.onerror = null;
       socket.close();
     });
     this.#sockets = {};
   }
 
   #updateSockets() {
-    this.#clientIdx = Math.floor(Math.random() * 99999999);
     this.#cleanupSockets();
     const addresses = getRobotAddresses(this.#address);
 
@@ -148,14 +155,17 @@ export class Nt4Socket extends (EventEmitter as unknown as new () => Nt4SocketEv
   }
 
   #createSocket(baseAddress: string) {
-    const address = `ws://${baseAddress}:5810/nt/${this.#appName}_${this.#clientIdx.toString()}`;
-    const socket = new WebSocket(address, "networktables.first.wpi.edu");
-    socket.binaryType = 'arraybuffer';
-    socket.onopen = () => this.emit("socketInstanceConnected", address);
-    socket.onclose = (ev) =>
-      this.emit("socketInstanceDisconnected", address, ev);
-    socket.onerror = () => this.emit("socketInstanceError", address);
-    socket.onmessage = ev => this.emit("socketInstanceMessage", address, ev);
-    this.#sockets[address] = socket;
+    const socket = new ReconnectingNt4Socket(baseAddress, this.#appName);
+    socket.on("connected", () =>
+      this.emit("socketInstanceConnected", baseAddress)
+    );
+    socket.on("disconnected", (ev) => {
+      this.emit("socketInstanceDisconnected", baseAddress, ev);
+    });
+    socket.on("error", () => this.emit("socketInstanceError", baseAddress));
+    socket.on("message", (ev) => {
+      this.emit("socketInstanceMessage", baseAddress, ev);
+    });
+    this.#sockets[baseAddress] = socket;
   }
 }

@@ -86,7 +86,7 @@ export class NT4_Topic {
   }
 }
 
-export class NT4_Client {
+export class Nt4Client {
   private onTopicAnnounce: (topic: NT4_Topic) => void;
   private onTopicUnannounce: (topic: NT4_Topic) => void;
   private onNewTopicData: (
