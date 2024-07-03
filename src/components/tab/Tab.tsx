@@ -232,7 +232,11 @@ function Tab({ tabId }: Props) {
           if (!node.data) {
             return;
           }
-          addComponentToTabRef.current?.(node.data.config, node.data.type, event);
+          addComponentToTabRef.current?.(
+            node.data.config,
+            node.data.type,
+            event
+          );
         },
       };
       componentGrid.addRowDropZone(dropZoneParms);
@@ -256,7 +260,12 @@ function Tab({ tabId }: Props) {
 
           if (componentsWithDisplayType.length > 0) {
             const [{ type, config }] = componentsWithDisplayType;
-            addComponentToTabRef.current?.(config, type, event, node.data.source);
+            addComponentToTabRef.current?.(
+              config,
+              type,
+              event,
+              node.data.source
+            );
           }
         },
       };
