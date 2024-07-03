@@ -215,7 +215,7 @@ function Tab({ tabId }: Props) {
         });
       }
     },
-    [gridElement, componentGrid, sourceGrid, cellSize, cellGap]
+    [gridElement, cellSize, cellGap, dispatch, tabId, components]
   );
 
   useEffect(() => {

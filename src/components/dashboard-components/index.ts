@@ -90,6 +90,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   gauge,
   icon,
   label,
+  layoutComponent,
   numberLabel,
   mechanism2d,
   networkAlerts,
