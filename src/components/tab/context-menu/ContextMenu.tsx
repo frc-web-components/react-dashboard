@@ -8,7 +8,10 @@ import {
 import ElementMenu from "./ElementMenu";
 import { clearTab } from "@store/slices/layoutSlice";
 
-export default function ContextMenu() {
+interface ContextMenuProps {
+  addLayout: (e: React.MouseEvent) => void;
+}
+export default function ContextMenu({ addLayout }: ContextMenuProps) {
   const contextMenuElement = useAppSelector(selectConextMenuElement);
   const dispatch = useAppDispatch();
 

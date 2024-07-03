@@ -68,7 +68,6 @@ export default function ElementMenu({ onClose, open, componentId }: Props) {
 
   return [
     <MenuItem disabled>{selectedComponent?.name}</MenuItem>,
-    <Divider />,
     <MenuItem onClick={remove}>Remove</MenuItem>,
     componentsWithDisplayType.length > 1 && (
       <NestedMenuItem label="Show As..." parentMenuOpen={open}>

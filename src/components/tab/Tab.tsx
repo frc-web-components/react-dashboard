@@ -3,7 +3,13 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import classNames from "classnames";
 import Styles from "./Tab.module.scss";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useAppDispatch, useAppSelector } from "@store/app/hooks";
 import {
   setSelectedComponent,
@@ -22,6 +28,10 @@ import {
 import { useDropZone } from "@context-providers/DropZoneContext";
 import { RowDropZoneParams, RowDragEndEvent } from "ag-grid-community";
 import { ComponentConfig, useComponentConfigs } from "@/dashboard";
+import {
+  ComponentConfig,
+  useComponentConfigs,
+} from "@context-providers/ComponentConfigContext";
 import { v4 as uuidv4 } from "uuid";
 import { ComponentListItem } from "../tools/ComponentPicker";
 import TabComponent from "./TabComponent";
@@ -116,7 +126,7 @@ function Tab({ tabId }: Props) {
       ...item,
       static: !editing,
     }));
-  }, [layoutComponents, editing]);
+  }, [layoutComponents, components, editing]);
 
   const minWidth = useMemo(() => {
     let maxX = 0;
@@ -125,7 +135,7 @@ function Tab({ tabId }: Props) {
       maxX = Math.max(x, maxX);
     });
     return maxX;
-  }, [gridLayout]);
+  }, [cellGap, cellSize, gridLayout]);
 
   const addComponentToTab = useCallback(
     (
@@ -146,12 +156,13 @@ function Tab({ tabId }: Props) {
         properties,
       } = config;
 
-      const { clientX, clientY } = event;
-      const minWidth = Math.ceil(minSize.width / cellSize);
-      const minHeight = Math.ceil(minSize.height / cellSize);
-      const width = Math.max(
-        minWidth,
-        Math.round(defaultSize.width / cellSize)
+      const componentGeometry = getComponentGridGeometry(
+        gridElement,
+        config.dashboard,
+        event.clientX,
+        event.clientY,
+        cellSize,
+        cellGap
       );
       const height = Math.max(
         minHeight,
@@ -232,7 +243,11 @@ function Tab({ tabId }: Props) {
           if (!node.data) {
             return;
           }
-          addComponentToTabRef.current?.(node.data.config, node.data.type, event);
+          addComponentToTabRef.current?.(
+            node.data.config,
+            node.data.type,
+            event
+          );
         },
       };
       componentGrid.addRowDropZone(dropZoneParms);
@@ -256,7 +271,12 @@ function Tab({ tabId }: Props) {
 
           if (componentsWithDisplayType.length > 0) {
             const [{ type, config }] = componentsWithDisplayType;
-            addComponentToTabRef.current?.(config, type, event, node.data.source);
+            addComponentToTabRef.current?.(
+              config,
+              type,
+              event,
+              node.data.source
+            );
           }
         },
       };

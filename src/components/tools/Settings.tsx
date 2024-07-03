@@ -8,8 +8,16 @@ import NumberInput from "../shared/number-input/NumberInput";
 import { useSourceProvider } from "@/dashboard";
 import { NT4Provider } from "@store/sources/nt4";
 import { useAppDispatch, useAppSelector } from "@store/app/hooks";
-import { selectGridGap, selectGridSize, selectGridPadding } from "@store/selectors/layoutSelectors";
-import { setGridGap, setGridSize, setGridPadding } from "@store/slices/layoutSlice";
+import {
+  selectGridGap,
+  selectGridSize,
+  selectGridPadding,
+} from "@store/selectors/layoutSelectors";
+import {
+  setGridGap,
+  setGridSize,
+  setGridPadding,
+} from "@store/slices/layoutSlice";
 
 const addressOptions = ["localhost"];
 const themeOptions = [{ label: "dark" }, { label: "light" }];

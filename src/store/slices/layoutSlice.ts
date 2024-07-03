@@ -4,8 +4,10 @@ import { layoutJson as defaultLayoutJson } from "./layout";
 import { IJsonModel, IJsonRowNode, IJsonTabSetNode } from "flexlayout-react";
 import { v4 as uuidv4 } from "uuid";
 
-function findTabset(node: IJsonRowNode | IJsonTabSetNode): IJsonTabSetNode | undefined {
-  if (node.type === 'tabset') {
+function findTabset(
+  node: IJsonRowNode | IJsonTabSetNode
+): IJsonTabSetNode | undefined {
+  if (node.type === "tabset") {
     return node;
   }
   for (const child of node.children) {
@@ -41,6 +43,8 @@ export interface Component {
   parent?: string;
   children: string[];
 }
+
+export type LayoutComponent = Omit<Component, "properties" | "source">;
 
 export interface Layout {
   selectedComponentId?: string;
@@ -288,7 +292,7 @@ export const layoutSlice = createAppSlice({
         });
       }
     }),
-  })
+  }),
 });
 
 // Action creators are generated for each case reducer function.
