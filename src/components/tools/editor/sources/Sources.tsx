@@ -11,7 +11,7 @@ import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useDropZone } from "@context-providers/DropZoneContext";
 import { useAppSelector } from "@store/app/hooks";
 import {
-  makeSelectSourceTreePreview,
+  makeSelectSourceTreeMetadata,
   SourceTreePreview,
   selectSourceValue,
 } from "@store/selectors/sourceSelectors";
@@ -210,9 +210,9 @@ function Sources() {
   const { providers } = useSourceProvider();
   const providerNames = Object.keys(providers);
   const [selectedProvider, setSelectedProvider] = useState("NT");
-  const selectSourceTreePreview = useMemo(makeSelectSourceTreePreview, []);
+  const selectSourceTreeMetadata = useMemo(makeSelectSourceTreeMetadata, []);
   const sourceTree = useAppSelector((state) =>
-    selectSourceTreePreview(state, selectedProvider, "")
+    selectSourceTreeMetadata(state, selectedProvider, "")
   );
 
   const [expandedSources, setExpandedSources] = useState<string[]>([]);

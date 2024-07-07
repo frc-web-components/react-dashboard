@@ -1,7 +1,8 @@
 import { RootState, store } from "../app/store";
 import { createSelector } from "@reduxjs/toolkit";
 import { Source, SourceMetadata } from "../slices/sourceSlice";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useAppSelector } from "../app/hooks";
 
 export const selectSources = (state: RootState) => state.source.sources;
 
@@ -10,6 +11,17 @@ export const selectProviderSources = (state: RootState, provider?: string) =>
 
 export const selectProviderMetadata = (state: RootState, provider?: string) =>
   typeof provider === "undefined" ? undefined : state.source.metadata[provider];
+
+export const selectSourceUpdate = (
+  state: RootState,
+  provider?: string,
+  key?: string
+) => {
+  if (typeof provider === "undefined" || typeof key === "undefined") {
+    return undefined;
+  }
+  return state.source.sourceUpdates?.[provider]?.[key];
+};
 
 export const selectConnectionStatus = (state: RootState) =>
   state.source.connectionStatus;
@@ -59,74 +71,17 @@ export interface SourceTreePreview extends Source {
   metadata?: SourceMetadata;
 }
 
-export function useSourceTree(provider?: string, key?: string) {
-  const prevSources = useRef<Record<string, Source>>({});
-  const prevValues = useRef<Record<string, unknown>>({});
+const selectSourceTree = makeSelectSourceTree();
 
+export function useSourceTree(provider?: string, key?: string) {
+  const update = useAppSelector((state) =>
+    selectSourceUpdate(state, provider, key)
+  );
   const [tree, setTree] = useState<SourceTree>();
 
-  const getTree = useCallback((sourceKey: string): SourceTree => {
-    const source = prevSources.current[sourceKey];
-    const value = prevValues.current[sourceKey];
-    const childrenSources: Record<string, SourceTree> = {};
-    source.children.forEach((key) => {
-      const childSource = prevSources.current[key];
-      childrenSources[childSource.name] = getTree(key);
-    });
-    return {
-      ...source,
-      value,
-      childrenSources,
-    };
-  }, []);
-
-  const updateRefs = useCallback(() => {
-    const sourceState = store.getState().source;
-    const newValues = provider ? sourceState.sourceValues[provider] ?? {} : {};
-    const newSources = provider ? sourceState.sources[provider] ?? {} : {};
-    const newKeys = Object.keys(newSources).filter(
-      (k) => k === key || k.startsWith(key + "/")
-    );
-
-    const prevKeys = new Set(Object.keys(prevSources.current));
-
-    let hasChanged = false;
-    for (const newKey of newKeys) {
-      prevKeys.delete(newKey);
-      if (
-        newValues[newKey] !== prevValues.current[newKey] ||
-        newSources[newKey] !== prevSources.current[newKey]
-      ) {
-        hasChanged = true;
-        break;
-      }
-    }
-
-    if (prevKeys.size > 0) {
-      hasChanged = true;
-    }
-
-    if (hasChanged) {
-      const sources: Record<string, Source> = {};
-      const values: Record<string, unknown> = {};
-      newKeys.forEach((newKey) => {
-        sources[newKey] = newSources[newKey];
-        values[newKey] = newValues[newKey];
-      });
-      prevSources.current = sources;
-      prevValues.current = values;
-
-      setTree(key ? getTree(key) : undefined);
-    }
-  }, [provider, key]);
-
   useEffect(() => {
-    const unsubscribe = store.subscribe(() => {
-      updateRefs();
-    });
-    updateRefs();
-    return unsubscribe;
-  }, [provider, key]);
+    setTree(selectSourceTree(store.getState(), provider, key));
+  }, [update, provider, key]);
 
   return tree;
 }
@@ -159,7 +114,7 @@ export function makeSelectSourceTree() {
   );
 }
 
-export function makeSelectSourceTreePreview() {
+export function makeSelectSourceTreeMetadata() {
   return createSelector(
     [selectProviderSources, selectSource, selectProviderMetadata],
     (sources, source, metadata) => {
