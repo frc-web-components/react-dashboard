@@ -1,7 +1,7 @@
 import { PropertyType } from "../../slices/sourceSlice";
 import StructDecoder from "./StructDecoder";
 import SourceProvider from "../source-provider";
-import { Nt4Client, NT4_Topic } from "./nt/NT4";
+import { Nt4Client, NT4_Topic } from "./client/NT4";
 
 const basicTypes = [
   "boolean",
