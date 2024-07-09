@@ -25,6 +25,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
     "@emotion/styled": "^11.11.5",
     "@frc-web-components/fwc": "^2.4.4",
     "@frc-web-components/node-wpilib-ws": "^0.2.3",

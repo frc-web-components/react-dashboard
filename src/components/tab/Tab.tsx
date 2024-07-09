@@ -31,6 +31,7 @@ import { getContextMenuPosition } from "./context-menu/useContextMenu";
 import ContextMenu from "./context-menu/ContextMenu";
 import { DELETE_KEYS } from "./constants";
 import { Paper } from "@mui/material";
+import { useDraggable } from "@dnd-kit/core";
 
 type AddComponentToTabFunction = (
   config: ComponentConfig,
@@ -116,7 +117,14 @@ function Tab({ tabId }: Props) {
       ...item,
       static: !editing,
     }));
-  }, [layoutComponents, editing]);
+  }, [layoutComponents, components, editing]);
+
+  const handleDrag = useCallback((node) => {
+    console.log("in handleDrag", node);
+  }, []);
+  // const handleDragOver = useCallback((e) => {
+  //   console.log("drag over event", e);
+  // }, []);
 
   const minWidth = useMemo(() => {
     let maxX = 0;
@@ -125,7 +133,7 @@ function Tab({ tabId }: Props) {
       maxX = Math.max(x, maxX);
     });
     return maxX;
-  }, [gridLayout]);
+  }, [cellGap, cellSize, gridLayout]);
 
   const addComponentToTab = useCallback(
     (
@@ -223,25 +231,28 @@ function Tab({ tabId }: Props) {
   }, [addComponentToTab]);
 
   useEffect(() => {
+    // called when an outside component is added to the grid
     if (componentGrid && gridElement) {
       const dropZoneParms: RowDropZoneParams = {
         getContainer() {
           return gridElement;
         },
-        onDragStop({ node, event }: RowDragEndEvent<ComponentListItem>) {
-          if (!node.data) {
+        onDragStop(e: RowDragEndEvent<ComponentListItem>) {
+          if (!e.node.data) {
             return;
           }
+          console.log("in drop zone params object", e);
+          handleDrag(e.node);
           addComponentToTabRef.current?.(
-            node.data.config,
-            node.data.type,
-            event
+            e.node.data.config,
+            e.node.data.type,
+            e.event
           );
         },
       };
       componentGrid.addRowDropZone(dropZoneParms);
     }
-  }, [gridElement, componentGrid]);
+  }, [gridElement, componentGrid, handleDrag]);
 
   useEffect(() => {
     if (sourceGrid && gridElement) {
@@ -272,6 +283,10 @@ function Tab({ tabId }: Props) {
       sourceGrid.addRowDropZone(dropZoneParms);
     }
   }, [gridElement, sourceGrid]);
+
+  // const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  //   id: "draggable",
+  // });
 
   return (
     <div
@@ -342,6 +357,10 @@ function Tab({ tabId }: Props) {
           // setLayout(updatedLayout as ComponentLayout[]);
         }}
         onDragStop={(_updatedLayout, _oldItem, newItem) => {
+          // called when an item already in the grid is dropped on the grid
+          console.log("drag stop updated layout", _updatedLayout);
+          console.log("old item", _oldItem);
+          console.log("new item", newItem);
           const { x, y, i } = newItem;
           dispatch(
             updateComponentPosition({
@@ -360,6 +379,7 @@ function Tab({ tabId }: Props) {
         width={(cellSize + cellGap) * 20000}
         margin={[cellGap, cellGap]}
         autoSize
+        allowOverlap={true}
         containerPadding={[gridPadding, gridPadding]}
         compactType={null}
         preventCollision

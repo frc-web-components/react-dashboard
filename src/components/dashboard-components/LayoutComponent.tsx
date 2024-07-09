@@ -1,22 +1,9 @@
-import { useCallback, useState } from "react";
-import _ from "lodash";
+import { useCallback } from "react";
 import { createComponent, stringDropdownProp, stringProp } from "./fromProps";
-import { Responsive, WidthProvider } from "react-grid-layout";
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
+import ReactGridLayout from "react-grid-layout";
 
-function generateLayout() {
-  return _.map(_.range(0, 25), function (_item, i) {
-    const y = Math.ceil(Math.random() * 4) + 1;
-    return {
-      x: Math.round(Math.random() * 5) * 2,
-      y: Math.floor(i / 6) * y,
-      w: 2,
-      h: y,
-      i: i.toString(),
-      static: Math.random() < 0.05,
-    };
-  });
-}
+import { useDroppable } from "@dnd-kit/core";
+
 export const layoutComponent = createComponent(
   {
     dashboard: {
@@ -43,72 +30,51 @@ export const layoutComponent = createComponent(
     },
   },
   ({ align, justify, childrenLayout, label }) => {
-    const [layoutConfig, setLayoutConfig] = useState([
-      { x: 0, y: 0, w: 20, h: 20, static: false },
-    ]);
-    const onDrop = useCallback((_layout, layoutItem, _event) => {
-      alert(
-        `Dropped element props:\n${JSON.stringify(
-          layoutItem,
-          ["x", "y", "w", "h"],
-          2
-        )}`
-      );
-      // setLayoutConfig here
+    const onDrop = useCallback(() => {
+      alert("got a drop event");
     }, []);
 
-    const generateDOM = useCallback(() => {
-      return _.map(layoutConfig, function (l, i) {
-        return (
-          <div key={i} className={l.static ? "static" : ""}>
-            {l.static ? (
-              <span
-                className="text"
-                title="This item is static and cannot be removed or resized."
-              >
-                Static - {i}
-              </span>
-            ) : (
-              <span className="text">{i}</span>
-            )}
-          </div>
-        );
-      });
-    }, [layoutConfig]);
+    const { isOver, setNodeRef } = useDroppable({
+      id: "droppable",
+    });
 
     return (
-      <ResponsiveReactGridLayout
-        style={{
-          height: "100%",
-          width: "100%",
-          border: "3px solid red",
-        }}
-        // {...this.props}
-        layouts={{ lg: generateLayout() }}
-        // onLayoutChange={this.onLayoutChange}
-        onDrop={onDrop}
-        preventCollision={false}
-        isDroppable={true}
-      >
-        <div
+      <div ref={setNodeRef}>
+        <ReactGridLayout
           style={{
-            display: "flex",
-            flexDirection:
-              childrenLayout == "row"
-                ? "row"
-                : childrenLayout == "column"
-                ? "column"
-                : undefined,
-            alignItems: align,
-            justifyContent: justify,
-            width: "100%",
             height: "100%",
-            padding: "5px",
+            width: "100%",
+            border: isOver ? "3px solid green" : "3px solid red",
           }}
+          onDrop={onDrop}
+          preventCollision={false}
+          layout={[
+            { i: "a", x: 0, y: 0, w: 1, h: 2, static: true },
+            { i: "b", x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4 },
+            { i: "c", x: 4, y: 0, w: 1, h: 2 },
+          ]}
         >
-          {generateDOM()}
-        </div>
-      </ResponsiveReactGridLayout>
+          <div
+            key="a"
+            style={{
+              display: "flex",
+              flexDirection:
+                childrenLayout == "row"
+                  ? "row"
+                  : childrenLayout == "column"
+                  ? "column"
+                  : undefined,
+              alignItems: align,
+              justifyContent: justify,
+              width: "100%",
+              height: "100%",
+              padding: "5px",
+            }}
+          >
+            Here is some text that should show up?
+          </div>
+        </ReactGridLayout>
+      </div>
     );
   }
 );

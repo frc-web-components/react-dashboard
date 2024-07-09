@@ -60,26 +60,26 @@ export interface ChildComponentConfig {
   type: string;
   propertyTabName?: string;
 }
-
-export interface ComponentConfig {
-  dashboard: {
-    name: string;
-    description: string;
-    defaultSize: {
-      width: number;
-      height: number;
-    };
-    minSize: {
-      width: number;
-      height: number;
-    };
-    topLevel?: boolean;
-    children?: {
-      type: string;
-      name: string;
-      properties?: Record<string, unknown>;
-    }[];
+export interface DashboardConfig {
+  name: string;
+  description: string;
+  defaultSize: {
+    width: number;
+    height: number;
   };
+  minSize: {
+    width: number;
+    height: number;
+  };
+  topLevel?: boolean;
+  children?: {
+    type: string;
+    name: string;
+    properties?: Record<string, unknown>;
+  }[];
+}
+export interface ComponentConfig {
+  dashboard: DashboardConfig;
   defaultSource?: {
     key: string;
     provider: string;
@@ -89,7 +89,14 @@ export interface ComponentConfig {
   properties: Record<string, ComponentProperty>;
   component: React.ComponentType<any>;
   children?: ChildComponentConfig[];
+  isLayout?: boolean;
 }
+
+// export type LayoutConfig = {
+//   dashboard: DashboardConfig;
+//   component: React.ComponentType<any>;
+//   children?: string[];
+// };
 
 interface DashboardEvents {
   addComponentsEvent: (components: Record<string, ComponentConfig>) => void;

@@ -59,6 +59,20 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
   };
 }
 
+// export function createLayout<P extends Record<string, ComponentProperty>>(
+//   {
+//     dashboard,
+//   }: {
+//     dashboard: LayoutConfig["dashboard"];
+//   },
+//   component: React.ComponentType<FromProps<P>>
+// ): LayoutConfig {
+//   return {
+//     dashboard,
+//     component,
+//   };
+// }
+
 export function numberProp(
   prop?: Partial<BaseProp<number>> & {
     min?: number;

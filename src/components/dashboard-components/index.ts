@@ -24,12 +24,18 @@ import { icon } from "./Icon";
 import { label, numberLabel } from "./Labels";
 import { mechanism2d } from "./Mechanism2d";
 import { networkAlerts } from "./NetworkAlerts";
-import { numberBar, accelerometer, voltageView, threeAxisAccelerometer } from "./NumberBar";
+import {
+  numberBar,
+  accelerometer,
+  voltageView,
+  threeAxisAccelerometer,
+} from "./NumberBar";
 import { pidCommand, pidController, profiledPidController } from "./Pid";
-import { preferences } from './Preferences';
+import { preferences } from "./Preferences";
 import { toggleButton, toggleGroup } from "./ToggleButton";
-import { sendableChooser } from './Dropdowns';
+import { sendableChooser } from "./Dropdowns";
 import { simComponents } from "./sim";
+import { layoutComponent } from "./LayoutComponent";
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -40,10 +46,10 @@ export const componentMap: Record<string, ComponentConfig> = {
       minSize: { width: 150, height: 90 },
     },
     defaultSource: {
-      key: '/FMSInfo',
-      provider: 'NT',
+      key: "/FMSInfo",
+      provider: "NT",
     },
-    acceptedSourceTypes: ['FMSInfo'],
+    acceptedSourceTypes: ["FMSInfo"],
     properties: {
       eventName: { type: "String", defaultValue: "" },
       matchNumber: { type: "Number", defaultValue: 0 },
@@ -68,8 +74,8 @@ export const componentMap: Record<string, ComponentConfig> = {
       defaultSize: { width: 200, height: 240 },
       minSize: { width: 120, height: 120 },
     },
-    primaryProperty: 'value',
-    acceptedSourceTypes: ['Number', 'Gyro'],
+    primaryProperty: "value",
+    acceptedSourceTypes: ["Number", "Gyro"],
     properties: {
       value: numberProp(),
       hideLabel: booleanProp(),
