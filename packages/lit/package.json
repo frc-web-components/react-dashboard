@@ -1,0 +1,28 @@
+{
+  "name": "@frc-web-components/lit",
+  "version": "0.4.1",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/lit.js",
+  "types": "./types/index.d.ts",
+  "scripts": {
+    "dev": "vite build --watch --config ./vite.config.dev.ts",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --config ../../eslint.config.js"
+  },
+  "dependencies": {
+    "@lit/context": "^1.0.1",
+    "@webbitjs/store": "^5.8.0"
+  },
+  "peerDependencies": {
+    "@frc-web-components/fwc": "workspace:*",
+    "lit": "catalog:"
+  },
+  "devDependencies": {
+    "vite": "^4.4.5",
+    "vite-plugin-dts": "^3.7.0"
+  }
+}
