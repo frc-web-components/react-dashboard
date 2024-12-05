@@ -33,6 +33,7 @@ https://github.com/frc-web-components/react-dashboard.gitk
 - Adding, Selecting, and Removing Elements
 - Tab Management
 - Moving and Resizing Components
+- Setting Element Properties
 
 ## App Layout
 
@@ -68,4 +69,10 @@ Selected elements can be moved by dragging them around their center:
 
 Elements can be resized by dragging their upper left and lower right corners:
 
-![resize](./docs/img/move.gif)
+![resize](./docs/img/resize.gif)
+
+### Setting Element Properties
+
+Element behavior changes based on their properties. A selected element's property values can be set in the Properties view. Property values can be changed through their input fields:
+
+![properties](./docs/img/properties.gif)
