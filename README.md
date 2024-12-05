@@ -31,6 +31,8 @@ https://github.com/frc-web-components/react-dashboard.gitk
 ## Usage
 
 - Adding, Selecting, and Removing Elements
+- Tab Management
+- Moving and Resizing Components
 
 ## App Layout
 
@@ -48,10 +50,22 @@ To select an element, click on it in the dashboard. Its properties will appear i
 
 ![selection](./docs/img/selection.png)
 
-Elements can be placed and resized anywhere in the Dashboard Layout Panel.
-
-![resize](./docs/img/resize.gif)
-
 To delete a component, either press Delete on your keyboard, right click on the component and select "Remove", or click the red `X` in its `Properties` panel.
 
 ![remove](./docs/img/remove.gif)
+
+### Tab Management
+
+By default, each dashboard starts with a TeleOperated tab and an Autonomous tab. If you need more tabs, you can add them with the `+` button. You can remove tabs by clicking the `x` button on the tab handle. You can rename a tab by double-clicking on the tab handle.
+
+![tabs](./docs/img/tabs.gif)
+
+### Moving and Resizing Components
+
+Selected elements can be moved by dragging them around their center:
+
+![move](./docs/img/move.gif)
+
+Elements can be resized by dragging their upper left and lower right corners:
+
+![resize](./docs/img/move.gif)
