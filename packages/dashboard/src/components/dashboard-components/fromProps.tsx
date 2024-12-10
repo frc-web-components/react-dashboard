@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { ComponentProperty, ComponentConfig } from '@/dashboard';
+import { createComponent as createReactComponent } from '@lit/react';
 
 type BaseProp<T> = {
   defaultValue: T;
@@ -56,6 +57,43 @@ export function createComponent<P extends Record<string, ComponentProperty>>(
     properties,
     acceptedSourceTypes,
     component,
+  };
+}
+
+export function createWebComponent<P extends Record<string, ComponentProperty>>(
+  {
+    dashboard,
+    children,
+    defaultSource,
+    primaryProperty,
+    properties,
+    acceptedSourceTypes,
+  }: {
+    dashboard: ComponentConfig['dashboard'];
+    children?: ComponentConfig['children'];
+    defaultSource?: ComponentConfig['defaultSource'];
+    primaryProperty?: string;
+    properties: P;
+    acceptedSourceTypes?: string[];
+  },
+  tagName: string,
+  component: CustomElementConstructor,
+): ComponentConfig {
+  const ReactComponent = createReactComponent({
+    tagName,
+    elementClass: component,
+    react: React,
+  });
+  return {
+    dashboard,
+    children,
+    defaultSource,
+    primaryProperty,
+    properties,
+    acceptedSourceTypes,
+    component: (props) => {
+      return <ReactComponent {...props} />;
+    },
   };
 }
 

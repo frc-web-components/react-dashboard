@@ -12,7 +12,7 @@
     "prepare": "husky install",
     "build": "pnpm exec nx run-many -t build",
     "dev": "pnpm build && pnpm exec nx run-many --parallel=20 -t dev",
-    "dashboard:dev": "pnpm --filter @frc-web-components/react-dashboard run dashboard:dev",
+    "dashboard:dev": "pnpm --filter @frc-web-components/app run dashboard:dev",
     "graph": "pnpm exec nx graph"
   },
   "keywords": [],

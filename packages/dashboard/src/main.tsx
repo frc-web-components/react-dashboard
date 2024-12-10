@@ -73,6 +73,7 @@ export function addExample(name: string, layout: Layout) {
 
 export {
   createComponent,
+  createWebComponent,
   booleanProp,
   colorProp,
   markdownProp,
@@ -81,6 +82,6 @@ export {
   stringArrayProp,
   stringDropdownProp,
   stringProp,
-} from './components/dashboard-components/fromProps.ts';
+} from './components/dashboard-components/fromProps';
 
 mountDashboard(document.getElementById('root')!);

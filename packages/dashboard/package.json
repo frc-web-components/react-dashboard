@@ -1,11 +1,11 @@
 {
-  "name": "@frc-web-components/react-dashboard",
+  "name": "@frc-web-components/app",
   "version": "0.1.16",
   "type": "module",
   "files": [
     "dist"
   ],
-  "main": "./dist/react-dashboard.js",
+  "main": "./dist/app.js",
   "types": "./types/main.d.ts",
   "scripts": {
     "dashboard:dev": "vite --config ./vite.config.dev.ts",
