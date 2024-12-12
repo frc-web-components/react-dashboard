@@ -1,11 +1,10 @@
-# FWC Plugin with Svelte + TS + Vite
+# FWC Plugin with Lit + TypeScript + Vite
 
-This template should help get you started developing a FWC plugin with Svelte and TypeScript in Vite.
+This template should help you get started developing a FWC plugin with Lit + Typescript + Vite.
 
 [<- Home](/README.md)
 
 - [Generating plugin](#generating-plugin)
-- [Recommended IDE Setup](#recommended-ide-setup)
 - [Installing](#installing)
 - [Running](#running)
 - [Building and importing into dashboard app](#building-and-importing-into-dashboard-app)
@@ -32,10 +31,6 @@ npm init fwc@latest my-first-plugin
 After being prompted with a few questions to help setup your plugin, the plugin project will be created and installed. The cli tool provides templates to create components using [lit](https://lit.dev/), [react](https://react.dev/) or [svelte](https://svelte.dev/):
 
 ![image](./docs/creating-plugin.png)
-
-## Recommended IDE Setup
-
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
 
 ## Installing
 
@@ -116,7 +111,7 @@ The plugin should now be successfully loaded:
 
 Theming in the FWC dashboard app is done using [CSS variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties).
 
-As an example take the following style rule for the `my-svelte-element` component:
+As an example take the following style rule for the `my-lit-element` component:
 
 ```css
 color: white;
@@ -125,10 +120,10 @@ color: white;
 To make this rule themable change it to the following:
 
 ```css
-color: var(--my-svelte-element-color, white);
+color: var(--my-lit-element-color, white);
 ```
 
-`--my-svelte-element-color` is the CSS variable. CSS variables are prefixed with `--`. To ensure uniqueness and to prevent accidentally overwriting existing rules prepend your variable with the element name. `white` is the default value if a theme is not set.
+`--my-lit-element-color` is the CSS variable. CSS variables are prefixed with `--`. To ensure uniqueness and to prevent accidentally overwriting existing rules prepend your variable with the element name. `white` is the default value if a theme is not set.
 
 To add per theme rules add the following code:
 
@@ -136,11 +131,11 @@ To add per theme rules add the following code:
 import { addThemeRules } from '@frc-web-components/app';
 
 addThemeRules('dark', {
-  '--my-svelte-element-color': 'black',
+  '--my-lit-element-color': 'black',
 });
 
 addThemeRules('light', {
-  '--my-svelte-element-color': 'white',
+  '--my-lit-element-color': 'white',
 });
 ```
 
@@ -157,5 +152,5 @@ const url: string = getAssetUrl('party.svg');
 The above URL can then be used as the src of an image element:
 
 ```html
-<img src="{url}" />
+<img src="${url}" />
 ```
