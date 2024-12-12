@@ -124,6 +124,25 @@ importers:
         specifier: ^6.1.0
         version: 6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
+  examples/lit-plugin:
+    dependencies:
+      '@frc-web-components/app':
+        specifier: workspace:*
+        version: link:../../packages/dashboard
+      lit:
+        specifier: ^3.2.1
+        version: 3.2.1
+    devDependencies:
+      typescript:
+        specifier: ~5.6.2
+        version: 5.6.3
+      vite:
+        specifier: ^6.0.1
+        version: 6.0.3(@types/node@22.9.3)(sass@1.81.0)
+      vite-plugin-dts:
+        specifier: ^4.3.0
+        version: 4.3.0(@types/node@22.9.3)(rollup@4.27.4)(typescript@5.6.3)(vite@6.0.3(@types/node@22.9.3)(sass@1.81.0))
+
   examples/react-plugin:
     dependencies:
       '@frc-web-components/app':
@@ -5398,6 +5417,9 @@ packages:
 
   lit@3.1.1:
     resolution: {integrity: sha512-hF1y4K58+Gqrz+aAPS0DNBwPqPrg6P04DuWK52eMkt/SM9Qe9keWLcFgRcEKOLuDlRZlDsDbNL37Vr7ew1VCuw==}
+
+  lit@3.2.1:
+    resolution: {integrity: sha512-1BBa1E/z0O9ye5fZprPtdqnc0BFzxIxTTOO/tQFmyC/hj1O3jL4TfmLBw0WEwjAokdLwpclkvGgDJwTIh0/22w==}
 
   local-pkg@0.5.1:
     resolution: {integrity: sha512-9rrA30MRRP3gBD3HTGnC6cDFpaE1kVDWxWgqWJUN0RvDNAo+Nz/9GxB+nHOH0ifbVFy0hSA1V6vFDvnx54lTEQ==}
@@ -13429,6 +13451,12 @@ snapshots:
       '@types/trusted-types': 2.0.7
 
   lit@3.1.1:
+    dependencies:
+      '@lit/reactive-element': 2.0.4
+      lit-element: 4.1.1
+      lit-html: 3.2.1
+
+  lit@3.2.1:
     dependencies:
       '@lit/reactive-element': 2.0.4
       lit-element: 4.1.1
