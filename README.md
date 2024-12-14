@@ -76,3 +76,9 @@ Elements can be resized by dragging their upper left and lower right corners:
 Element behavior changes based on their properties. A selected element's property values can be set in the Properties view. Property values can be changed through their input fields:
 
 ![properties](./docs/img/properties.gif)
+
+## Developing
+
+### Publishing and Releasing
+
+This project uses changesets to manage publishing. More info can be found here: https://pnpm.io/using-changesets

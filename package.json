@@ -22,6 +22,7 @@
     "node": ">=18.16.1"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.27.10",
     "@eslint/js": "^9.9.0",
     "@types/fs-extra": "^11.0.4",
     "@vitejs/plugin-react": "^4.3.1",
@@ -33,11 +34,11 @@
     "globals": "^15.9.0",
     "husky": "^8.0.3",
     "lint-staged": "^14.0.0",
+    "nx": "19.7.3",
     "prettier": "^3.0.1",
     "rollup": "^4.21.1",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "nx": "19.7.3",
     "vite": "^5.4.1",
     "vite-plugin-dts": "^4.0.3"
   },
