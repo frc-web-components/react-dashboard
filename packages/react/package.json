@@ -1,9 +1,10 @@
 {
   "name": "@frc-web-components/react",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "main": "./dist/fwc-react.es.js",
   "module": "./dist/fwc-react.es.js",

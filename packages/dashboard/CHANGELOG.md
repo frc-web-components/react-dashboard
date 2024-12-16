@@ -1,5 +1,15 @@
 # @frc-web-components/app
 
+## 1.0.1
+
+### Patch Changes
+
+- Adding missing declaration files to packages
+- Updated dependencies
+  - @frc-web-components/react@1.0.1
+  - @frc-web-components/fwc@3.0.1
+  - @frc-web-components/svelte@1.0.1
+
 ## 1.0.0
 
 ### Major Changes

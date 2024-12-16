@@ -1,9 +1,10 @@
 {
   "name": "@frc-web-components/app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "main": "./dist/app.js",
   "types": "./types/main.d.ts",

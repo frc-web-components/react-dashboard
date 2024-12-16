@@ -1,8 +1,9 @@
 {
   "name": "@frc-web-components/fwc",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "files": [
-    "dist"
+    "dist",
+    "types"
   ],
   "main": "dist/fwc.es.j",
   "module": "dist/fwc.es.js",
