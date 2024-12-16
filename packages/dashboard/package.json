@@ -1,6 +1,6 @@
 {
   "name": "@frc-web-components/app",
-  "version": "0.1.16",
+  "version": "1.0.0",
   "type": "module",
   "files": [
     "dist"

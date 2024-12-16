@@ -15,7 +15,7 @@
     "@storybook/web-components": "^7.6.3",
     "@storybook/web-components-vite": "^7.6.3",
     "eslint-plugin-storybook": "^0.6.15",
-    "storybook": "^7.6.3",
+    "storybook": "^8.4.7",
     "storybook-addon-themes": "^6.1.0"
   },
   "author": "Amory Galili",

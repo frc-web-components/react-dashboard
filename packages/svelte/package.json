@@ -1,6 +1,6 @@
 {
   "name": "@frc-web-components/svelte",
-  "version": "0.6.1",
+  "version": "1.0.0",
   "type": "module",
   "files": [
     "dist"
