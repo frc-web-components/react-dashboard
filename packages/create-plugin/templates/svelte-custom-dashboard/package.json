@@ -24,8 +24,8 @@
     "vite": "^6.0.1"
   },
   "dependencies": {
-    "@frc-web-components/fwc": "workspace:*",
-    "@frc-web-components/svelte": "workspace:*",
+    "@frc-web-components/fwc": "^3.0.1",
+    "@frc-web-components/svelte": "^1.0.1",
     "@webbitjs/store": "^5.8.0"
   }
 }
