@@ -1,4 +1,35 @@
-# React FWC Dashboard
+# FRC Web Components
+
+FRC Web Components (FWC) is a web-based dashboard used for the [FIRST Robotics Competition (FRC)](https://www.firstinspires.org/robotics/frc).
+
+![dashboard image](./docs/images/dashboard.png)
+
+FWC can be either installed as a standalone application, or as a javascript package for custom dashboard solutions.
+
+## Installation
+
+The standalone Tauri application that wraps around FWC can be installed here: [https://github.com/frc-web-components/app/releases](https://github.com/frc-web-components/app/releases)
+
+To install using npm:
+
+```bash
+npm i @frc-web-components/fwc@latest
+```
+
+## Try it out!
+
+A live version of the application can be viewed here: [https://frc-web-components.github.io/dashboard/](https://frc-web-components.github.io/dashboard/)
+
+## Documentation
+
+- [Component documentation](https://frc-web-components.github.io/storybook) - Component examples and documentation
+- [Dashboard Interface](/docs/dashboard.md) - Learn how to use the FWC dashboard app
+- [Plugin Development](/docs/plugins.md) - Documentation on FWC dashboard plugin development.
+- [Lit plugin example](/examples/lit-plugin/README.md) - An example plugin using the lit-plugin template from the `create-fwc` cli tool.
+- [React plugin example](/examples/react-plugin/README.md) - An example plugin using the react-plugin template from the `create-fwc` cli tool.
+- [Svelte plugin example](/examples/svelte-plugin/README.md) - An example plugin using the svelte-plugin template from the `create-fwc` cli tool.
+- [React custom dashboard example](/examples/react-custom-dashboard/README.md) - An example custom dashboard using the react-custom-dashboard template from the `create-fwc` cli tool.
+- [Svelte custom dashboard example](/examples/svelte-custom-dashboard/README.md) - An example custom dashboard using the svelte-custom-dashboard template from the `create-fwc` cli tool.
 
 ## Developing
 
@@ -25,59 +56,6 @@ To run the project locally run in the root directory:
 ```bash
 pnpm dev
 ```
-
-https://github.com/frc-web-components/react-dashboard.gitk
-
-## Usage
-
-- Adding, Selecting, and Removing Elements
-- Tab Management
-- Moving and Resizing Components
-- Setting Element Properties
-
-## App Layout
-
-When you first open the app, you will see the following panels:
-![screen-layout-1](./docs/img/layout01.png)
-![screen-layout-2](./docs/img/layout02.png)
-
-### Adding, Selecting, and Removing Elements
-
-Elements can be added to the dashboard by dragging them from the `Components` tabl on the sidebar to the dashboard:
-
-![add-component](./docs/img/addComponent.gif)
-
-To select an element, click on it in the dashboard. Its properties will appear in the `Properties` panel in the sidebar.
-
-![selection](./docs/img/selection.png)
-
-To delete a component, either press Delete on your keyboard, right click on the component and select "Remove", or click the red `X` in its `Properties` panel.
-
-![remove](./docs/img/remove.gif)
-
-### Tab Management
-
-By default, each dashboard starts with a TeleOperated tab and an Autonomous tab. If you need more tabs, you can add them with the `+` button. You can remove tabs by clicking the `x` button on the tab handle. You can rename a tab by double-clicking on the tab handle.
-
-![tabs](./docs/img/tabs.gif)
-
-### Moving and Resizing Components
-
-Selected elements can be moved by dragging them around their center:
-
-![move](./docs/img/move.gif)
-
-Elements can be resized by dragging their upper left and lower right corners:
-
-![resize](./docs/img/resize.gif)
-
-### Setting Element Properties
-
-Element behavior changes based on their properties. A selected element's property values can be set in the Properties view. Property values can be changed through their input fields:
-
-![properties](./docs/img/properties.gif)
-
-## Developing
 
 ### Publishing and Releasing
 
