@@ -1,5 +1,11 @@
 # @frc-web-components/svelte
 
+## 1.0.2
+
+### Patch Changes
+
+- Removed test svelte component. Updated example component in dashboard plugin templates and added missing images from dashboard interface.
+
 ## 1.0.1
 
 ### Patch Changes

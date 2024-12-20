@@ -1,5 +1,12 @@
 # example-react-plugin
 
+## 0.0.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @frc-web-components/app@1.0.2
+
 ## 0.0.2
 
 ### Patch Changes
