@@ -10,7 +10,7 @@ export const myLitElement = createWebComponent(
     dashboard: {
       name: 'My Lit Element',
       description: '',
-      defaultSize: { width: 100, height: 100 },
+      defaultSize: { width: 130, height: 50 },
       minSize: { width: 20, height: 20 },
     },
     acceptedSourceTypes: ['Number'],

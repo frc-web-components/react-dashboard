@@ -35,7 +35,6 @@ import { preferences } from './Preferences';
 import { toggleButton, toggleGroup } from './ToggleButton';
 import { sendableChooser } from './Dropdowns';
 import { simComponents } from './sim';
-import { myFoo } from './MyFoo';
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -111,7 +110,6 @@ export const componentMap: Record<string, ComponentConfig> = {
   accelerometer,
   voltageView,
   ...simComponents,
-  myFoo,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);
