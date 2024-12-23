@@ -65,7 +65,7 @@ You should see the dashboard in the browser:
 
 From here you should be able to navigate to your component which you can add and test in the browser:
 
-![image](./docs/nav-to-my-plugin.png)
+![image](./docs/plugin-dnd-test.gif)
 
 ## Building and importing into dashboard app
 
@@ -108,10 +108,6 @@ The app must be refreshed to view the changes:
 
 ![image](./docs/refresh-plugin.png)
 
-The plugin should now be successfully loaded:
-
-![image](./docs/plugin-successfully-loaded.png)
-
 ## Theming
 
 Theming in the FWC dashboard app is done using [CSS variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties).
@@ -133,15 +129,7 @@ color: var(--my-svelte-element-color, white);
 To add per theme rules add the following code:
 
 ```typescript
-import { addThemeRules } from '@frc-web-components/app';
-
-addThemeRules('dark', {
-  '--my-svelte-element-color': 'black',
-});
-
-addThemeRules('light', {
-  '--my-svelte-element-color': 'white',
-});
+# TODO
 ```
 
 ## Including Static Assets
