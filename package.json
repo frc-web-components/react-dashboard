@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "prepare": "husky install",
     "build": "pnpm exec nx run-many -t build",
-    "dev": "pnpm build && pnpm exec nx run-many --parallel=20 -t dev",
+    "dev": "pnpm build && pnpm exec nx run-many --parallel=20 -t dev --projects=@frc-web-components/fwc,@frc-web-components/react",
     "dashboard:dev": "pnpm --filter @frc-web-components/app run dashboard:dev",
     "graph": "pnpm exec nx graph"
   },
