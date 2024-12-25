@@ -2,14 +2,14 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useAppDispatch, useAppSelector } from '@store/app/hooks';
 import {
-  selectConextMenuElement,
+  selectContextMenuElement,
   setContextMenuElement,
 } from '@store/slices/appSlice';
 import ElementMenu from './ElementMenu';
 import { clearTab } from '@store/slices/layoutSlice';
 
 export default function ContextMenu() {
-  const contextMenuElement = useAppSelector(selectConextMenuElement);
+  const contextMenuElement = useAppSelector(selectContextMenuElement);
   const dispatch = useAppDispatch();
 
   const onClose = () => dispatch(setContextMenuElement(undefined));

@@ -34,10 +34,13 @@ export const appSlice = createAppSlice({
   }),
   selectors: {
     selectEditing: (state) => state.editing,
-    selectConextMenuElement: (state) => state.contextMenuElement,
+    selectContextMenuElement: (state) => state.contextMenuElement,
   },
 });
 
 export const { toggleEditing, setContextMenuElement, setEditing } =
   appSlice.actions;
-export const { selectEditing, selectConextMenuElement } = appSlice.selectors;
+export const {
+  selectEditing,
+  selectContextMenuElement: selectConextMenuElement,
+} = appSlice.selectors;

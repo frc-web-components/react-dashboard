@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { store } from '@store/app/store';
-import { selectConextMenuElement } from '@store/slices/appSlice';
+import { selectContextMenuElement } from '@store/slices/appSlice';
 
 export function getContextMenuPosition(event: React.MouseEvent) {
   event.preventDefault();
   event.stopPropagation();
-  const contextMenuElement = selectConextMenuElement(store.getState());
+  const contextMenuElement = selectContextMenuElement(store.getState());
   return !contextMenuElement
     ? {
         left: event.clientX + 2,
