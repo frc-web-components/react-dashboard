@@ -76,7 +76,7 @@ function Titlebar() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
-            sx={{ color: 'white', outline: 'none' }}
+            // sx={{ color: 'white', outline: 'none' }}
             style={{
               outline: 'none',
               textTransform: 'none',
