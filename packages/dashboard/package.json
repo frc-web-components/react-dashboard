@@ -19,7 +19,6 @@
     "@frc-web-components/fwc": "workspace:*",
     "@frc-web-components/node-wpilib-ws": "^0.2.3",
     "@frc-web-components/react": "workspace:*",
-    "@frc-web-components/svelte": "workspace:*",
     "@lit/react": "^1.0.2",
     "@mui/icons-material": "^5.15.17",
     "@mui/material": "^5.15.17",
