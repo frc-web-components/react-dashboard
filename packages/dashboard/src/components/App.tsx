@@ -28,6 +28,9 @@ const darkTheme = createTheme({
       secondary: '#aaaaaa',
       disabled: '#888888',
     },
+    background: {
+      default: '#121212',
+    },
   },
 });
 
@@ -35,9 +38,19 @@ const lightTheme = createTheme({
   palette: {
     mode: 'light',
     text: {
-      primary: '#111111',
+      primary: '#010101',
       secondary: '#cccccc',
       disabled: '#888888',
+    },
+    background: { default: '#fdfdfd' },
+  },
+  components: {
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: '#010101',
+        },
+      },
     },
   },
 });

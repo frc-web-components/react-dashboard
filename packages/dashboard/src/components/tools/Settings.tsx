@@ -34,10 +34,16 @@ export default function Settings() {
   }, [address, providers]);
 
   return (
-    <Box sx={{ flexGrow: 1, padding: '10px' }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        padding: '10px',
+        background: (theme) => theme.palette.background.default,
+      }}
+    >
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h5" gutterBottom sx={{ color: 'text.primary' }}>
             Dashboard Settings
           </Typography>
         </Grid>
@@ -75,10 +81,14 @@ export default function Settings() {
           <NumberInput
             initialValue={gridSize}
             size="small"
+            color="primary"
             label="Grid Cell Size"
             style={{ width: '100%' }}
             onChange={(value) => {
               dispatch(setGridSize(value));
+            }}
+            sx={{
+              color: 'text.primary',
             }}
           />
         </Grid>
