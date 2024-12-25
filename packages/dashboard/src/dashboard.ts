@@ -381,5 +381,5 @@ export const useDashboardTheme = (): [
     };
   }, []);
 
-  return [theme, dashboard.setTheme];
+  return [theme, (theme: string) => dashboard.setTheme(theme)];
 };
