@@ -23,10 +23,24 @@ const model = Model.fromJson(appLayoutJson);
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
+    text: {
+      primary: '#dddddd',
+      secondary: '#aaaaaa',
+      disabled: '#888888',
+    },
   },
 });
 
-const lightTheme = createTheme();
+const lightTheme = createTheme({
+  palette: {
+    mode: 'light',
+    text: {
+      primary: '#111111',
+      secondary: '#cccccc',
+      disabled: '#888888',
+    },
+  },
+});
 
 function App() {
   const dispatch = useAppDispatch();

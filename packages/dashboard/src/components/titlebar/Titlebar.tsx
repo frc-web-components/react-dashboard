@@ -3,8 +3,10 @@ import WifiOffIcon from '@mui/icons-material/WifiOff';
 import { useAppSelector } from '@store/app/hooks';
 import { selectConnectionStatus } from '@store/selectors/sourceSelectors';
 import {
+  Box,
   Button,
   ButtonGroup,
+  Container,
   Divider,
   IconButton,
   Menu,
@@ -56,16 +58,16 @@ function Titlebar() {
 
   return (
     <>
-      <div
+      <Box
         className="fwc-titlebar"
         data-tauri-drag-region
-        style={{
+        sx={{
           height: '33px',
-          background: 'black',
-          borderBottom: '1px solid #333',
+          background: 'primary.main',
+          borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
+          width: 'full',
           display: 'flex',
           alignItems: 'center',
-          // padding: "0 7px",
           justifyContent: 'space-between',
         }}
       >
@@ -76,7 +78,7 @@ function Titlebar() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
             onClick={handleClick}
-            // sx={{ color: 'white', outline: 'none' }}
+            sx={{ color: 'text.primary', outline: 'none' }}
             style={{
               outline: 'none',
               textTransform: 'none',
@@ -216,16 +218,17 @@ function Titlebar() {
             </MenuList>
           </Menu>
         </div>
-        <div
+        <Container
           style={{
-            fontSize: 18,
-            color: '#ccc',
+            color: `success.main`,
             userSelect: 'none',
             pointerEvents: 'none',
+            display: 'flex',
+            justifyContent: 'center',
           }}
         >
           {dashboardTitle}
-        </div>
+        </Container>
         <div
           style={{
             display: 'flex',
@@ -236,16 +239,16 @@ function Titlebar() {
           <div>
             {Object.values(connectionStatuses).map((status) => {
               return (
-                <div
+                <Container
                   key={`title-item-${status.label}`}
-                  style={{
+                  sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    color: status.connected ? 'green' : 'red',
-                    gap: '5px',
-                    fontSize: '15px',
+                    color: status.connected ? 'success.main' : 'error.main',
                     userSelect: 'none',
                     pointerEvents: 'none',
+                    gap: '5px',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {status.connected ? (
@@ -254,7 +257,7 @@ function Titlebar() {
                     <WifiOffIcon fontSize="small" />
                   )}
                   {status.label}
-                </div>
+                </Container>
               );
             })}
           </div>
@@ -294,7 +297,7 @@ function Titlebar() {
             </IconButton>
           </ButtonGroup>
         </div>
-      </div>
+      </Box>
       <PluginsDialog
         open={pluginsDialogOpen}
         onClose={() => setPluginsDialogOpen(false)}
