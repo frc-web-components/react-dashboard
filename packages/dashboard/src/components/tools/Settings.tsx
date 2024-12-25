@@ -5,7 +5,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Box, Grid, Typography } from '@mui/material';
 import NumberInput from '../shared/number-input/NumberInput';
-import { useSourceProvider } from '@/dashboard';
+import { useDashboardTheme, useSourceProvider } from '@/dashboard';
 import { NT4Provider } from '@store/sources/nt4';
 import { useAppDispatch, useAppSelector } from '@store/app/hooks';
 import {
@@ -35,6 +35,7 @@ export default function Settings() {
   const gridPadding = useAppSelector(selectGridPadding);
   const { providers } = useSourceProvider();
   const dispatch = useAppDispatch();
+  const [theme, setTheme] = useDashboardTheme();
 
   useEffect(() => {
     (providers['NT'] as NT4Provider).connect(address);
@@ -56,7 +57,12 @@ export default function Settings() {
               size="small"
               options={themeOptions}
               freeSolo
-              defaultValue={themeOptions[0]}
+              defaultValue={theme as any}
+              onChange={(_, value) => {
+                if (value) {
+                  setTheme(value.label);
+                }
+              }}
               renderInput={(params) => <TextField {...params} label="Theme" />}
             />
           </Grid>

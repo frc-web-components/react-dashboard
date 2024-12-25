@@ -17,6 +17,8 @@ import {
   selectSource,
   selectSourceValue,
 } from '@store/selectors/sourceSelectors';
+import { DashboardThemes, darkTheme } from '@frc-web-components/fwc/themes';
+import { useEffect, useState } from 'react';
 
 export type SourceInfo =
   | {
@@ -110,6 +112,7 @@ interface DashboardEvents {
   pluginDialogLoadPluginEvent: () => void;
   dashboardTitleChange: (title: string) => void;
   exampleAdd: () => void;
+  themeChangeEvent: (theme: string) => void;
 }
 
 export type DashboardEventEmitter = StrictEventEmitter<
@@ -139,10 +142,26 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
     { name: 'Example 2', layout: exampleLayout },
   ];
   #store = getDefaultStore();
+  #themes = new DashboardThemes();
 
   constructor() {
     super();
     this.#store.set(dashboardAtom, this);
+    this.#themes.addThemeRules('dark', darkTheme);
+    this.#themes.setTheme(document.body, 'dark');
+  }
+
+  addThemeRules(theme: string, cssVariables: Record<string, string>) {
+    this.#themes.addThemeRules(theme, cssVariables);
+  }
+
+  setTheme(theme: string) {
+    this.#themes.setTheme(document.body, theme);
+    this.emit('themeChangeEvent', theme);
+  }
+
+  getTheme() {
+    return this.#themes.getTheme(document.body);
   }
 
   setTitle(title: string) {
@@ -346,4 +365,21 @@ export const useSourceProvider = () => {
     providers,
     setSourceValue,
   };
+};
+
+export const useDashboardTheme = (): [
+  string | undefined,
+  (theme: string) => void,
+] => {
+  const dashboard = useDashboard();
+  const [theme, setTheme] = useState(dashboard.getTheme());
+
+  useEffect(() => {
+    dashboard.on('themeChangeEvent', setTheme);
+    return () => {
+      dashboard.off('themeChangeEvent', setTheme);
+    };
+  }, []);
+
+  return [theme, dashboard.setTheme];
 };

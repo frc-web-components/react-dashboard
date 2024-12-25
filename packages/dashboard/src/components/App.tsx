@@ -1,5 +1,4 @@
 import 'flexlayout-react/style/dark.css';
-import { DashboardThemes, darkTheme } from '@frc-web-components/fwc/themes';
 import Titlebar from './titlebar/Titlebar';
 import {
   Action,
@@ -16,10 +15,6 @@ import { setEditing } from '@store/slices/appSlice';
 import { useAppDispatch } from '@store/app/hooks';
 
 const model = Model.fromJson(appLayoutJson);
-
-const themes = new DashboardThemes();
-themes.addThemeRules('dark', darkTheme);
-themes.setTheme(document.body, 'dark');
 
 function App() {
   const dispatch = useAppDispatch();

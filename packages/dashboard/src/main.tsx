@@ -71,6 +71,21 @@ export function addExample(name: string, layout: Layout) {
   dashboard.addExample(name, layout);
 }
 
+export function addThemeRules(
+  theme: string,
+  cssVariables: Record<string, string>,
+) {
+  dashboard.addThemeRules(theme, cssVariables);
+}
+
+export function setTheme(theme: string) {
+  dashboard.setTheme(theme);
+}
+
+export function getTheme() {
+  return dashboard.getTheme();
+}
+
 export {
   createComponent,
   createWebComponent,
