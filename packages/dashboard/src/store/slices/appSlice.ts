@@ -42,5 +42,5 @@ export const { toggleEditing, setContextMenuElement, setEditing } =
   appSlice.actions;
 export const {
   selectEditing,
-  selectContextMenuElement: selectConextMenuElement,
+  selectContextMenuElement: selectContextMenuElement,
 } = appSlice.selectors;
