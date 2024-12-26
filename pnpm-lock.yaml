@@ -345,9 +345,6 @@ importers:
       '@frc-web-components/react':
         specifier: workspace:*
         version: link:../react
-      '@frc-web-components/svelte':
-        specifier: workspace:*
-        version: link:../svelte
       '@lit/react':
         specifier: ^1.0.2
         version: 1.0.6(@types/react@18.3.12)
