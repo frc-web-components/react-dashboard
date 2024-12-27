@@ -24,6 +24,8 @@ export default class MyElement extends LitElement {
       display: inline-flex;
       align-items: center;
       gap: 8px;
+      width: 100%;
+      height: 100%;
     }
   `;
 

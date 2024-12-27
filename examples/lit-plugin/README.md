@@ -5,6 +5,7 @@ This template should help you get started developing a FWC plugin with Lit + Typ
 [<- Home](/README.md)
 
 - [Generating plugin](#generating-plugin)
+- [Recommended IDE Setup](#recommended-ide-setup)
 - [Installing](#installing)
 - [Running](#running)
 - [Building and importing into dashboard app](#building-and-importing-into-dashboard-app)
@@ -60,7 +61,7 @@ You should see the dashboard in the browser:
 
 From here you should be able to navigate to your component which you can add and test in the browser:
 
-![image](./docs/nav-to-my-plugin.png)
+![image](./docs/plugin-dnd-test.gif)
 
 ## Building and importing into dashboard app
 
@@ -103,10 +104,6 @@ The app must be refreshed to view the changes:
 
 ![image](./docs/refresh-plugin.png)
 
-The plugin should now be successfully loaded:
-
-![image](./docs/plugin-successfully-loaded.png)
-
 ## Theming
 
 Theming in the FWC dashboard app is done using [CSS variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties).
@@ -131,10 +128,12 @@ To add per theme rules add the following code:
 import { addThemeRules } from '@frc-web-components/app';
 
 addThemeRules('dark', {
+  '--my-lit-element-background': 'cadetblue',
   '--my-lit-element-color': 'black',
 });
 
 addThemeRules('light', {
+  '--my-lit-element-background': 'cornflowerblue',
   '--my-lit-element-color': 'white',
 });
 ```
@@ -152,5 +151,5 @@ const url: string = getAssetUrl('party.svg');
 The above URL can then be used as the src of an image element:
 
 ```html
-<img src="${url}" />
+<img src="{url}" />
 ```
