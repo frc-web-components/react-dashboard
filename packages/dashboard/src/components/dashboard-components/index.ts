@@ -37,6 +37,7 @@ import { preferences } from './Preferences';
 import { toggleButton, toggleGroup } from './ToggleButton';
 import { sendableChooser } from './Dropdowns';
 import { relay } from './Relay';
+import { toggleSwitch } from './toggleSwitch';
 // import { simComponents } from './sim';
 
 export const componentMap: Record<string, ComponentConfig> = {
@@ -115,6 +116,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   voltageView,
   encoder,
   relay,
+  toggleSwitch,
   // ...simComponents,
 };
 
