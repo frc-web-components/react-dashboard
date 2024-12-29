@@ -8,6 +8,26 @@ import { useComponentConfigs } from '@/dashboard';
 import { memoizeWithArgs } from 'proxy-memoize';
 import { RootState } from '@store/app/store';
 import { setComponentTemporaryValue } from '@store/slices/layoutSlice';
+import { ErrorBoundary } from 'react-error-boundary';
+
+function fallbackRender({ error }: { error: Error }) {
+  // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+  return (
+    <div
+      role="alert"
+      style={{
+        position: 'relative',
+        overflow: 'auto',
+        width: '100%',
+        height: '100%',
+      }}
+    >
+      <p>Something went wrong:</p>
+      <span style={{ color: 'red' }}>{error.message}</span>
+    </div>
+  );
+}
 
 export function makeSelectChildren() {
   return memoizeWithArgs((state: RootState, componentId: string) => {
@@ -76,28 +96,30 @@ function TabComponent({ Component, componentId }: Props) {
   );
 
   return (
-    <ComponentProvider
-      componentId={componentId}
-      propertySources={propertySourceInfos}
-    >
-      <div className={Styles['component-child']}>
-        <Component
-          className={Styles['component-child']}
-          {...propertyValues}
-          setProperty={newSetProperty}
-        >
-          {childComponents.map((child) => {
-            return (
-              <TabComponent
-                key={child.id}
-                componentId={child.id}
-                Component={components[child.type].component}
-              />
-            );
-          })}
-        </Component>
-      </div>
-    </ComponentProvider>
+    <ErrorBoundary fallbackRender={fallbackRender}>
+      <ComponentProvider
+        componentId={componentId}
+        propertySources={propertySourceInfos}
+      >
+        <div className={Styles['component-child']}>
+          <Component
+            className={Styles['component-child']}
+            {...propertyValues}
+            setProperty={newSetProperty}
+          >
+            {childComponents.map((child) => {
+              return (
+                <TabComponent
+                  key={child.id}
+                  componentId={child.id}
+                  Component={components[child.type].component}
+                />
+              );
+            })}
+          </Component>
+        </div>
+      </ComponentProvider>
+    </ErrorBoundary>
   );
 }
 
