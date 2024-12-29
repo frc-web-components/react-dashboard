@@ -1,0 +1,20 @@
+.flex-tab {
+  background-color: var(--mui-background-default);
+}
+
+.flex-border {
+  background-color: var(--mui-background-default);
+}
+
+.flex-border-left {
+  border-right: 1px solid var(--mui-palette-grey-600);
+}
+
+.flex-border-button {
+  background-color: var(--mui-palette-primary-main);
+  color: var(--mui-palette-primary-contrast-text);
+}
+
+.flex-border-button-content {
+  color: var(--mui-palette-primary-contrastText);
+}

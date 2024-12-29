@@ -19,7 +19,7 @@ import { useDashboardTheme } from '@/dashboard';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Box } from '@mui/material';
 import styles from './App.module.scss';
-import { useCallback } from 'react';
+import { flexLayoutClassNameMapper } from './flex-layout-theming';
 
 const model = Model.fromJson(appLayoutJson);
 const darkTheme = createTheme({
@@ -61,26 +61,6 @@ const lightTheme = createTheme({
 function App() {
   const dispatch = useAppDispatch();
   const [theme] = useDashboardTheme();
-  const flexLayoutClassNameMapper = useCallback(
-    (className: string) => {
-      if (theme == 'dark') return className;
-      switch (className) {
-        case 'flexlayout__tab':
-          return styles['flex-tab'];
-        case 'flexlayout__border':
-          return `${className} ${styles['flex-border']}`;
-        case 'flexlayout__border_left':
-          return `${className} ${styles['flex-border-left']}`;
-        case 'flexlayout__border_button':
-          return `${className} ${styles['flex-border-button']}`;
-        case 'flexlayout__border_button_content':
-          return `${className} ${styles['flex-border-button-content']}`;
-        default:
-          return className;
-      }
-    },
-    [theme],
-  );
 
   return (
     <ThemeProvider theme={theme == 'dark' ? darkTheme : lightTheme}>
@@ -105,7 +85,13 @@ function App() {
           }}
         >
           <FlexLayout
-            classNameMapper={flexLayoutClassNameMapper}
+            classNameMapper={(className) => {
+              return flexLayoutClassNameMapper(
+                className,
+                theme ?? 'dark',
+                styles,
+              );
+            }}
             model={model}
             factory={(node: TabNode) => {
               const component = node.getComponent();
