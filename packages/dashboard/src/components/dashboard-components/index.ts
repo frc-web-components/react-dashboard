@@ -5,6 +5,7 @@ import { markdownViewer } from './MarkdownViewer';
 import { numberSlider } from './NumberSlider';
 import { booleanBox } from './BooleanBox';
 import { checkboxGroup } from './CheckboxGroup';
+import { radioGroup } from './RadioGroup';
 import { robotCommand, robotSubsystem } from './CommandBased';
 import { booleanProp, numberProp } from './fromProps';
 import { field, fieldPath, fieldRobot } from './Field';
@@ -21,6 +22,7 @@ import {
 } from './Drivebases';
 import { gauge } from './Gauge';
 import { icon } from './Icon';
+import { encoder } from './Encoder';
 import { label, numberLabel } from './Labels';
 import { mechanism2d } from './Mechanism2d';
 import { networkAlerts } from './NetworkAlerts';
@@ -60,6 +62,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   booleanBox,
   camera,
   checkboxGroup,
+  radioGroup,
   robotCommand,
   robotSubsystem,
   field,
@@ -109,6 +112,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   threeAxisAccelerometer,
   accelerometer,
   voltageView,
+  encoder,
   ...simComponents,
 };
 
