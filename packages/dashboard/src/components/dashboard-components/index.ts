@@ -36,7 +36,8 @@ import { pidCommand, pidController, profiledPidController } from './Pid';
 import { preferences } from './Preferences';
 import { toggleButton, toggleGroup } from './ToggleButton';
 import { sendableChooser } from './Dropdowns';
-import { simComponents } from './sim';
+import { relay } from './Relay';
+// import { simComponents } from './sim';
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -113,7 +114,8 @@ export const componentMap: Record<string, ComponentConfig> = {
   accelerometer,
   voltageView,
   encoder,
-  ...simComponents,
+  relay,
+  // ...simComponents,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);
