@@ -1,12 +1,5 @@
-import 'flexlayout-react/style/dark.css';
 import Titlebar from './titlebar/Titlebar';
-import {
-  Action,
-  Actions,
-  Layout as FlexLayout,
-  Model,
-  TabNode,
-} from 'flexlayout-react';
+import { Action, Actions, Model, TabNode } from 'flexlayout-react';
 import Editor from './tools/editor/Editor';
 import Settings from './tools/Settings';
 import { appLayoutJson } from './app-layout';
@@ -18,8 +11,7 @@ import createTheme from '@mui/material/styles/createTheme';
 import { useDashboardTheme } from '@/dashboard';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Box } from '@mui/material';
-import styles from './App.module.scss';
-import { flexLayoutClassNameMapper } from './flex-layout-theming';
+import StyledFlexLayout from './StyledFlexLayout';
 
 const model = Model.fromJson(appLayoutJson);
 const darkTheme = createTheme({
@@ -84,14 +76,7 @@ function App() {
             flex: '1',
           }}
         >
-          <FlexLayout
-            classNameMapper={(className) => {
-              return flexLayoutClassNameMapper(
-                className,
-                theme ?? 'dark',
-                styles,
-              );
-            }}
+          <StyledFlexLayout
             model={model}
             factory={(node: TabNode) => {
               const component = node.getComponent();

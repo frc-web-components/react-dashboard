@@ -81,7 +81,6 @@ export default function Settings() {
           <NumberInput
             initialValue={gridSize}
             size="small"
-            color="primary"
             label="Grid Cell Size"
             style={{ width: '100%' }}
             onChange={(value) => {
