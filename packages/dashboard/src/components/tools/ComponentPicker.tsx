@@ -5,7 +5,11 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from 'ag-grid-react';
 import { useMemo, useState } from 'react';
 import { useDropZone } from '@context-providers/DropZoneContext';
-import { ComponentConfig, useComponentConfigs } from '@/dashboard';
+import {
+  ComponentConfig,
+  useComponentConfigs,
+  useDashboardTheme,
+} from '@/dashboard';
 
 export interface ComponentListItem {
   config: ComponentConfig;
@@ -31,6 +35,7 @@ function ComponentPicker() {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
   const [components] = useComponentConfigs();
   const { setComponentGrid } = useDropZone();
+  const [theme] = useDashboardTheme();
 
   const rowData = useMemo(() => {
     return Object.entries(components)
@@ -54,7 +59,7 @@ function ComponentPicker() {
       <div style={{ height: '100%', boxSizing: 'border-box' }}>
         <div
           style={{ height: '100%', width: '100%' }}
-          className={'ag-theme-balham-dark'}
+          className={`ag-theme-balham-${theme}`}
         >
           <AgGridReact<ComponentListItem>
             alwaysShowVerticalScroll

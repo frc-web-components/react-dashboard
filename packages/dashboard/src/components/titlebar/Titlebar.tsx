@@ -63,8 +63,9 @@ function Titlebar() {
         data-tauri-drag-region
         sx={{
           height: '33px',
-          background: 'primary.main',
-          borderBottom: (theme) => `1px solid ${theme.palette.primary.main}`,
+          background: 'background.default',
+          borderBottom: (theme) =>
+            `1px solid ${theme.palette.background.default}`,
           width: 'full',
           display: 'flex',
           alignItems: 'center',

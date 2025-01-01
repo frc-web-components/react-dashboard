@@ -12,11 +12,26 @@ import { useDashboardTheme } from '@/dashboard';
 import CssBaseline from '@mui/material/CssBaseline/CssBaseline';
 import { Box } from '@mui/material';
 import StyledFlexLayout from './StyledFlexLayout';
+import { common } from '@mui/material/colors';
+
+declare module '@mui/material/styles' {
+  interface PaletteColor {
+    screen?: string;
+  }
+
+  interface SimplePaletteColorOptions {
+    screen?: string;
+  }
+}
 
 const model = Model.fromJson(appLayoutJson);
 const darkTheme = createTheme({
   palette: {
     mode: 'dark',
+    primary: {
+      main: common.black,
+      screen: '#0a0a0abf',
+    },
     text: {
       primary: '#dddddd',
       secondary: '#aaaaaa',
@@ -32,6 +47,10 @@ const lightTheme = createTheme({
   cssVariables: true,
   palette: {
     mode: 'light',
+    primary: {
+      main: '#1976d2',
+      screen: '#0000000A',
+    },
     text: {
       primary: '#010101',
       secondary: '#cccccc',
@@ -66,7 +85,7 @@ function App() {
           alignItems: 'stretch',
           padding: 3,
           boxSizing: 'border-box',
-          background: 'primary.main',
+          backgroundColor: 'primary.paper',
         }}
       >
         <Titlebar />

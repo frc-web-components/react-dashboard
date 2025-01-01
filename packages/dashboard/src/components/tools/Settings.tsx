@@ -38,7 +38,7 @@ export default function Settings() {
       sx={{
         flexGrow: 1,
         padding: '10px',
-        background: (theme) => theme.palette.background.default,
+        background: (theme) => theme.palette.background.paper,
       }}
     >
       <Grid container spacing={2}>

@@ -21,7 +21,11 @@ import {
 } from '@store/selectors/layoutSelectors';
 import { useDropZone } from '@context-providers/DropZoneContext';
 import { RowDropZoneParams, RowDragEndEvent } from 'ag-grid-community';
-import { ComponentConfig, useComponentConfigs } from '@/dashboard';
+import {
+  ComponentConfig,
+  useComponentConfigs,
+  useDashboardTheme,
+} from '@/dashboard';
 import { v4 as uuidv4 } from 'uuid';
 import { ComponentListItem } from '../tools/ComponentPicker';
 import TabComponent from './TabComponent';
@@ -30,7 +34,7 @@ import { SourceData } from '../tools/editor/sources/Sources';
 import { getContextMenuPosition } from './context-menu/useContextMenu';
 import ContextMenu from './context-menu/ContextMenu';
 import { DELETE_KEYS } from './constants';
-import { Paper } from '@mui/material';
+import { Paper, useTheme } from '@mui/material';
 
 type AddComponentToTabFunction = (
   config: ComponentConfig,
@@ -89,6 +93,7 @@ function Tab({ tabId }: Props) {
   const cellGap = useAppSelector(selectGridGap);
   const gridPadding = useAppSelector(selectGridPadding);
   const addComponentToTabRef = useRef<AddComponentToTabFunction>();
+  const [theme] = useDashboardTheme();
 
   useEffect(() => {
     componentsRef.current = components;
@@ -96,6 +101,10 @@ function Tab({ tabId }: Props) {
 
   // layout is an array of objects, see the demo for more complete usage
   // const [layout, setLayout] = useState<ComponentLayout[]>([]);
+  const muiTheme = useTheme();
+  const getThemedGridColor = useCallback(() => {
+    return `${muiTheme.palette.primary.screen}`;
+  }, [theme]);
 
   const gridLayout = useMemo(() => {
     const layout: ComponentLayout[] = Object.values(layoutComponents ?? {}).map(
@@ -305,11 +314,11 @@ function Tab({ tabId }: Props) {
           width: '100%',
           backgroundSize: `${cellSize + cellGap}px ${cellSize + cellGap}px`,
           backgroundImage: editing
-            ? `linear-gradient(to right, rgba(10, 10, 10,.75) ${Math.max(
+            ? `linear-gradient(to right, ${getThemedGridColor()} ${Math.max(
                 cellGap,
                 1,
               )}px, transparent ${Math.max(cellGap, 1)}px),
-          linear-gradient(to bottom, rgba(10, 10, 10,.75) ${Math.max(
+          linear-gradient(to bottom, ${getThemedGridColor()} ${Math.max(
             cellGap,
             1,
           )}px, transparent ${Math.max(cellGap, 1)}px)`
