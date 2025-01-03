@@ -17,7 +17,7 @@ import {
 import useResizeObserver from '@react-hook/resize-observer';
 import styles from './Sources.module.scss';
 import { SourceMetadata } from '@store/slices/sourceSlice';
-import { useSourceProvider } from '@/dashboard';
+import { useDashboardTheme, useSourceProvider } from '@/dashboard';
 
 interface SourceContext {
   expand: (id: string) => unknown;
@@ -213,6 +213,7 @@ function Sources() {
   const sourceTree = useAppSelector((state) =>
     selectSourceTreeMetadata(state, selectedProvider, ''),
   );
+  const [theme] = useDashboardTheme();
 
   const [expandedSources, setExpandedSources] = useState<string[]>([]);
   const { sourceGrid, setSourceGrid } = useDropZone(); // Use the context
@@ -304,7 +305,7 @@ function Sources() {
       <div style={{ height: '100%', boxSizing: 'border-box' }}>
         <div
           style={{ height: '100%', width: '100%' }}
-          className={'ag-theme-balham-dark'}
+          className={`ag-theme-balham-${theme}`}
         >
           <AgGridReact<SourceData>
             alwaysShowVerticalScroll

@@ -12,7 +12,11 @@ import {
   updateComponentPropertySource,
   updateComponentSource,
 } from '@store/slices/layoutSlice';
-import { ComponentConfig, useComponentConfigs } from '@/dashboard';
+import {
+  ComponentConfig,
+  useComponentConfigs,
+  useDashboardTheme,
+} from '@/dashboard';
 import useResizeObserver from '@react-hook/resize-observer';
 import MarkdownEditor from './MarkdownEditor';
 import {
@@ -217,6 +221,7 @@ interface Props {
 function Properties({ childComponentConfig, configType }: Props) {
   const [columnDefs] = useState<ColDef[]>(defaultColumnDefs);
   const [gridApi, setGridApi] = useState<GridApi>();
+  const [theme] = useDashboardTheme();
   const selectSelectedComponent = useMemo(makeSelectSelectedComponent, []);
   const selectSelectedComponentChildren = useMemo(
     makeSelectSelectedComponentChildren,
@@ -428,7 +433,7 @@ function Properties({ childComponentConfig, configType }: Props) {
       <div style={{ height: '100%', boxSizing: 'border-box' }}>
         <div
           style={{ height: '100%', width: '100%' }}
-          className={'ag-theme-balham-dark'}
+          className={`ag-theme-balham-${theme}`}
         >
           <AgGridReact<PropertyData>
             alwaysShowVerticalScroll
