@@ -85,7 +85,7 @@ function App() {
           alignItems: 'stretch',
           padding: 3,
           boxSizing: 'border-box',
-          backgroundColor: 'primary.paper',
+          backgroundColor: 'background.paper',
         }}
       >
         <Titlebar />
