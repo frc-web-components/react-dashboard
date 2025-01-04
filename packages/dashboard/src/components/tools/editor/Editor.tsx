@@ -16,6 +16,7 @@ import { makeSelectSelectedComponent } from '@store/selectors/layoutSelectors';
 import { useComponentConfigs } from '@/dashboard';
 import { selectEditing } from '@store/slices/appSlice';
 import Sources from './sources/Sources';
+import StyledFlexLayout from '@/components/StyledFlexLayout';
 
 function Editor() {
   const layoutRef = useRef<Layout>();
@@ -126,7 +127,7 @@ function Editor() {
   }
 
   return (
-    <Layout
+    <StyledFlexLayout
       ref={layoutRef as any}
       model={modelRef.current ?? Model.fromJson(layoutJson)}
       factory={factory}

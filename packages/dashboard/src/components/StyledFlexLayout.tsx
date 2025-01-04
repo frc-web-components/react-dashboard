@@ -11,11 +11,13 @@ export default function StyledFlexLayout(
 ) {
   const [theme] = useDashboardTheme();
   return (
-    <FlexLayout
-      classNameMapper={(className) => {
-        return flexLayoutClassNameMapper(className, theme ?? 'dark', styles);
-      }}
-      {...props}
-    />
+    <div className={theme == 'light' ? 'light-scrollbars' : 'dark-scrollbars'}>
+      <FlexLayout
+        classNameMapper={(className) => {
+          return flexLayoutClassNameMapper(className, theme ?? 'dark', styles);
+        }}
+        {...props}
+      />
+    </div>
   );
 }
