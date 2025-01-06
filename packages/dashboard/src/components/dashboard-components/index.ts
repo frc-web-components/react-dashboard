@@ -38,6 +38,8 @@ import { toggleButton, toggleGroup } from './ToggleButton';
 import { sendableChooser } from './Dropdowns';
 import { relay } from './Relay';
 import { toggleSwitch } from './toggleSwitch';
+import { textField } from './TextField';
+import { numberField } from './number-field/numberField';
 // import { simComponents } from './sim';
 
 export const componentMap: Record<string, ComponentConfig> = {
@@ -117,6 +119,8 @@ export const componentMap: Record<string, ComponentConfig> = {
   encoder,
   relay,
   toggleSwitch,
+  textField,
+  numberField,
   // ...simComponents,
 };
 

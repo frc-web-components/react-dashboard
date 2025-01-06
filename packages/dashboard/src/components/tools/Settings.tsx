@@ -85,7 +85,8 @@ export default function Settings() {
           </Grid>
           <Grid item xs={12}>
             <NumberInput
-              initialValue={gridSize}
+              fullWidth
+              value={gridSize}
               size="small"
               label="Grid Cell Size"
               style={{ width: '100%' }}
@@ -96,7 +97,8 @@ export default function Settings() {
           </Grid>
           <Grid item xs={12}>
             <NumberInput
-              initialValue={gridGap}
+              fullWidth
+              value={gridGap}
               size="small"
               label="Grid Cell Gap"
               style={{ width: '100%' }}
@@ -107,7 +109,8 @@ export default function Settings() {
           </Grid>
           <Grid item xs={12}>
             <NumberInput
-              initialValue={gridPadding}
+              fullWidth
+              value={gridPadding}
               size="small"
               label="Grid Padding"
               style={{ width: '100%' }}

@@ -101,23 +101,21 @@ function TabComponent({ Component, componentId }: Props) {
         componentId={componentId}
         propertySources={propertySourceInfos}
       >
-        <div className={Styles['component-child']}>
-          <Component
-            className={Styles['component-child']}
-            {...propertyValues}
-            setProperty={newSetProperty}
-          >
-            {childComponents.map((child) => {
-              return (
-                <TabComponent
-                  key={child.id}
-                  componentId={child.id}
-                  Component={components[child.type].component}
-                />
-              );
-            })}
-          </Component>
-        </div>
+        <Component
+          className={Styles['component-child']}
+          {...propertyValues}
+          setProperty={newSetProperty}
+        >
+          {childComponents.map((child) => {
+            return (
+              <TabComponent
+                key={child.id}
+                componentId={child.id}
+                Component={components[child.type].component}
+              />
+            );
+          })}
+        </Component>
       </ComponentProvider>
     </ErrorBoundary>
   );
