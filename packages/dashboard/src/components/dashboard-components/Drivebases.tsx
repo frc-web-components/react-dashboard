@@ -11,8 +11,8 @@ export const swerveDrivebase = createComponent(
     dashboard: {
       name: 'Swerve Drivebase',
       description: '',
-      defaultSize: { width: 300, height: 300 },
-      minSize: { width: 50, height: 50 },
+      defaultSize: { width: 250, height: 250 },
+      minSize: { width: 200, height: 200 },
     },
     defaultSource: {
       key: '/SmartDashboard/swerve',
@@ -20,10 +20,6 @@ export const swerveDrivebase = createComponent(
     },
     acceptedSourceTypes: ['Swerve'],
     properties: {
-      moduleCount: numberProp({ defaultValue: 4 }),
-      wheelLocations: numberArrayProp({
-        defaultValue: [1, -1, 1, 1, -1, -1, -1, 1],
-      }),
       measuredStates: numberArrayProp({
         defaultValue: [0, 0, 0, 0, 0, 0, 0, 0],
       }),
@@ -41,7 +37,13 @@ export const swerveDrivebase = createComponent(
     },
   },
   (props) => {
-    return <Swerve {...props} />;
+    return (
+      <Swerve
+        {...props}
+        moduleCount={4}
+        wheelLocations={[1, -1, 1, 1, -1, -1, -1, 1]}
+      />
+    );
   },
 );
 
