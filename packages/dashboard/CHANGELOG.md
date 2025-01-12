@@ -1,5 +1,17 @@
 # @frc-web-components/app
 
+## 1.2.0
+
+### Minor Changes
+
+- 9318bfc: git commit -m "Added missing components to dashboard. Updated field components for 2025 season. Improved appearance of swerve component. Fixed bug with the color property editor not having a valid color initially. Removed border around components. Added error boundary to components to prevent errors crashing the app."
+
+### Patch Changes
+
+- Updated dependencies [9318bfc]
+  - @frc-web-components/fwc@3.1.0
+  - @frc-web-components/react@2.0.0
+
 ## 1.1.0
 
 ### Minor Changes
