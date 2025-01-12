@@ -1,0 +1,48 @@
+.flex-border-left {
+  border-right: 1px solid var(--mui-palette-grey-600);
+}
+
+.flex-border-button,
+.flex-tab-button {
+  background-color: var(--mui-palette-primary-light);
+  color: var(--mui-palette-primary-contrast-text);
+  opacity: 0.75;
+  &:hover {
+    background-color: var(--mui-palette-primary-main);
+  }
+}
+
+.flex-border-button-content,
+.flex-tab-button-content {
+  color: var(--mui-palette-primary-contrastText);
+}
+
+.flex-tab-button-selected,
+.flex-border-button-selected {
+  background-color: var(--mui-palette-primary-main);
+  opacity: 1;
+}
+
+.flex-tab,
+.flex-tabset,
+.flex-tabset-tabbar-outer,
+.flex-tabset-tabbar-outer-top,
+.flex-border {
+  background-color: var(--mui-background-default);
+}
+
+.flex-tabset-selected {
+  background: linear-gradient(
+    var(--mui-background-default),
+    var(--mui-background-default)
+  );
+}
+
+.flex-layout-splitter {
+  background: var(--mui-palette-primary-dark);
+  opacity: 0.75;
+}
+
+.dark-scrollbars {
+  scrollbar-color: #d1d1d1 #2c2c2c;
+}

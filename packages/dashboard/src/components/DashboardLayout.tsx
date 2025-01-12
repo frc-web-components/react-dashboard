@@ -14,6 +14,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { setFlexLayout } from '@store/slices/layoutSlice';
 import { selectFlexLayout } from '@store/selectors/layoutSelectors';
 import { selectEditing } from '@store/slices/appSlice';
+import StyledFlexLayout from './StyledFlexLayout';
 
 function DashboardLayout() {
   const layoutRef = useRef<FlexLayout>();
@@ -22,7 +23,7 @@ function DashboardLayout() {
   const dispatch = useAppDispatch();
 
   return (
-    <FlexLayout
+    <StyledFlexLayout
       ref={layoutRef as any}
       model={Model.fromJson(layoutJson)}
       factory={(node) => <Tab tabId={node.getId()} />}

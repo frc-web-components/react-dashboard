@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { Box, Grid, Typography } from '@mui/material';
 import NumberInput from '../shared/number-input/NumberInput';
 import { useDashboardTheme, useSourceProvider } from '@/dashboard';
@@ -22,12 +20,6 @@ import {
 const addressOptions = ['localhost'];
 const themeOptions = [{ label: 'dark' }, { label: 'light' }];
 
-const darkTheme = createTheme({
-  palette: {
-    mode: 'dark',
-  },
-});
-
 export default function Settings() {
   const [address, setAddress] = useState('localhost');
   const gridSize = useAppSelector(selectGridSize);
@@ -39,88 +31,89 @@ export default function Settings() {
 
   useEffect(() => {
     (providers['NT'] as NT4Provider).connect(address);
-  }, [address]);
+  }, [address, providers]);
 
   return (
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline />
-      <Box sx={{ flexGrow: 1, padding: '10px' }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <Typography variant="h5" gutterBottom>
-              Dashboard Settings
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Autocomplete
-              id="size-small-outlined"
-              size="small"
-              options={themeOptions}
-              freeSolo
-              defaultValue={theme as any}
-              onChange={(_, value) => {
-                if (value) {
-                  setTheme(value.label);
-                }
-              }}
-              renderInput={(params) => <TextField {...params} label="Theme" />}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <Autocomplete
-              id="size-small-outlined"
-              size="small"
-              options={addressOptions}
-              freeSolo
-              defaultValue={address}
-              onChange={(_, value) => {
-                if (value) {
-                  setAddress(value);
-                }
-              }}
-              renderInput={(params) => (
-                <TextField {...params} label="Team/IP" />
-              )}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <NumberInput
-              fullWidth
-              value={gridSize}
-              size="small"
-              label="Grid Cell Size"
-              style={{ width: '100%' }}
-              onChange={(value) => {
-                dispatch(setGridSize(value));
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <NumberInput
-              fullWidth
-              value={gridGap}
-              size="small"
-              label="Grid Cell Gap"
-              style={{ width: '100%' }}
-              onChange={(value) => {
-                dispatch(setGridGap(value));
-              }}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <NumberInput
-              fullWidth
-              value={gridPadding}
-              size="small"
-              label="Grid Padding"
-              style={{ width: '100%' }}
-              onChange={(value) => {
-                dispatch(setGridPadding(value));
-              }}
-            />
-          </Grid>
+    <Box
+      sx={{
+        flexGrow: 1,
+        padding: '10px',
+        background: (theme) => theme.palette.background.paper,
+      }}
+    >
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Typography variant="h5" gutterBottom sx={{ color: 'text.primary' }}>
+            Dashboard Settings
+          </Typography>
         </Grid>
-      </Box>
-    </ThemeProvider>
+        <Grid item xs={12}>
+          <Autocomplete
+            id="size-small-outlined"
+            size="small"
+            options={themeOptions}
+            freeSolo
+            defaultValue={theme as any}
+            onChange={(_, value) => {
+              if (value) {
+                setTheme(value.label);
+              }
+            }}
+            renderInput={(params) => <TextField {...params} label="Theme" />}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <Autocomplete
+            id="size-small-outlined"
+            size="small"
+            options={addressOptions}
+            freeSolo
+            defaultValue={address}
+            onChange={(_, value) => {
+              if (value) {
+                setAddress(value);
+              }
+            }}
+            renderInput={(params) => <TextField {...params} label="Team/IP" />}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <NumberInput
+            fullWidth
+            value={gridSize}
+            size="small"
+            label="Grid Cell Size"
+            style={{ width: '100%' }}
+            onChange={(value) => {
+              dispatch(setGridSize(value));
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <NumberInput
+            fullWidth
+            value={gridGap}
+            size="small"
+            label="Grid Cell Gap"
+            style={{ width: '100%' }}
+            onChange={(value) => {
+              dispatch(setGridGap(value));
+            }}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <NumberInput
+            fullWidth
+            value={gridPadding}
+            size="small"
+            label="Grid Padding"
+            style={{ width: '100%' }}
+            onChange={(value) => {
+              dispatch(setGridPadding(value));
+            }}
+          />
+        </Grid>
+      </Grid>
+    </Box>
   );
 }
