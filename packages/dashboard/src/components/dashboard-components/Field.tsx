@@ -76,7 +76,7 @@ export const field = createComponent(
     acceptedSourceTypes: ['Field2d'],
     properties: {
       game: stringDropdownProp({
-        defaultValue: 'Crescendo',
+        defaultValue: 'Reefscape',
         options: fieldConfigs.map((field) => field.game),
       }),
       rotationUnit: stringDropdownProp({
