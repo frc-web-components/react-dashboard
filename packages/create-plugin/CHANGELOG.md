@@ -1,5 +1,11 @@
 # create-fwc
 
+## 3.1.0
+
+### Minor Changes
+
+- Added themes and update docs
+
 ## 3.0.1
 
 ### Patch Changes

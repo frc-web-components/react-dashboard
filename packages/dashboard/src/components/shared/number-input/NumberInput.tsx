@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AddCircle, RemoveCircle } from '@mui/icons-material';
 import {
+  Box,
   FormControl,
   FormHelperText,
   IconButton,
@@ -11,12 +12,12 @@ import {
   OutlinedInputProps,
   Typography,
 } from '@mui/material';
+// import { Property as CSSProperty } from 'csstype';
 
 import { clampNumber, generateNumberRegex, getFormControlProps } from './utils';
 
-interface NumberInputProps
-  extends Omit<OutlinedInputProps, 'value' | 'onChange'> {
-  initialValue?: number;
+interface NumberInputProps extends Omit<OutlinedInputProps, 'onChange'> {
+  value?: number;
   min?: number;
   max?: number;
   step?: number;
@@ -24,17 +25,14 @@ interface NumberInputProps
   unit?: string;
   singularUnit?: string;
   helperText?: string;
+  // textAlign?: CSSProperty.TextAlign;
+  hideActionButtons?: boolean;
   onChange?: (value: number) => void;
-  onInvalidInput?: (value: string | null) => void;
 }
 
-/*
- * author: https://github.com/nameer
- * source: https://gist.github.com/nameer/664abb9d4e261a210de1f1ba814a0ad2
- */
-
+// https://gist.github.com/nameer/664abb9d4e261a210de1f1ba814a0ad2
 const NumberInput: React.FC<NumberInputProps> = ({
-  initialValue,
+  value,
   min = 0,
   max = Infinity,
   step = 1,
@@ -42,12 +40,14 @@ const NumberInput: React.FC<NumberInputProps> = ({
   unit,
   singularUnit: singleUnit,
   helperText,
+  // textAlign = 'center',
+  hideActionButtons = false,
   onChange,
-  onInvalidInput,
   ...props
 }) => {
-  const [value, setValue] = useState(initialValue?.toString());
-  const [addBtnFocus, setAddBtnFocus] = useState(false);
+  const [, setErrorMessage] = useState<string | undefined>('');
+  const [stateValue, setStateValue] = useState(value?.toString());
+
   // Allow decimal if any of props is decimal
   // num can be Infinity: num%1 || 0
   // num%1 can give numbers like 0 and 0.1: hence length-2
@@ -68,10 +68,10 @@ const NumberInput: React.FC<NumberInputProps> = ({
 
     if (e.ctrlKey || e.shiftKey || e.altKey) return;
     if (e.key === 'ArrowUp') {
-      updateValue(step);
+      updateValue(step)();
       return;
     } else if (e.key === 'ArrowDown') {
-      updateValue(-step);
+      updateValue(-step)();
       return;
     }
     const char = e.key;
@@ -85,124 +85,150 @@ const NumberInput: React.FC<NumberInputProps> = ({
     return char;
   };
 
+  const internalValue =
+    formatValue(stateValue).toString() === stateValue && value !== undefined
+      ? formatValue(value).toString()
+      : stateValue;
+
   const updateChange = (value: string) => {
-    setValue(value);
-    onInvalidInput?.(null);
+    setStateValue(value);
+    setErrorMessage(undefined);
     const formattedValue = formatValue(value);
     if (formattedValue.toString() === value) onChange?.(formattedValue);
   };
-  const updateValue = (diff: number) =>
-    updateChange(formatValue(formatValue(value) + diff).toString());
+  const updateValue = (diff: number) => () =>
+    updateChange(formatValue(formatValue(internalValue) + diff).toString());
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     updateChange(e.target.value);
   const handlePaste = (e: React.ClipboardEvent) => {
     const text = e.clipboardData?.getData('Text');
-    if (
-      !text?.trim().match(numberRegex) ||
-      Number(text) < min ||
-      Number(text) > max
-    ) {
-      onInvalidInput?.(text);
+    if (!text?.trim().match(numberRegex)) {
+      setErrorMessage('Invalid input');
+      e.preventDefault();
+    } else if (Number(!text?.trim()) < min) {
+      setErrorMessage('Minimum value is ' + min);
+      e.preventDefault();
+    } else if (Number(!text?.trim()) > max) {
+      setErrorMessage('Maximum value is ' + max);
       e.preventDefault();
     }
   };
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    handleAddBtnFocus(e);
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) =>
     updateChange(formatValue(e.target.value).toString());
-  };
-  const handleAddBtnFocus = (e: React.FocusEvent) =>
-    setAddBtnFocus(e.type === 'focus');
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     const char = getKeyDownChar(e);
     if (!char)
       // No character
       return;
     const target = e.target as HTMLInputElement;
-    if (target.selectionStart === null || target.selectionEnd === null)
+    if (target.selectionStart == null || target.selectionEnd == null)
       // No selection
       return;
     const resultingStr =
       target.value.substring(0, target.selectionStart) +
       char +
       target.value.substring(target.selectionEnd);
-    if (
-      !resultingStr.match(numberRegex) ||
-      Number(resultingStr) < min ||
-      Number(resultingStr) > max
-    ) {
-      onInvalidInput?.(resultingStr);
+    if (!resultingStr.match(numberRegex)) {
+      setErrorMessage('Invalid input');
+      e.preventDefault();
+    } else if (Number(resultingStr) < min) {
+      setErrorMessage('Minimum value is ' + min);
+      e.preventDefault();
+    } else if (Number(resultingStr) > max) {
+      setErrorMessage('Maximum value is ' + max);
       e.preventDefault();
     }
   };
 
+  useEffect(() => {
+    if (typeof value === 'number') {
+      updateChange(value?.toString());
+    }
+  }, [value]);
+
   props ??= {};
-  props.sx ??= {};
-  props.sx = { ...props.sx };
   props.inputProps ??= {};
   props.inputProps.style ??= {};
-  props.inputProps.style.textAlign ??= 'center';
+  props.inputProps.style.textAlign ??= 'center'; //textAlign;
   props.placeholder ??= Math.min(max, Math.max(min, 0)).toString();
   const formControlProps = getFormControlProps(props);
 
-  const actionsDisabled = props.readOnly || props.disabled;
+  hideActionButtons = hideActionButtons || props.readOnly || false;
+
   singleUnit ??= unit;
   unit ??= singleUnit;
 
   return (
-    <FormControl
-      {...formControlProps}
-      variant="outlined"
-      style={{ width: '100%' }}
-    >
-      <InputLabel htmlFor="number-input">{props.label}</InputLabel>
-      <OutlinedInput
-        {...props}
-        value={value}
-        id="number-input"
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        onPaste={handlePaste}
-        onFocus={handleAddBtnFocus}
-        startAdornment={
-          <InputAdornment position="start">
-            <IconButton
-              aria-label="decrease value"
-              onClick={updateValue.bind(null, -step)}
-              edge="start"
-              disabled={actionsDisabled || formatValue(value) <= min}
-              style={{
-                outline: 'none',
-              }}
-            >
-              <RemoveCircle />
-            </IconButton>
-          </InputAdornment>
-        }
-        endAdornment={
-          <InputAdornment position="end">
-            <Typography className="cursor-default select-none">
-              {formatValue(value) === 1 ? singleUnit : unit}
-            </Typography>
-            <IconButton
-              aria-label="increase value"
-              onClick={updateValue.bind(null, step)}
-              edge="end"
-              disabled={actionsDisabled || formatValue(value) >= max}
-              color={addBtnFocus ? props.color || 'primary' : undefined}
-              onFocus={handleAddBtnFocus}
-              onBlur={handleAddBtnFocus}
-              style={{
-                outline: 'none',
-              }}
-            >
-              <AddCircle />
-            </IconButton>
-          </InputAdornment>
-        }
-      />
-      {helperText && <FormHelperText>{helperText}</FormHelperText>}
-    </FormControl>
+    <Box>
+      <FormControl {...formControlProps} variant="outlined">
+        <InputLabel shrink htmlFor="number-input">
+          {props.label}
+        </InputLabel>
+        <OutlinedInput
+          notched
+          error={
+            props.error || Number(stateValue) < min || Number(stateValue) > max
+          }
+          {...props}
+          value={internalValue}
+          id="number-input"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          startAdornment={
+            !hideActionButtons ? (
+              <InputAdornment position="start">
+                <IconButton
+                  aria-label="decrease value"
+                  onClick={updateValue(-step)}
+                  edge="start"
+                  disabled={props.disabled || formatValue(internalValue) <= min}
+                >
+                  <RemoveCircle />
+                </IconButton>
+              </InputAdornment>
+            ) : undefined
+          }
+          endAdornment={
+            (unit || !hideActionButtons) && (
+              <InputAdornment position="end">
+                {unit && (
+                  <Typography className="cursor-default select-none">
+                    {formatValue(internalValue) === 1 ? singleUnit : unit}
+                  </Typography>
+                )}
+                {!hideActionButtons && (
+                  <IconButton
+                    aria-label="increase value"
+                    onClick={updateValue(step)}
+                    edge="end"
+                    disabled={
+                      props.disabled || formatValue(internalValue) >= max
+                    }
+                    color={undefined}
+                    sx={{
+                      '&:hover': {
+                        color: (theme) =>
+                          props.color || theme.palette.primary.main,
+                      },
+                      '&:focus': {
+                        color: (theme) =>
+                          props.color || theme.palette.primary.main,
+                      },
+                      transition: (theme) => theme.transitions.create('color'),
+                    }}
+                  >
+                    <AddCircle />
+                  </IconButton>
+                )}
+              </InputAdornment>
+            )
+          }
+        />
+        {helperText && <FormHelperText>{helperText}</FormHelperText>}
+      </FormControl>
+    </Box>
   );
 };
 

@@ -1,11 +1,12 @@
-import { Nt4Client } from '@frc-web-components/fwc/source-providers';
 import { PropertyType } from '../../slices/sourceSlice';
+import StructDecoder from './StructDecoder';
+import SourceProvider from '../source-provider';
+// import { Nt4Client, NT4_Topic } from './client/NT4';
+import { Nt4Client } from '@frc-web-components/fwc/source-providers';
 import {
   NT4_Client,
   NT4_Topic,
 } from '@frc-web-components/fwc/source-providers/nt4/NT4';
-import StructDecoder from './StructDecoder';
-import SourceProvider from '../source-provider';
 
 const basicTypes = [
   'boolean',
@@ -48,6 +49,7 @@ function getPropType(type: string, value?: unknown): PropertyType {
 }
 
 export class NT4Provider extends SourceProvider {
+  // #nt4!: Nt4Client;
   #nt4!: NT4_Client;
   #structDecoder = new StructDecoder();
   static STRUCT_PREFIX = 'struct:';

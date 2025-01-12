@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@frc-web-components/fwc": "^3.0.1",
-    "@frc-web-components/svelte": "^1.0.1",
+    "@frc-web-components/svelte": "^1.0.2",
     "@webbitjs/store": "^5.8.0"
   }
 }

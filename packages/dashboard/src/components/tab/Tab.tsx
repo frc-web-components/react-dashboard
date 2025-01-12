@@ -34,7 +34,7 @@ import { SourceData } from '../tools/editor/sources/Sources';
 import { getContextMenuPosition } from './context-menu/useContextMenu';
 import ContextMenu from './context-menu/ContextMenu';
 import { DELETE_KEYS } from './constants';
-import { Paper, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 
 type AddComponentToTabFunction = (
   config: ComponentConfig,
@@ -382,27 +382,22 @@ function Tab({ tabId }: Props) {
       >
         {gridLayout.map(({ i: id, Component }) => {
           return (
-            <Paper
+            <div
               key={id}
-              elevation={2}
-              sx={{ padding: (theme) => theme.spacing(0.5) }}
+              className={classNames(Styles.component, {
+                [Styles.selected]: selectedComponent?.id === id,
+              })}
+              onContextMenu={(event) => {
+                const position = getContextMenuPosition(event);
+                dispatch(
+                  setContextMenuElement(
+                    position && { position, type: 'ELEMENT', elementId: id },
+                  ),
+                );
+              }}
             >
-              <div
-                className={classNames(Styles.component, {
-                  [Styles.selected]: selectedComponent?.id === id,
-                })}
-                onContextMenu={(event) => {
-                  const position = getContextMenuPosition(event);
-                  dispatch(
-                    setContextMenuElement(
-                      position && { position, type: 'ELEMENT', elementId: id },
-                    ),
-                  );
-                }}
-              >
-                <TabComponent componentId={id} Component={Component} />
-              </div>
-            </Paper>
+              <TabComponent componentId={id} Component={Component} />
+            </div>
           );
         })}
       </GridLayout>

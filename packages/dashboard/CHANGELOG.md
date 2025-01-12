@@ -1,5 +1,11 @@
 # @frc-web-components/app
 
+## 1.1.0
+
+### Minor Changes
+
+- 92232ce: Add functions to add theme rules, set and get the current theme from the dashboard API
+
 ## 1.0.2
 
 ### Patch Changes

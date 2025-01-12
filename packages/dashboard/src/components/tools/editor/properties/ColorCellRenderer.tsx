@@ -23,7 +23,7 @@ export const ColorCellEditor = (
   props: CustomCellEditorProps<PropertyData, string>,
 ) => {
   const [isOpen, setIsOpen] = useState(true);
-  const [value, setValue] = useState(props.value ?? '#000');
+  const [value, setValue] = useState(props.value || '#000');
 
   return (
     <div>

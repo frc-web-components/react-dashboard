@@ -5,6 +5,7 @@ import { markdownViewer } from './MarkdownViewer';
 import { numberSlider } from './NumberSlider';
 import { booleanBox } from './BooleanBox';
 import { checkboxGroup } from './CheckboxGroup';
+import { radioGroup } from './RadioGroup';
 import { robotCommand, robotSubsystem } from './CommandBased';
 import { booleanProp, numberProp } from './fromProps';
 import { field, fieldPath, fieldRobot } from './Field';
@@ -21,6 +22,7 @@ import {
 } from './Drivebases';
 import { gauge } from './Gauge';
 import { icon } from './Icon';
+import { encoder } from './Encoder';
 import { label, numberLabel } from './Labels';
 import { mechanism2d } from './Mechanism2d';
 import { networkAlerts } from './NetworkAlerts';
@@ -34,7 +36,11 @@ import { pidCommand, pidController, profiledPidController } from './Pid';
 import { preferences } from './Preferences';
 import { toggleButton, toggleGroup } from './ToggleButton';
 import { sendableChooser } from './Dropdowns';
-import { simComponents } from './sim';
+import { relay } from './Relay';
+import { toggleSwitch } from './toggleSwitch';
+import { textField } from './TextField';
+import { numberField } from './number-field/numberField';
+// import { simComponents } from './sim';
 
 export const componentMap: Record<string, ComponentConfig> = {
   basicFmsInfo: {
@@ -60,6 +66,7 @@ export const componentMap: Record<string, ComponentConfig> = {
   booleanBox,
   camera,
   checkboxGroup,
+  radioGroup,
   robotCommand,
   robotSubsystem,
   field,
@@ -109,7 +116,12 @@ export const componentMap: Record<string, ComponentConfig> = {
   threeAxisAccelerometer,
   accelerometer,
   voltageView,
-  ...simComponents,
+  encoder,
+  relay,
+  toggleSwitch,
+  textField,
+  numberField,
+  // ...simComponents,
 };
 
 export const componentList: ComponentConfig[] = Object.values(componentMap);

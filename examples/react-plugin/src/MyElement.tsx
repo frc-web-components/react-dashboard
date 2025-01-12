@@ -10,7 +10,7 @@ export const myElement = createComponent(
     dashboard: {
       name: 'My React Element',
       description: '',
-      defaultSize: { width: 100, height: 100 },
+      defaultSize: { width: 130, height: 50 },
       minSize: { width: 20, height: 20 },
     },
     acceptedSourceTypes: ['Number'],
@@ -29,6 +29,8 @@ export const myElement = createComponent(
       display: 'inline-flex',
       alignItems: 'center',
       gap: '8px',
+      width: '100%',
+      height: '100%',
     };
     return (
       <button
