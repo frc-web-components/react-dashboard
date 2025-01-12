@@ -65,12 +65,38 @@ TODO
 
 ## Themes
 
-TODO
+Themes can be changed in the settings menu. The available themes are "dark" and "light":
+
+![themes](./img/themes.png)
 
 ## Saving and Opening Dashboards
 
-TODO
+Dashboards can be saved and reopened through the file menu:
+
+![saving dashboard](./img/saving-dashboard.gif)
+
+![opening dashboard](./img/opening-dashboard.gif)
 
 ## Importing Plugins
 
-TODO
+To import the plugin open the app and click the `File > Plugins` menu item:
+
+![image](./img/plugins/plugin-file-menu.png)
+
+This should open the plugins dialog:
+
+![image](./img/plugins/plugin-dialog.png)
+
+Click `Load Plugin` which open up an open folder dialog. Navigate to your plugin and select the `plugin` folder generated with the `npm run build` command:
+
+![image](./img/plugins/select-plugin-folder.png)
+
+You should now see the plugin loaded in the dialog:
+
+![image](./img/plugins/plugin-loaded.png)
+
+The app must be refreshed to view the changes:
+
+![image](./img/plugins/refresh-plugin.png)
+
+The plugin should now be successfully loaded.
