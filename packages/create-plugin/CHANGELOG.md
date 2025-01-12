@@ -1,5 +1,11 @@
 # create-fwc
 
+## 3.1.1
+
+### Patch Changes
+
+- acf9f4c: Updated template package versions.
+
 ## 3.1.0
 
 ### Minor Changes
