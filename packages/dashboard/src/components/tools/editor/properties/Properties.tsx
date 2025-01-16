@@ -19,7 +19,7 @@ import {
   makeSelectSelectedComponent,
   makeSelectSelectedComponentChildren,
 } from '@store/selectors/layoutSelectors';
-import { SourceCellRenderer } from './SourceCellRenderer';
+import { SourceCellEditor, SourceCellRenderer } from './SourceCellRenderer';
 import { ColorCellEditor, ColorCellRenderer } from './ColorCellRenderer';
 import PropertyNameCellRenderer from './NameCellRenderer';
 import styles from './Properties.module.scss';
@@ -62,9 +62,13 @@ const defaultColumnDefs: ColDef<PropertyData>[] = [
   },
   {
     field: 'source',
-    editable: false,
     sortable: false,
     cellRenderer: SourceCellRenderer,
+    cellEditor: SourceCellEditor,
+    editable: (params) => {
+      return !!params.data?.source;
+    },
+    singleClickEdit: true,
   },
   // Using dot notation to access nested property
   {
