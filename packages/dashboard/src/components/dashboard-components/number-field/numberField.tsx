@@ -15,7 +15,7 @@ export const numberField = createComponent(
       minSize: { width: 150, height: 40 },
     },
     primaryProperty: 'value',
-    acceptedSourceTypes: ['String'],
+    acceptedSourceTypes: ['Number'],
     properties: {
       value: numberProp(),
       label: stringProp(),

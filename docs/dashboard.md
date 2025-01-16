@@ -57,7 +57,29 @@ Element behavior changes based on their properties. A selected element's propert
 
 ## Property Sources and Robot Communication
 
-TODO
+You can connect to your robot or robot simulation from the Dashboard Settings panel:
+
+![alt text](./img/address-setting.png)
+
+Use `localhost` to connect to your simulated robot or your team # or robot IP address to connnect to your robot.
+
+Component properties can be controlled externally through sources such as NetworkTables. A component connected to NetworkTables can send to or receive updates from a physical or simulated robot.
+
+Below the slider component is bound to the `/num` topic in NetworkTables. The slider and value in OutlineViewer update when changed on either end:
+
+![NT slider](./img/nt-slider.gif)
+
+NetworkTable topics can be bound to components by dragging them from the `Sources` panel to the selected component's `Properties` panel:
+
+![Source](./img/gyro-source.gif)
+
+Sources with sub-topics can also be bound to components. Sub-topics will be mapped to properties. Topic names will be converted to camel-case so they don't have to align with property names perfectly:
+
+![Source](./img/gyro-source2.gif)
+
+Sources can also be bound to individual properties:
+
+![Source](./img/gyro-source3.gif)
 
 ## Source Providers
 
