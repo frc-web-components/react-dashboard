@@ -12,7 +12,7 @@ import './index.module.scss';
 import { Layout } from './store/slices/layoutSlice.ts';
 import ShuffleboardLayout from './plugins/shuffleboard-layout.ts';
 import { NT4Provider } from '@store/sources/nt4';
-import { SimProvider } from '@store/sources/sim';
+// import { SimProvider } from '@store/sources/sim';
 
 const darkTheme = createTheme({
   palette: {
@@ -23,7 +23,7 @@ const darkTheme = createTheme({
 const dashboard = new Dashboard();
 dashboard.addComponents(componentMap);
 dashboard.addSourceProvider('NT', new NT4Provider());
-dashboard.addSourceProvider('Sim', new SimProvider());
+// dashboard.addSourceProvider('Sim', new SimProvider());
 
 new ShuffleboardLayout(dashboard);
 
