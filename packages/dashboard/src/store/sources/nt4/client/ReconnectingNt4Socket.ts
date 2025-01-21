@@ -34,7 +34,6 @@ export default class ReconnectingNt4Socket extends (EventEmitter as unknown as n
     });
 
     this.on('error', () => {
-      this.emit('error');
       setTimeout(() => {
         this.#createSocket();
       }, 500);
