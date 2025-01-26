@@ -137,10 +137,7 @@ export default class Dashboard extends (EventEmitter as unknown as new () => Das
   #exampleDashboards: {
     name: string;
     layout: Layout;
-  }[] = [
-    { name: 'Example', layout: exampleLayout },
-    { name: 'Example 2', layout: exampleLayout },
-  ];
+  }[] = [{ name: 'YAGSL Swerve', layout: exampleLayout }];
   #store = getDefaultStore();
   #themes = new DashboardThemes();
 

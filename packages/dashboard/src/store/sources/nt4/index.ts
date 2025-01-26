@@ -1,7 +1,8 @@
 import { PropertyType } from '../../slices/sourceSlice';
 import StructDecoder from './StructDecoder';
 import SourceProvider from '../source-provider';
-import { Nt4Client, NT4_Topic } from './client/NT4';
+import { NT4_Client, NT4_Topic } from './client/NT4_';
+import { getRobotAddress } from './client/utils';
 
 const basicTypes = [
   'boolean',
@@ -44,7 +45,7 @@ function getPropType(type: string, value?: unknown): PropertyType {
 }
 
 export class NT4Provider extends SourceProvider {
-  #nt4!: Nt4Client;
+  #nt4!: NT4_Client;
   #structDecoder = new StructDecoder();
   static STRUCT_PREFIX = 'struct:';
   #topics: Record<string, NT4_Topic> = {};
@@ -62,8 +63,8 @@ export class NT4Provider extends SourceProvider {
     this.#address = address;
     this.#updateConnectionStatus();
 
-    const client = new Nt4Client(
-      address,
+    const client = new NT4_Client(
+      getRobotAddress(address),
       'FRC Web Components',
       (topic: NT4_Topic) => {
         this.#topics[topic.name] = topic;
@@ -123,7 +124,7 @@ export class NT4Provider extends SourceProvider {
 
     this.#nt4 = client;
     this.#nt4.connect();
-    this.#nt4.subscribeAll(['/'], true);
+    this.#nt4.subscribe(['/'], true, true);
   }
 
   #updateConnectionStatus() {
@@ -228,11 +229,11 @@ export class NT4Provider extends SourceProvider {
     const topic = this.#topics[key];
     const propType = getPropType(type);
     if (topic) {
-      this.#nt4.publishNewTopic(topic.name, topic.type);
+      this.#nt4.publishTopic(topic.name, topic.type);
       this.#nt4.addSample(topic.name, serializedValue);
       this.update(topic.name, value, type, propType);
     } else if (type !== undefined) {
-      this.#nt4.publishNewTopic(key, type);
+      this.#nt4.publishTopic(key, type);
       this.#nt4.addSample(key, serializedValue);
       this.update(key, value, type, propType);
     }

@@ -33,3 +33,7 @@ export function getRobotAddresses(serverAddr: string) {
     ? getRobotAddressesFromTeamNumber(parseFloat(serverAddr))
     : [serverAddr];
 }
+
+export function getRobotAddress(serverAddr: string) {
+  return getRobotAddresses(serverAddr)[0];
+}

@@ -1,56 +1,27 @@
 import { Layout } from '../store/slices/layoutSlice';
 
 const layout: Layout = {
-  selectedComponentId: '97427c9b-2d00-4494-a06c-7637ca39a238',
   flexLayout: {
-    global: {
-      borderSize: 350,
-    },
-    borders: [
-      {
-        type: 'border',
-        location: 'left',
-        children: [
-          {
-            type: 'tab',
-            id: 'settingsTab',
-            name: 'Settings',
-            component: 'settings',
-            enableClose: false,
-            enableDrag: false,
-            icon: '/settings.svg',
-          },
-          {
-            type: 'tab',
-            id: 'editorTab',
-            name: 'Editor',
-            component: 'editor',
-            enableClose: false,
-            enableDrag: false,
-            icon: '/edit.svg',
-            enableRenderOnDemand: true,
-          },
-        ],
-      },
-    ],
+    global: { splitterSize: 3, splitterExtra: 6, borderSize: 350 },
+    borders: [],
     layout: {
       type: 'row',
       id: 'layout',
       children: [
         {
           type: 'tabset',
-          id: '2b8907fc-ae03-4ff5-b8c0-f9b92bb47e36',
+          id: '90abf9c8-22b7-4e66-90de-0d75f6516078',
           weight: 50,
           children: [
             {
               type: 'tab',
-              id: '43239588-9f7d-4135-b5fc-cd9095eb9006',
+              id: 'b95ba66f-1e10-41e5-915b-0a561f212043',
               name: 'TeleOperated',
               component: 'components',
             },
             {
               type: 'tab',
-              id: '90658caf-713b-49ac-82d8-69572b9f5270',
+              id: 'a8a32092-a26b-4ff2-b572-1ed32d1f5c7b',
               name: 'Autonomous',
               component: 'components',
             },
@@ -61,104 +32,34 @@ const layout: Layout = {
     },
   },
   components: {
-    '7978eeef-ffc8-4ad2-beda-236f32cd28ac': {
-      id: '7978eeef-ffc8-4ad2-beda-236f32cd28ac',
+    'c43c9efd-cd18-4c39-85bf-440134c2ecb9': {
+      id: 'c43c9efd-cd18-4c39-85bf-440134c2ecb9',
       children: [],
-      minSize: {
-        width: 1,
-        height: 1,
-      },
-      size: {
-        width: 2,
-        height: 1,
-      },
-      position: {
-        x: 0,
-        y: 0,
-      },
+      source: { key: '/SmartDashboard/swerve', provider: 'NT' },
+      minSize: { width: 4, height: 4 },
+      size: { width: 5, height: 5 },
+      position: { x: 1, y: 1 },
       properties: {
-        options: {
-          value: [],
-        },
-        selected: {
-          value: '',
-        },
-        default: {
-          value: '',
-        },
-        active: {
-          value: '',
-        },
-        label: {
-          value: 'Auto Choices',
-        },
-      },
-      type: 'sendableChooser',
-      name: 'Sendable Chooser',
-    },
-    '97427c9b-2d00-4494-a06c-7637ca39a238': {
-      id: '97427c9b-2d00-4494-a06c-7637ca39a238',
-      children: [],
-      source: {
-        key: '/SmartDashboard/swerve',
-        provider: 'NT',
-      },
-      minSize: {
-        width: 1,
-        height: 1,
-      },
-      size: {
-        width: 2,
-        height: 2,
-      },
-      position: {
-        x: 2,
-        y: 1,
-      },
-      properties: {
-        moduleCount: {
-          value: 4,
-        },
-        wheelLocations: {
-          value: [1, -1, 1, 1, -1, -1, -1, 1],
-        },
-        measuredStates: {
-          value: [0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        desiredStates: {
-          value: [0, 0, 0, 0, 0, 0, 0, 0],
-        },
-        robotRotation: {
-          value: 0,
-        },
-        maxSpeed: {
-          value: 1,
-        },
-        rotationUnit: {
-          value: 'radians',
-        },
-        sizeLeftRight: {
-          value: 2,
-        },
-        sizeFrontBack: {
-          value: 2,
-        },
+        measuredStates: { value: [0, 0, 0, 0, 0, 0, 0, 0] },
+        desiredStates: { value: [0, 0, 0, 0, 0, 0, 0, 0] },
+        robotRotation: { value: 0 },
+        maxSpeed: { value: 1 },
+        rotationUnit: { value: 'radians' },
+        sizeLeftRight: { value: 2 },
+        sizeFrontBack: { value: 2 },
       },
       type: 'swerveDrivebase',
       name: 'Swerve Drivebase',
     },
   },
   tabs: {
-    '43239588-9f7d-4135-b5fc-cd9095eb9006': {
-      componentIds: [
-        '7978eeef-ffc8-4ad2-beda-236f32cd28ac',
-        '97427c9b-2d00-4494-a06c-7637ca39a238',
-      ],
+    'b95ba66f-1e10-41e5-915b-0a561f212043': {
+      componentIds: ['c43c9efd-cd18-4c39-85bf-440134c2ecb9'],
     },
   },
-  gridSize: 128,
+  gridSize: 50,
   gridGap: 5,
-  gridPadding: 8,
+  gridPadding: 5,
 };
 
 export default layout;

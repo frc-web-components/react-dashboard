@@ -20,6 +20,7 @@
     "@frc-web-components/node-wpilib-ws": "^0.2.3",
     "@frc-web-components/react": "workspace:*",
     "@lit/react": "^1.0.2",
+    "@msgpack/msgpack": "3.0.0-beta2",
     "@mui/icons-material": "^5.15.17",
     "@mui/material": "^5.15.17",
     "@react-hook/resize-observer": "^1.2.6",
