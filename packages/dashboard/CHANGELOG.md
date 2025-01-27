@@ -1,5 +1,17 @@
 # @frc-web-components/app
 
+## 1.3.0
+
+### Minor Changes
+
+- 0c45ef1: Updated components for 2025 release. Updated NT4 client to use 4.1 (thanks AdvantageScope!). Dashboard only subscribes to networktable topics that are used by components while in live mode.
+
+### Patch Changes
+
+- Updated dependencies [0c45ef1]
+  - @frc-web-components/react@3.0.0
+  - @frc-web-components/fwc@3.2.0
+
 ## 1.2.0
 
 ### Minor Changes
