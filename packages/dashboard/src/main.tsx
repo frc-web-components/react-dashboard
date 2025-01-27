@@ -11,7 +11,7 @@ import Dashboard, { ComponentConfig } from './dashboard.ts';
 import './index.module.scss';
 import { Layout } from './store/slices/layoutSlice.ts';
 import ShuffleboardLayout from './plugins/shuffleboard-layout.ts';
-import { NT4Provider } from '@store/sources/nt4';
+import { getNt4Provider } from '@store/sources/nt4';
 // import { SimProvider } from '@store/sources/sim';
 
 const darkTheme = createTheme({
@@ -22,7 +22,7 @@ const darkTheme = createTheme({
 
 const dashboard = new Dashboard();
 dashboard.addComponents(componentMap);
-dashboard.addSourceProvider('NT', new NT4Provider());
+dashboard.addSourceProvider('NT', getNt4Provider());
 // dashboard.addSourceProvider('Sim', new SimProvider());
 
 new ShuffleboardLayout(dashboard);

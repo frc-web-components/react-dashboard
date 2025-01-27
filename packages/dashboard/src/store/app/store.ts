@@ -4,6 +4,10 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { layoutSlice } from '../slices/layoutSlice';
 import { appSlice } from '../slices/appSlice';
 import { sourceSlice } from '../slices/sourceSlice';
+import {
+  nt4SubscriptionMiddleware,
+  nt4EditingMiddleware,
+} from '@store/sources/nt4';
 
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
@@ -18,9 +22,12 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     reducer: rootReducer,
     // Adding the api middleware enables caching, invalidation, polling,
     // and other useful features of `rtk-query`.
-    // middleware: (getDefaultMiddleware) => {
-    //   return [];
-    // },
+    middleware: (getDefaultMiddleware) => {
+      return getDefaultMiddleware().concat([
+        nt4SubscriptionMiddleware,
+        nt4EditingMiddleware,
+      ]);
+    },
     preloadedState,
   });
   // configure listeners using the provided defaults
