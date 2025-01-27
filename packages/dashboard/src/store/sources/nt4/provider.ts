@@ -268,7 +268,7 @@ export class NT4Provider extends SourceProvider {
       this.#subscriptions.delete(removal);
     });
     additions.forEach((addition) => {
-      const subscriptionId = this.#nt4.subscribe([addition], true, false);
+      const subscriptionId = this.#nt4.subscribe([addition], true, false, 0.02);
       this.#subscriptions.set(addition, subscriptionId);
     });
   }
@@ -283,7 +283,7 @@ export class NT4Provider extends SourceProvider {
       this.#subscribeAllId = undefined;
     }
     if (isEditing) {
-      this.#subscribeAllId = this.#nt4.subscribe(['/'], true, false);
+      this.#subscribeAllId = this.#nt4.subscribe(['/'], true, false, 0.2);
     }
     this.#isConnected = isEditing;
   }

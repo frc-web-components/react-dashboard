@@ -1,4 +1,5 @@
 import {
+  setLayout,
   addComponent,
   removeComponent,
   clearTab,
@@ -45,6 +46,7 @@ export const nt4EditingMiddleware: Middleware =
 export const nt4SubscriptionMiddleware: Middleware =
   (storeAPI: MiddlewareAPI) => (next) => (action) => {
     const updateProviderSources = [
+      setLayout,
       addComponent,
       removeComponent,
       clearTab,
